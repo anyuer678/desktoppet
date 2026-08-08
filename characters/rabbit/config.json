@@ -1,0 +1,109 @@
+{
+  "configVersion": 1,
+  "id": "rabbit",
+  "name": "兔兔",
+  "version": "1.2",
+  "author": "",
+  "description": "示例角色：肥兔（支持 v0.2 状态系统 + 夜间叠加层）",
+  "avatar": {
+    "main": "avatar.png",
+    "preview": "preview.jpg"
+  },
+  "animation": {
+    "default": "idle",
+    "states": {
+      "idle": {
+        "type": "template",
+        "template": {
+          "breathe": {
+            "scale": 0.02,
+            "duration": 2400
+          },
+          "float": {
+            "y": 6,
+            "duration": 3600
+          }
+        }
+      },
+      "focus": {
+        "type": "template",
+        "template": {
+          "breathe": {
+            "scale": 0.012,
+            "duration": 1600
+          },
+          "float": {
+            "y": 2,
+            "duration": 5000
+          }
+        }
+      },
+      "sleep": {
+        "type": "template",
+        "template": {
+          "breathe": {
+            "scale": 0.03,
+            "duration": 4200
+          },
+          "float": {
+            "y": 0,
+            "duration": 6000
+          }
+        }
+      },
+      "happy": {
+        "type": "template",
+        "template": {
+          "breathe": {
+            "scale": 0.035,
+            "duration": 1100
+          },
+          "float": {
+            "y": 10,
+            "duration": 2000
+          }
+        }
+      },
+      "warning": {
+        "type": "template",
+        "template": {
+          "breathe": {
+            "scale": 0.06,
+            "duration": 500
+          },
+          "float": {
+            "y": 0,
+            "duration": 4000
+          }
+        }
+      }
+    }
+  },
+  "interaction": {
+    "click": "speak",
+    "doubleClick": "open_center",
+    "rightClick": "menu"
+  },
+  "overlays": {
+    "night": {
+      "condition": {
+        "time": {
+          "start": 22,
+          "end": 6
+        }
+      },
+      "apply": {
+        "opacity": 0.65,
+        "template": {
+          "breatheScale": 1,
+          "floatY": 1,
+          "speed": 2
+        }
+      }
+    }
+  },
+  "settings": {
+    "defaultSize": 256,
+    "allowResize": true
+  }
+}

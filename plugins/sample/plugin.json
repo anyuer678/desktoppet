@@ -1,0 +1,13 @@
+{
+  "id": "sample",
+  "name": "示例插件",
+  "version": "1.0",
+  "description": "骨架示例：持续注入一个 working 事件，使桌宠进入 focus 状态",
+  "events": [
+    {
+      "type": "working",
+      "priority": 5,
+      "durationMs": 10000
+    }
+  ]
+}

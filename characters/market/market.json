@@ -1,0 +1,11 @@
+[
+  {
+    "id": "rabbit",
+    "name": "兔兔",
+    "author": "官方示例",
+    "description": "官方示例角色：支持状态系统（待机/专注/睡眠/开心/告警）、夜间叠加层、气泡消息、交互动作配置与陪伴统计",
+    "version": "1.2",
+    "preview": "rabbit-preview.jpg",
+    "source": "rabbit.pet"
+  }
+]
