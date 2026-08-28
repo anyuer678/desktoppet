@@ -1,27 +1,3 @@
-DesktopPet 可扩展桌面宠物平台
-Copyright (C) 2026 DesktopPet 作者与贡献者
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-------------------------------------------------------------------------
-
-免责声明
-
-本项目按 GPL-3.0 协议以"现状"（AS IS）提供，作者与贡献者不对使用本项目产生的任何直接、间接、偶然或后果性损失负责，包括但不限于：实际生产/生活环境中的业务故障、数据丢失、服务中断、安全事件等任何恶劣结果。若需将本项目用于实际生产或业务场景，请自行充分评估风险，并按需修改代码以满足你的实际需求；任何因使用本项目（含修改后版本）造成的影响，均由使用者自行承担。
-
-------------------------------------------------------------------------
-
                     GNU GENERAL PUBLIC LICENSE
                        Version 3, 29 June 2007
 
@@ -210,8 +186,8 @@ measures.
 
   When you convey a covered work, you waive any legal power to forbid
 circumvention of technological measures to the extent such circumvention
-is effected by exercising rights under this License with respect to the
-covered work, and you disclaim any intention to limit operation or
+is effected by exercising rights under this License with respect to
+the covered work, and you disclaim any intention to limit operation or
 modification of the work as a means of enforcing, against the work's
 users, your or third parties' legal rights to forbid circumvention of
 technological measures.
