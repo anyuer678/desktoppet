@@ -3,7 +3,7 @@ import { dirname } from 'path'
 import type { PushApiConfig } from '../../shared/ipc'
 
 export const DEFAULT_PUSH_API_CONFIG: PushApiConfig = {
-  enabled: true,
+  enabled: false,
   token: ''
 }
 
