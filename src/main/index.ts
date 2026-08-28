@@ -519,7 +519,7 @@ function registerPetProtocol(): void {
     try {
       const resp = await net.fetch(pathToFileURL(filePath).toString())
       const headers = new Headers(resp.headers)
-      headers.set('Access-Control-Allow-Origin', '*')
+      headers.set('Access-Control-Allow-Origin', 'http://localhost:8765')
       return new Response(resp.body, { status: resp.status, headers })
     } catch (err) {
       log('warn', '[pet] fetch error:', filePath, err)
