@@ -1,4 +1,4 @@
-import { app, BrowserWindow, clipboard, dialog, globalShortcut, ipcMain, Menu, protocol, screen, shell } from 'electron'
+import { app, BrowserWindow, dialog, globalShortcut, ipcMain, Menu, protocol, screen, shell } from 'electron'
 import { execFile } from 'child_process'
 import { existsSync, readFileSync, writeFileSync } from 'fs'
 import { join, resolve } from 'path'
@@ -29,11 +29,8 @@ import { updateCharacterConfig } from './character/configEditor'
 import { importPetArchive, deletePetArchive, exportPetArchive, suggestPackFileName, validatePackId } from './character/importer'
 import {
   charactersRoot,
-  passiveConfigPath,
   pluginsDir,
-  pushApiConfigPath,
   reportOutputDir,
-  schedulesPath,
   settingsPath
 } from './app/paths'
 import { seedDefaultCharacters, seedDefaultPlugins } from './app/seed'
@@ -42,29 +39,13 @@ import { createShortcutsHub } from './window/shortcuts'
 import { createTray } from './window/tray'
 import { PET_SCHEME_PRIVILEGES, registerPetProtocol } from './protocol/petProtocol'
 import { DEFAULT_SETTINGS, loadSettings, saveSettings } from './storage/settingsStore'
-import { diffEventTypes, type PetEvent } from './event/eventCenter'
+import { diffEventTypes } from './event/eventCenter'
 import { createEventRuntime } from './event/eventRuntime'
-import { createSampler } from './monitor/systemMonitor'
-import { createBatterySampler, type BatterySampler } from './monitor/battery'
-import { summarizePerf } from './perf/perfReport'
+import { createPassiveRuntime } from './event/passiveRuntime'
 import { readMarketCatalog, installMarketEntry } from './market/catalog'
 import { createLogger, type Logger } from './logging/logger'
 import { loadPlugins, toPluginInfo } from './plugin/pluginHost'
-import { createSourceHub, type SourceContext } from './event/sourceHub'
-import { createSystemSource } from './event/sources/systemSource'
-import { createPluginSource } from './event/sources/pluginSource'
-import { createClipboardSource } from './event/sources/clipboardSource'
-import { createFolderSource, defaultListFiles, folderShouldNotify } from './event/sources/folderSource'
-import { createForegroundSource, foregroundMapping, getForegroundApp } from './event/sources/foregroundSource'
-import { clipboardShouldNotify } from './event/clipboard'
-import { classifyClipboard, extractDomain, isSensitive } from './event/sourceClassifier'
-import {
-  DEFAULT_PASSIVE_SOURCES_CONFIG,
-  loadPassiveConfig,
-  savePassiveConfig,
-  validatePassiveConfig
-} from './event/passiveStore'
-import { ScheduleRepository } from './schedule/scheduler'
+import { validatePassiveConfig } from './event/passiveStore'
 import {
   addStateTime,
   aggregateWeek,
@@ -86,17 +67,12 @@ import { validateAutoReportConfig } from './stats/autoReportStore'
 import { createStatsRuntime } from './stats/statsRuntime'
 import { createAutoReportRuntime } from './stats/autoReportRuntime'
 import { buildWorkbook } from './stats/spreadsheet'
-import { generateToken } from './push/pushApi'
-import { startPushHttpService, type PushHttpServer } from './push/httpService'
-import {
-  DEFAULT_PUSH_API_CONFIG,
-  loadPushApiConfig,
-  savePushApiConfig
-} from './push/pushApiStore'
+import { createPushRuntime } from './push/pushRuntime'
+import { createScheduleRuntime } from './schedule/scheduleRuntime'
+import { createPerfRuntime } from './perf/perfRuntime'
 
 let settings: Settings = DEFAULT_SETTINGS
 let saveTimer: NodeJS.Timeout | null = null
-let latestFps = 0
 
 // 事件中心运行时（活跃事件/历史/上次状态为其闭包私有状态）
 const eventRuntime = createEventRuntime({ notifyPet, notifyCenter })
@@ -106,30 +82,6 @@ let logger: Logger | null = null
 
 // 插件系统（whenReady 中加载）
 let loadedPlugins: PluginManifest[] = []
-
-// 日程提醒/闹钟（whenReady 中初始化，文件持久化于 userData/schedules.json）
-let scheduleRepo: ScheduleRepository | null = null
-let stopScheduler: (() => void) | null = null
-
-// 电池采样器（whenReady 中初始化；will-quit 停止）
-let batterySampler: BatterySampler | null = null
-
-// 事件推送 API（whenReady 中初始化，配置持久化于 userData/pushApi.json）
-let pushApiCfg: PushApiConfig = { ...DEFAULT_PUSH_API_CONFIG }
-let pushServer: PushHttpServer | null = null
-
-// 被动数据源（whenReady 中初始化，userData/passiveSources.json）
-let passiveCfg: PassiveSourcesConfig = { ...DEFAULT_PASSIVE_SOURCES_CONFIG }
-let passiveHub: ReturnType<typeof createSourceHub> | null = null
-let rebuildPassiveHub: (() => void) | null = null
-
-const runPowerShell = promisify(execFile)
-async function powershellRunner(cmd: string): Promise<string> {
-  const { stdout } = await runPowerShell('powershell.exe', [
-    '-NoProfile', '-NonInteractive', '-Command', cmd
-  ])
-  return stdout
-}
 
 // 窗口运行时（pet/center 引用注册表；moved/位置修正经依赖回调回写 settings）
 const windows = createWindowHub({
@@ -165,9 +117,36 @@ const autoReports = createAutoReportRuntime({
   log
 })
 
-/** 触发中的 alarm 事件列表（schedule 触发后注入事件中心 6 秒，使桌宠进入 warning 状态） */
-const ALARM_EVENT_DURATION_MS = 6000
-const ALARM_EVENT_PRIORITY = 80
+// 推送 API 运行时（配置/token/服务句柄/事件计数器为其私有状态）
+const push = createPushRuntime({
+  events: eventRuntime,
+  stats,
+  notifyPet,
+  notifyCenter,
+  log
+})
+
+// 日程运行时（仓库/调度器停止句柄为其私有状态）
+const schedule = createScheduleRuntime({
+  events: eventRuntime,
+  stats,
+  notifyPet,
+  notifyCenter,
+  log
+})
+
+// 被动数据源运行时（配置/hub/采样器为其私有状态；插件清单经 getter 现读）
+const passive = createPassiveRuntime({
+  events: eventRuntime,
+  stats,
+  notifyPet,
+  getPlugins: () => loadedPlugins,
+  powershellRunner,
+  log
+})
+
+// 性能采样运行时（latestFps 为其私有状态）
+const perf = createPerfRuntime({ windows })
 
 // tick 循环状态（上一轮 tick 时间戳；步骤⑧随 tick 迁入 runtime/tick.ts）
 let lastTickAt = 0
@@ -176,12 +155,13 @@ function log(level: 'info' | 'warn' | 'error', message: string, ...args: unknown
   logger?.[level](message, ...args)
 }
 
-function hasClipboardImage(): boolean {
-  try {
-    return clipboard.availableFormats().some((f) => f.startsWith('image/'))
-  } catch {
-    return false
-  }
+/** PowerShell 命令执行器（前台窗口检测用，注入 passiveRuntime） */
+const runPowerShell = promisify(execFile)
+async function powershellRunner(cmd: string): Promise<string> {
+  const { stdout } = await runPowerShell('powershell.exe', [
+    '-NoProfile', '-NonInteractive', '-Command', cmd
+  ])
+  return stdout
 }
 
 function debouncedSaveSettings(): void {
@@ -195,28 +175,6 @@ function notifyPet(channel: string, payload?: unknown): void {
 
 function notifyCenter(channel: string, payload?: unknown): void {
   windows.notifyCenter(channel, payload)
-}
-
-/**
- * 日程触发：注入 alarm 事件到事件中心（让桌宠进入 warning 状态 6 秒），
- * 同时广播 schedule:fired 给桌宠与控制中心（气泡显示标题）。
- */
-function fireSchedule(fired: ScheduleFired): void {
-  const now = fired.firedAt
-  const alarmEvent: PetEvent = {
-    source: `schedule:${fired.id}`,
-    type: 'alarm',
-    priority: ALARM_EVENT_PRIORITY,
-    durationMs: ALARM_EVENT_DURATION_MS,
-    occurredAt: now
-  }
-  eventRuntime.apply(alarmEvent)
-  stats.record((s) => countEvent(s, 'schedule'))
-  log('info', '[schedule] fired:', fired.id, fired.title)
-  notifyPet('schedule:fired', fired)
-  notifyCenter('schedule:fired', fired)
-  // 立即触发一次状态更新（不必等下一个 tick）
-  eventRuntime.syncStateAndNotify(now)
 }
 
 /** 读取市场目录下的预览图并转为 data URL（sandbox 渲染层无法直接 file:// 访问） */
@@ -248,68 +206,6 @@ function openCenter(tab?: string): void {
 
 const MIN_PET_SIZE = 96
 const MAX_PET_SIZE = 512
-
-/** 确保服务拥有合法 token：为空/非法时生成新 token 并落盘 */
-function ensurePushApiToken(force = false): void {
-  if (force || !/^[0-9a-f]{32}$/.test(pushApiCfg.token)) {
-    pushApiCfg = { ...pushApiCfg, token: generateToken() }
-    savePushApiConfig(pushApiConfigPath(), pushApiCfg)
-  }
-}
-
-/** 推送事件处理：计入统计 + 注入事件中心 + 气泡 */
-let pushEventSource = 1
-function onPushApiEvent(body: { title: string; message: string; type?: string }): void {
-  const now = Date.now()
-  stats.record((s) => countEvent(s, 'push'))
-  const sourceId = `push:${(pushEventSource++ % 100000).toString(36)}-${now.toString(36).slice(-4)}`
-  eventRuntime.apply({
-    source: sourceId,
-    type: body.type ?? 'notice',
-    priority: 50,
-    durationMs: 8000,
-    occurredAt: now
-  })
-  const fired: PushApiFired = {
-    kind: 'push',
-    reaction: 'pushNote',
-    title: body.title,
-    body: body.message,
-    type: body.type
-  }
-  log('info', '[pushApi] event', fired.title)
-  notifyPet('push:fired', fired)
-  eventRuntime.syncStateAndNotify(now)
-}
-
-/** 启动推送 HTTP 服务（token 就绪后监听随机空闲端口） */
-function startPushApiService(): void {
-  if (!pushApiCfg.enabled) {
-    log('info', '[pushApi] disabled, not starting')
-    return
-  }
-  if (pushServer) return
-  ensurePushApiToken()
-  startPushHttpService({
-    getConfig: () => pushApiCfg,
-    onPushEvent: onPushApiEvent,
-    log
-  })
-    .then((srv) => {
-      pushServer = srv
-      log('info', '[pushApi] listening on port', srv.port)
-      notifyCenter('pushApi:state', { port: srv.port, enabled: true })
-    })
-    .catch((err) => log('error', '[pushApi] start failed', err))
-}
-
-/** 停止推送服务（幂等） */
-async function stopPushApiService(): Promise<void> {
-  if (pushServer) {
-    await pushServer.close()
-    pushServer = null
-  }
-}
 
 function registerIpc(): void {
   ipcMain.handle('settings:get', () => settings)
@@ -518,83 +414,39 @@ function registerIpc(): void {
   ipcMain.handle('pushApi:get', () => ({
     ok: true,
     info: {
-      enabled: pushApiCfg.enabled,
-      port: pushServer?.port ?? 0,
-      token: pushApiCfg.token
+      enabled: push.config().enabled,
+      port: push.port(),
+      token: push.config().token
     }
   }))
   ipcMain.handle('pushApi:setEnabled', (_e, enabled: unknown) => {
     if (typeof enabled !== 'boolean') return { ok: false, error: 'enabled 必须为布尔' }
-    pushApiCfg = { ...pushApiCfg, enabled }
-    savePushApiConfig(pushApiConfigPath(), pushApiCfg)
+    push.setEnabled(enabled)
     if (enabled) {
-      startPushApiService()
+      push.start()
     } else {
-      void stopPushApiService().then(() => notifyCenter('pushApi:state', { enabled: false, port: 0 }))
+      void push.stop().then(() => notifyCenter('pushApi:state', { enabled: false, port: 0 }))
     }
     return { ok: true }
   })
   ipcMain.handle('pushApi:resetToken', () => {
-    ensurePushApiToken(true)
-    return { ok: true, token: pushApiCfg.token }
+    push.ensureToken(true)
+    return { ok: true, token: push.config().token }
   })
   ipcMain.handle('pushApi:test', () => {
-    onPushApiEvent({ title: '测试推送', message: '桌宠收到啦，链路正常', type: 'complete' })
+    push.fireEvent({ title: '测试推送', message: '桌宠收到啦，链路正常', type: 'complete' })
     return { ok: true }
   })
-  ipcMain.handle('passive:get', () => ({ ok: true, config: passiveCfg }))
+  ipcMain.handle('passive:get', () => ({ ok: true, config: passive.config() }))
   ipcMain.handle('passive:set', (_e, cfg: unknown) => {
     const err = validatePassiveConfig(cfg)
     if (err) return { ok: false, error: err }
-    passiveCfg = cfg as PassiveSourcesConfig
-    savePassiveConfig(passiveConfigPath(), passiveCfg)
-    rebuildPassiveHub?.()
+    passive.setConfig(cfg as PassiveSourcesConfig)
+    passive.rebuild()
     log('info', '[passive] config updated')
     return { ok: true }
   })
-  ipcMain.handle('passive:test', (_e, sourceId: unknown) => {
-    const id = sourceId === 'folder' || sourceId === 'foreground' ? sourceId : 'clipboard'
-    if (id === 'clipboard') {
-      const text = clipboard.readText()
-      if (!text.trim()) return { ok: false, error: '剪贴板当前为空' }
-      if (clipboardShouldNotify(text, passiveCfg.clipboard).ok !== true) {
-        return { ok: false, error: '剪贴板内容不满足当前规则' }
-      }
-      const now = Date.now()
-      stats.record((s) => countEvent(s, 'clipboard'))
-      eventRuntime.apply({ source: 'clipboard', type: 'clipboard', priority: 5, durationMs: 8000, occurredAt: now })
-      const reaction = isSensitive(text)
-        ? 'clipSensitive'
-        : classifyClipboard(text)
-      const placeholder = reaction === 'clipLink' ? extractDomain(text) ?? '' : ''
-      notifyPet('push:fired', { kind: 'passive', reaction, placeholder })
-      return { ok: true }
-    }
-    if (id === 'folder') {
-      const dir = passiveCfg.folder.dir
-      if (!dir) return { ok: false, error: '未配置监听目录' }
-      const files = defaultListFiles(dir).filter((f) => folderShouldNotify(f, passiveCfg.folder.patterns))
-      const hit = files[0]
-      if (!hit) return { ok: false, error: '目录中无匹配当前规则的文件' }
-      const now = Date.now()
-      stats.record((s) => countEvent(s, 'folder'))
-      eventRuntime.apply({ source: 'folder', type: 'folder', priority: 5, durationMs: 8000, occurredAt: now })
-      notifyPet('push:fired', { kind: 'passive', reaction: 'folderChange', placeholder: hit })
-      return { ok: true }
-    }
-    // foreground
-    const m = getForegroundApp(powershellRunner)
-    return m.then((app) => {
-      if (!app) return { ok: false, error: '获取前台窗口失败' }
-      const mapping = foregroundMapping(app, passiveCfg.foreground.mappings)
-      stats.record((s) => countEvent(s, 'foreground'))
-      if (!mapping || mapping.state !== 'focus') return { ok: false, error: '前台进程未命中 focus 映射' }
-      const now = Date.now()
-      eventRuntime.apply({ source: 'foreground', type: 'working', priority: 4, durationMs: passiveCfg.foreground.pollMs * 2, occurredAt: now })
-      notifyPet('push:fired', { kind: 'passive', reaction: 'foreground', placeholder: app.process })
-      return { ok: true }
-    }).catch(() => ({ ok: false, error: 'PowerShell 执行失败' }))
-  })
+  ipcMain.handle('passive:test', (_e, sourceId: unknown) => passive.test(sourceId))
   ipcMain.handle('stats:openReportDir', async () => {
     const dir = reportOutputDir()
     try {
@@ -663,33 +515,9 @@ function registerIpc(): void {
     return { ok: true, deleted }
   })
   ipcMain.on('perf:fps', (_e, fps: unknown) => {
-    if (typeof fps === 'number' && Number.isFinite(fps)) latestFps = fps
+    perf.onFps(fps)
   })
-  ipcMain.handle('perf:start', async () => {
-    const samples: PerfSample[] = []
-    let last = process.cpuUsage()
-    for (let i = 0; i < 5; i++) {
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-      const now = process.cpuUsage()
-      const cpuPercent = (now.user - last.user + now.system - last.system) / 1e4
-      last = now
-      let rendererMB = 0
-      try {
-        const pid = windows.pet()?.webContents.getOSProcessId()
-        const metric = app.getAppMetrics().find((m) => m.pid === pid)
-        rendererMB = (metric?.memory.workingSetSize ?? 0) / 1024
-      } catch {
-        rendererMB = 0
-      }
-      samples.push({
-        cpuPercent: Math.round(cpuPercent * 10) / 10,
-        rssMB: Math.round((process.memoryUsage().rss / 1024 / 1024) * 10) / 10,
-        rendererMB: Math.round(rendererMB * 10) / 10,
-        fps: latestFps
-      })
-    }
-    return summarizePerf(samples)
-  })
+  ipcMain.handle('perf:start', () => perf.sample())
   ipcMain.handle('market:catalog', () => {
     const marketDir = join(charactersRoot(), 'market')
     const catalog = readMarketCatalog(marketDir)
@@ -707,37 +535,30 @@ function registerIpc(): void {
     return installMarketEntry(marketDir, entryId, charactersRoot())
   })
   ipcMain.handle('plugin:list', () => toPluginInfo(loadedPlugins))
-  ipcMain.handle('schedule:list', () => scheduleRepo?.list() ?? [])
+  ipcMain.handle('schedule:list', () => schedule.repo()?.list() ?? [])
   ipcMain.handle('schedule:create', (_e, input: ScheduleInput) => {
-    if (!scheduleRepo) return { ok: false, error: '调度器未初始化' }
-    const r = scheduleRepo.create(input)
+    const repo = schedule.repo()
+    if (!repo) return { ok: false, error: '调度器未初始化' }
+    const r = repo.create(input)
     return r.ok ? { ok: true, item: r.item } : { ok: false, error: r.error }
   })
   ipcMain.handle('schedule:update', (_e, id: string, input: ScheduleInput) => {
-    if (!scheduleRepo) return { ok: false, error: '调度器未初始化' }
-    const r = scheduleRepo.update(id, input)
+    const repo = schedule.repo()
+    if (!repo) return { ok: false, error: '调度器未初始化' }
+    const r = repo.update(id, input)
     return r.ok ? { ok: true, item: r.item } : { ok: false, error: r.error }
   })
   ipcMain.handle('schedule:delete', (_e, id: string) => {
-    if (!scheduleRepo) return { ok: false, error: '调度器未初始化' }
-    return scheduleRepo.remove(id)
+    const repo = schedule.repo()
+    if (!repo) return { ok: false, error: '调度器未初始化' }
+    return repo.remove(id)
   })
   ipcMain.handle('schedule:toggle', (_e, id: string, enabled: boolean) => {
-    if (!scheduleRepo) return { ok: false, error: '调度器未初始化' }
-    return scheduleRepo.setEnabled(id, enabled)
+    const repo = schedule.repo()
+    if (!repo) return { ok: false, error: '调度器未初始化' }
+    return repo.setEnabled(id, enabled)
   })
-  ipcMain.handle('schedule:test', (_e, id: string) => {
-    if (!scheduleRepo) return { ok: false, error: '调度器未初始化' }
-    const item = scheduleRepo.list().find((it) => it.id === id)
-    if (!item) return { ok: false, error: '日程不存在' }
-    fireSchedule({
-      id: item.id,
-      title: item.title,
-      message: item.message,
-      firedAt: Date.now()
-    })
-    return { ok: true }
-  })
+  ipcMain.handle('schedule:test', (_e, id: string) => schedule.testFire(id))
   ipcMain.handle('menu:popup', (event) => {
     const win = BrowserWindow.fromWebContents(event.sender)
     if (!win) return
@@ -794,14 +615,12 @@ if (!gotLock) {
     loadedPlugins = loadPlugins(pluginsDir())
     log('info', '[plugins] loaded', loadedPlugins.length, 'plugins from', pluginsDir())
     settings = loadSettings(settingsPath())
-    scheduleRepo = new ScheduleRepository(schedulesPath(), fireSchedule)
-    stopScheduler = scheduleRepo.startScheduler(1000)
-    log('info', '[schedule] loaded', scheduleRepo.list().length, 'schedules from', schedulesPath())
+    schedule.start()
     stats.init()
     autoReports.start()
-    pushApiCfg = loadPushApiConfig(pushApiConfigPath())
-    passiveCfg = loadPassiveConfig(passiveConfigPath())
-    startPushApiService()
+    push.loadConfig()
+    passive.loadConfig()
+    push.start()
     registerPetProtocol({ log })
     registerIpc()
     windows.ensurePetPosition()
@@ -810,30 +629,7 @@ if (!gotLock) {
     shortcuts.register()
     screen.on('display-metrics-changed', () => windows.ensurePetPosition())
 
-    const sampler = createSampler()
-    // 电池采样（异步轮询，60s 间隔），tick 只读缓存
-    batterySampler = createBatterySampler()
-    batterySampler.start()
-    const sourceCtx: SourceContext = {
-      inject: (ev) => eventRuntime.apply(ev),
-      replaceBySource: (prefix, evs) => eventRuntime.replaceBySource(prefix, evs),
-      notify: notifyPet,
-      count: (t) => stats.record((s) => countEvent(s, t)),
-      log
-    }
-    const rebuildPassiveHubFn = (): void => {
-      passiveHub?.stop()
-      passiveHub = createSourceHub(sourceCtx, [
-        createSystemSource(() => ({ ...sampler(), battery: batterySampler?.get() ?? null })),
-        createPluginSource(() => loadedPlugins),
-        createClipboardSource(() => ({ text: clipboard.readText(), hasImage: hasClipboardImage() }), () => passiveCfg.clipboard),
-        createFolderSource(() => passiveCfg.folder, defaultListFiles),
-        createForegroundSource(() => passiveCfg.foreground, powershellRunner)
-      ])
-      passiveHub.start()
-    }
-    rebuildPassiveHub = rebuildPassiveHubFn
-    rebuildPassiveHubFn()
+    passive.start()
     lastTickAt = Date.now()
     // 上一轮活跃事件类型（新增类型才广播 pet:speech 让桌宠说话，避免持续事件刷屏）
     let lastEventTypes = new Set<string>()
@@ -845,7 +641,7 @@ if (!gotLock) {
         stats.record((s) => addStateTime(s, eventRuntime.currentState(), (now - lastTickAt) / 1000, now))
       }
       lastTickAt = now
-      passiveHub?.tick(now)
+      passive.tick(now)
       const diff = diffEventTypes(lastEventTypes, eventRuntime.active(now))
       for (const t of diff.added) {
         notifyPet('pet:speech', t)
@@ -864,10 +660,10 @@ if (!gotLock) {
 
   app.on('will-quit', () => {
     globalShortcut.unregisterAll()
-    stopScheduler?.()
-    batterySampler?.stop()
-    passiveHub?.stop()
-    void stopPushApiService()
+    schedule.stop()
+    // passive.stop 内部保持原顺序：电池采样先停、hub 后停
+    passive.stop()
+    void push.stop()
     stats.dispose()
   })
 
