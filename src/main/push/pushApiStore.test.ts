@@ -19,7 +19,7 @@ describe('pushApiStore', () => {
   afterEach(() => rmSync(dir, { recursive: true, force: true }))
 
   it('默认值：enabled=true，token 为空（首次启动惰性生成）', () => {
-    expect(DEFAULT_PUSH_API_CONFIG).toEqual({ enabled: true, token: '' })
+    expect(DEFAULT_PUSH_API_CONFIG).toEqual({ enabled: false, token: '' })
   })
 
   it('文件不存在 → 返回默认值', () => {
@@ -35,14 +35,14 @@ describe('pushApiStore', () => {
     writeFileSync(file, JSON.stringify({ token: 'ab'.repeat(16) }), 'utf-8')
     const cfg = loadPushApiConfig(file)
     expect(cfg.token).toBe('ab'.repeat(16))
-    expect(cfg.enabled).toBe(true)
+    expect(cfg.enabled).toBe(false)
   })
 
   it('token 类型非法（非字符串）→ 补默认空串', () => {
     writeFileSync(file, JSON.stringify({ token: 123 }), 'utf-8')
     const cfg = loadPushApiConfig(file)
     expect(cfg.token).toBe('')
-    expect(cfg.enabled).toBe(true)
+    expect(cfg.enabled).toBe(false)
   })
 
   it('round-trip：保存后可读回', () => {
