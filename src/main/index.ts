@@ -1,6 +1,6 @@
-import { app, BrowserWindow, clipboard, dialog, globalShortcut, ipcMain, Menu, Notification, protocol, screen, shell } from 'electron'
+import { app, BrowserWindow, clipboard, dialog, globalShortcut, ipcMain, Menu, protocol, screen, shell } from 'electron'
 import { execFile } from 'child_process'
-import { existsSync, readFileSync, readdirSync, writeFileSync } from 'fs'
+import { existsSync, readFileSync, writeFileSync } from 'fs'
 import { join, resolve } from 'path'
 import { promisify } from 'util'
 import type {
@@ -34,8 +34,7 @@ import {
   pushApiConfigPath,
   reportOutputDir,
   schedulesPath,
-  settingsPath,
-  statsRootPath
+  settingsPath
 } from './app/paths'
 import { seedDefaultCharacters, seedDefaultPlugins } from './app/seed'
 import { createWindowHub } from './window/windows'
@@ -70,33 +69,22 @@ import {
   addStateTime,
   aggregateWeek,
   buildStatsCsv,
-  clearStatsDir,
   computeStreak,
   countEvent,
   countInteraction,
-  deleteDailyStatsFile,
   emptyStats,
-  iterateDates,
   loadDailyRange,
   loadDailyRangeFullYear,
   loadDailyStats,
-  migrateStatsLayout,
-  sanitizeRoleId,
-  saveDailyStats,
   summarizeYear,
   todayStr,
   validateRange
 } from './stats/dailyStats'
 import { computeAchievements } from './stats/achievements'
 import { comparePeriods, generateReportFile } from './stats/report'
-import { shouldCatchUpMonthly, shouldCatchUpWeekly } from './stats/autoReport'
-import { createAutoReportTicker } from './stats/autoReportTicker'
-import {
-  DEFAULT_AUTO_REPORT_CONFIG,
-  loadAutoReports,
-  saveAutoReports,
-  validateAutoReportConfig
-} from './stats/autoReportStore'
+import { validateAutoReportConfig } from './stats/autoReportStore'
+import { createStatsRuntime } from './stats/statsRuntime'
+import { createAutoReportRuntime } from './stats/autoReportRuntime'
 import { buildWorkbook } from './stats/spreadsheet'
 import { generateToken } from './push/pushApi'
 import { startPushHttpService, type PushHttpServer } from './push/httpService'
@@ -125,11 +113,6 @@ let stopScheduler: (() => void) | null = null
 
 // 电池采样器（whenReady 中初始化；will-quit 停止）
 let batterySampler: BatterySampler | null = null
-
-// 自动报告（whenReady 中初始化，文件持久化于 userData/autoReports.json）
-let autoReportCfg: AutoReportConfig = { ...DEFAULT_AUTO_REPORT_CONFIG }
-let autoReportFile = ''
-let autoReportTicker: ReturnType<typeof createAutoReportTicker> | null = null
 
 // 事件推送 API（whenReady 中初始化，配置持久化于 userData/pushApi.json）
 let pushApiCfg: PushApiConfig = { ...DEFAULT_PUSH_API_CONFIG }
@@ -168,103 +151,26 @@ const shortcuts = createShortcutsHub({
   enabled: () => settings.shortcutsEnabled
 })
 
-/** 生成自动报告：silent=true 仅落盘；否则气泡 + 系统通知 */
-function generateAutoReport(mode: 'week' | 'month', silent: boolean): void {
-  try {
-    const { path } = generateReportFile({
-      dir: statsDir,
-      outputDir: reportOutputDir(),
-      mode
-    })
-    log('info', `[autoReport:${mode}] saved`, path)
-    if (silent) return
-    const title = mode === 'week' ? '陪伴周报已生成' : '陪伴月报已生成'
-    const fired: AutoReportFired = { type: mode, title, body: path }
-    notifyPet('autoReport:fired', fired)
-    notifyCenter('autoReport:fired', fired)
-    try {
-      new Notification({ title, body: path }).show()
-    } catch (err) {
-      log('error', '[autoReport] notification failed', err)
-    }
-  } catch (err) {
-    log('error', `[autoReport:${mode}]`, err)
-  }
-}
+// 陪伴统计运行时（目录/内存/防抖落盘/跨日与切角色为其私有状态；init 于 whenReady 调用）
+const stats = createStatsRuntime({
+  getActiveCharacterId: () => settings.activeCharacterId,
+  log
+})
+
+// 自动报告运行时（statsDir 经 getter 现读，角色切换后报告写入新目录）
+const autoReports = createAutoReportRuntime({
+  getStatsDir: () => stats.dir(),
+  notifyPet,
+  notifyCenter,
+  log
+})
+
 /** 触发中的 alarm 事件列表（schedule 触发后注入事件中心 6 秒，使桌宠进入 warning 状态） */
 const ALARM_EVENT_DURATION_MS = 6000
 const ALARM_EVENT_PRIORITY = 80
 
-// 陪伴统计（whenReady 中初始化，按天文件持久化于 userData/stats/）
-let statsDir = ''
-let dailyStats: DailyStats | null = null
-let statsDate = ''
-let statsSaveTimer: NodeJS.Timeout | null = null
-let lastStatsSaveAt = 0
+// tick 循环状态（上一轮 tick 时间戳；步骤⑧随 tick 迁入 runtime/tick.ts）
 let lastTickAt = 0
-
-// 落盘节流：日志变化后最多 STATS_SAVE_INTERVAL_MS（2s）内落盘；避免「防抖时长 ≥ tick 间隔」导致定时器被持续重置而永不保存。
-// 注意：此值必须小于 tick 间隔（4000ms），q且配合「已有定时器则跳过」保证高频 tick 下定期收账。
-const STATS_SAVE_INTERVAL_MS = 2000
-
-// 多角色分离：统计根目录 userData/stats/ 与当前活跃角色目录 userData/stats/<角色id>/
-let statsRoot = ''
-let activeStatsRoleId = 'rabbit'
-
-/** 当前角色统计目录（stats/<角色id>，缩写角色 id 已 sanitize） */
-function roleStatsDir(): string {
-  return join(statsRoot, activeStatsRoleId)
-}
-
-/**
- * 节流落盘：已有定时器则跳过（合并高频 tick）；否则调度在「距上次保存 ≥ 2s」时执行。
- * 保证任何情况下最长 2s 内落盘一次，退出/切角色路径仍走同步 saveDailyStats。
- */
-function debouncedSaveStats(): void {
-  if (statsSaveTimer) return
-  const wait = Math.max(0, STATS_SAVE_INTERVAL_MS - (Date.now() - lastStatsSaveAt))
-  statsSaveTimer = setTimeout(() => {
-    statsSaveTimer = null
-    lastStatsSaveAt = Date.now()
-    if (dailyStats) saveDailyStats(statsDir, dailyStats)
-  }, wait)
-}
-
-/** 统计记一笔（状态时长/事件/互动），并防抖落盘 */
-function recordStats(mutate: (stats: DailyStats) => DailyStats): void {
-  if (!dailyStats) return
-  dailyStats = mutate(dailyStats)
-  debouncedSaveStats()
-}
-
-/** 角色切换（settings.activeCharacterId 已更新后调用）：旧角色今日落盘 → 迁移 → 切角色目录 → 载入新角色今日 */
-function applyStatsRoleSwitch(): void {
-  if (dailyStats) saveDailyStats(statsDir, dailyStats)
-  activeStatsRoleId = sanitizeRoleId(settings.activeCharacterId || 'rabbit')
-  migrateStatsLayout(statsRoot, activeStatsRoleId)
-  statsDir = roleStatsDir()
-  const today = todayStr()
-  if (today !== statsDate) statsDate = today
-  dailyStats = loadDailyStats(statsDir, statsDate)
-}
-
-function ensureStatsDate(now: number): void {
-  const today = todayStr(new Date(now))
-  const role = sanitizeRoleId(settings.activeCharacterId || 'rabbit')
-  const switched = role !== activeStatsRoleId
-  if (switched) {
-    if (dailyStats) saveDailyStats(statsDir, dailyStats)
-    activeStatsRoleId = role
-    statsDir = roleStatsDir()
-    statsDate = today
-    dailyStats = loadDailyStats(statsDir, today)
-    return
-  }
-  if (today === statsDate) return
-  if (dailyStats) saveDailyStats(statsDir, dailyStats)
-  statsDate = today
-  dailyStats = loadDailyStats(statsDir, today)
-}
 
 function log(level: 'info' | 'warn' | 'error', message: string, ...args: unknown[]): void {
   logger?.[level](message, ...args)
@@ -305,7 +211,7 @@ function fireSchedule(fired: ScheduleFired): void {
     occurredAt: now
   }
   eventRuntime.apply(alarmEvent)
-  recordStats((s) => countEvent(s, 'schedule'))
+  stats.record((s) => countEvent(s, 'schedule'))
   log('info', '[schedule] fired:', fired.id, fired.title)
   notifyPet('schedule:fired', fired)
   notifyCenter('schedule:fired', fired)
@@ -333,7 +239,7 @@ function selectCharacter(id: string): void {
   settings = { ...settings, activeCharacterId: id }
   saveSettings(settingsPath(), settings)
   notifyPet('character:changed', id)
-  applyStatsRoleSwitch()
+  stats.switchRole()
 }
 
 function openCenter(tab?: string): void {
@@ -342,34 +248,6 @@ function openCenter(tab?: string): void {
 
 const MIN_PET_SIZE = 96
 const MAX_PET_SIZE = 512
-
-/** 启动自动报告：加载配置 → 启动时静默补发 → 开启分钟级 ticker */
-function startAutoReports(): void {
-  autoReportFile = join(app.getPath('userData'), 'autoReports.json')
-  autoReportCfg = loadAutoReports(autoReportFile)
-  const outDir = reportOutputDir()
-  const reportExists = (key: string, prefix: string): boolean => {
-    try {
-      return readdirSync(outDir).some((f) => f.startsWith(prefix) && f.includes(key))
-    } catch {
-      return false
-    }
-  }
-  const now = new Date()
-  if (shouldCatchUpWeekly(autoReportCfg, now, (k) => reportExists(k, '陪伴周报-'))) {
-    generateAutoReport('week', true)
-  }
-  if (shouldCatchUpMonthly(autoReportCfg, now, (k) => reportExists(k, '陪伴月报-'))) {
-    generateAutoReport('month', true)
-  }
-  autoReportTicker = createAutoReportTicker({
-    getConfig: () => autoReportCfg,
-    onWeeklyFire: () => generateAutoReport('week', false),
-    onMonthlyFire: () => generateAutoReport('month', false)
-  })
-  autoReportTicker.start()
-  log('info', '[autoReport] started', JSON.stringify(autoReportCfg))
-}
 
 /** 确保服务拥有合法 token：为空/非法时生成新 token 并落盘 */
 function ensurePushApiToken(force = false): void {
@@ -383,7 +261,7 @@ function ensurePushApiToken(force = false): void {
 let pushEventSource = 1
 function onPushApiEvent(body: { title: string; message: string; type?: string }): void {
   const now = Date.now()
-  recordStats((s) => countEvent(s, 'push'))
+  stats.record((s) => countEvent(s, 'push'))
   const sourceId = `push:${(pushEventSource++ % 100000).toString(36)}-${now.toString(36).slice(-4)}`
   eventRuntime.apply({
     source: sourceId,
@@ -507,7 +385,7 @@ function registerIpc(): void {
       settings = { ...settings, activeCharacterId: fallback }
       saveSettings(settingsPath(), settings)
       notifyPet('character:changed', fallback)
-      applyStatsRoleSwitch()
+      stats.switchRole()
     }
     return result
   })
@@ -567,16 +445,16 @@ function registerIpc(): void {
   })
   ipcMain.on('pet:interact', (_e, kind: unknown) => {
     if (kind !== 'click' && kind !== 'drag' && kind !== 'speak') return
-    recordStats((s) => countInteraction(s, kind as InteractionKind))
+    stats.record((s) => countInteraction(s, kind as InteractionKind))
   })
   ipcMain.handle('stats:report', () => {
-    ensureStatsDate(Date.now())
-    // 先将今日内存中的统计落盘，保证「本周」聚合与磁盘一致（含进行中的时长）
-    if (dailyStats) saveDailyStats(statsDir, dailyStats)
+    // 先做跨日/切角色检查，再将今日内存统计落盘，保证「本周」聚合与磁盘一致（含进行中的时长）
+    stats.ensureDate(Date.now())
+    stats.flush()
     return {
-      today: dailyStats ?? emptyStats(''),
-      week: aggregateWeek(statsDir, statsDate),
-      streak: computeStreak(statsDir, statsDate)
+      today: stats.today() ?? emptyStats(''),
+      week: aggregateWeek(stats.dir(), stats.date()),
+      streak: computeStreak(stats.dir(), stats.date())
     }
   })
   ipcMain.handle('stats:range', (_e, start: unknown, end: unknown) => {
@@ -585,23 +463,23 @@ function registerIpc(): void {
     }
     const v = validateRange(start, end)
     if (!v.ok) return v
-    return { ok: true, days: loadDailyRange(statsDir, start, end) }
+    return { ok: true, days: loadDailyRange(stats.dir(), start, end) }
   })
   ipcMain.handle('stats:year', (_e, year: unknown) => {
     if (typeof year !== 'number' || !Number.isInteger(year) || year < 2000 || year > 2100) {
       return { ok: false, error: '年份应在 2000~2100 之间' }
     }
-    return { ok: true, summary: summarizeYear(statsDir, year) }
+    return { ok: true, summary: summarizeYear(stats.dir(), year) }
   })
   ipcMain.handle('stats:heatmap', (_e, year: unknown) => {
     if (typeof year !== 'number' || !Number.isInteger(year) || year < 2000 || year > 2100) {
       return { ok: false, error: '年份应在 2000~2100 之间' }
     }
-    return { ok: true, days: loadDailyRangeFullYear(statsDir, year) }
+    return { ok: true, days: loadDailyRangeFullYear(stats.dir(), year) }
   })
   ipcMain.handle('stats:achievements', () => ({
     ok: true,
-    achievements: computeAchievements(statsDir, activeStatsRoleId, todayStr())
+    achievements: computeAchievements(stats.dir(), stats.roleId(), todayStr())
   }))
   ipcMain.handle('stats:trend', (_e, cStart: unknown, cEnd: unknown, pStart: unknown, pEnd: unknown) => {
     const four = [cStart, cEnd, pStart, pEnd]
@@ -611,7 +489,7 @@ function registerIpc(): void {
     const v2 = validateRange(ps, pe)
     if (!v1.ok) return v1
     if (!v2.ok) return v2
-    const compare = comparePeriods(statsDir, activeStatsRoleId, cs, ce, ps, pe)
+    const compare = comparePeriods(stats.dir(), stats.roleId(), cs, ce, ps, pe)
     return { ok: true, compare }
   })
   ipcMain.handle('stats:report:generate', async (_e, mode: unknown) => {
@@ -619,7 +497,7 @@ function registerIpc(): void {
     if (!m) return { ok: false, error: 'mode 应为 week 或 month' }
     try {
       const { path } = generateReportFile({
-        dir: statsDir,
+        dir: stats.dir(),
         outputDir: join(app.getPath('documents'), 'DesktopPet', '报告'),
         mode: m
       })
@@ -630,12 +508,11 @@ function registerIpc(): void {
       return { ok: false, error: '报告写入失败' }
     }
   })
-  ipcMain.handle('autoReport:get', () => ({ ok: true, config: autoReportCfg }))
+  ipcMain.handle('autoReport:get', () => ({ ok: true, config: autoReports.config() }))
   ipcMain.handle('autoReport:set', (_e, cfg: unknown) => {
     const err = validateAutoReportConfig(cfg)
     if (err) return { ok: false, error: err }
-    autoReportCfg = cfg as AutoReportConfig
-    saveAutoReports(autoReportFile, autoReportCfg)
+    autoReports.setConfig(cfg as AutoReportConfig)
     return { ok: true }
   })
   ipcMain.handle('pushApi:get', () => ({
@@ -684,7 +561,7 @@ function registerIpc(): void {
         return { ok: false, error: '剪贴板内容不满足当前规则' }
       }
       const now = Date.now()
-      recordStats((s) => countEvent(s, 'clipboard'))
+      stats.record((s) => countEvent(s, 'clipboard'))
       eventRuntime.apply({ source: 'clipboard', type: 'clipboard', priority: 5, durationMs: 8000, occurredAt: now })
       const reaction = isSensitive(text)
         ? 'clipSensitive'
@@ -700,7 +577,7 @@ function registerIpc(): void {
       const hit = files[0]
       if (!hit) return { ok: false, error: '目录中无匹配当前规则的文件' }
       const now = Date.now()
-      recordStats((s) => countEvent(s, 'folder'))
+      stats.record((s) => countEvent(s, 'folder'))
       eventRuntime.apply({ source: 'folder', type: 'folder', priority: 5, durationMs: 8000, occurredAt: now })
       notifyPet('push:fired', { kind: 'passive', reaction: 'folderChange', placeholder: hit })
       return { ok: true }
@@ -710,7 +587,7 @@ function registerIpc(): void {
     return m.then((app) => {
       if (!app) return { ok: false, error: '获取前台窗口失败' }
       const mapping = foregroundMapping(app, passiveCfg.foreground.mappings)
-      recordStats((s) => countEvent(s, 'foreground'))
+      stats.record((s) => countEvent(s, 'foreground'))
       if (!mapping || mapping.state !== 'focus') return { ok: false, error: '前台进程未命中 focus 映射' }
       const now = Date.now()
       eventRuntime.apply({ source: 'foreground', type: 'working', priority: 4, durationMs: passiveCfg.foreground.pollMs * 2, occurredAt: now })
@@ -733,10 +610,10 @@ function registerIpc(): void {
     if (typeof year !== 'number' || !Number.isInteger(year) || year < 2000 || year > 2100) {
       return { ok: false, error: '年份应在 2000~2100 之间' }
     }
-    const days = loadDailyRangeFullYear(statsDir, year)
+    const days = loadDailyRangeFullYear(stats.dir(), year)
     const { canceled, filePath } = await dialog.showSaveDialog({
       title: '导出 Excel 统计',
-      defaultPath: join(app.getPath('documents'), `陪伴统计-${activeStatsRoleId}-${year}.xlsx`),
+      defaultPath: join(app.getPath('documents'), `陪伴统计-${stats.roleId()}-${year}.xlsx`),
       filters: [{ name: 'Excel', extensions: ['xlsx'] }]
     })
     if (canceled || !filePath) return { ok: false, canceled: true }
@@ -756,7 +633,7 @@ function registerIpc(): void {
     }
     const v = validateRange(start, end)
     if (!v.ok || !v.dates) return v
-    const rows = v.dates.map((d) => ({ date: d, stats: loadDailyStats(statsDir, d) }))
+    const rows = v.dates.map((d) => ({ date: d, stats: loadDailyStats(stats.dir(), d) }))
     const csv = buildStatsCsv(rows)
     const { canceled, filePath } = await dialog.showSaveDialog({
       title: '导出陪伴统计',
@@ -777,15 +654,11 @@ function registerIpc(): void {
     if (typeof date !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(date)) {
       return { ok: false, error: '日期格式应为 YYYY-MM-DD' }
     }
-    deleteDailyStatsFile(statsDir, date)
-    if (date === statsDate && dailyStats) {
-      dailyStats = emptyStats(date)
-    }
+    stats.deleteDay(date)
     return { ok: true }
   })
   ipcMain.handle('stats:clearAll', () => {
-    const deleted = clearStatsDir(statsDir)
-    if (dailyStats) dailyStats = emptyStats(statsDate)
+    const deleted = stats.clearAll()
     log('info', '[stats:clearAll] deleted', deleted, 'files')
     return { ok: true, deleted }
   })
@@ -924,14 +797,8 @@ if (!gotLock) {
     scheduleRepo = new ScheduleRepository(schedulesPath(), fireSchedule)
     stopScheduler = scheduleRepo.startScheduler(1000)
     log('info', '[schedule] loaded', scheduleRepo.list().length, 'schedules from', schedulesPath())
-    statsRoot = statsRootPath()
-    activeStatsRoleId = sanitizeRoleId(settings.activeCharacterId || 'rabbit')
-    migrateStatsLayout(statsRoot, activeStatsRoleId)
-    statsDir = join(statsRoot, activeStatsRoleId)
-    statsDate = todayStr()
-    dailyStats = loadDailyStats(statsDir, statsDate)
-    log('info', '[stats] dir=', statsRoot, 'role=', activeStatsRoleId)
-    startAutoReports()
+    stats.init()
+    autoReports.start()
     pushApiCfg = loadPushApiConfig(pushApiConfigPath())
     passiveCfg = loadPassiveConfig(passiveConfigPath())
     startPushApiService()
@@ -951,7 +818,7 @@ if (!gotLock) {
       inject: (ev) => eventRuntime.apply(ev),
       replaceBySource: (prefix, evs) => eventRuntime.replaceBySource(prefix, evs),
       notify: notifyPet,
-      count: (t) => recordStats((s) => countEvent(s, t)),
+      count: (t) => stats.record((s) => countEvent(s, t)),
       log
     }
     const rebuildPassiveHubFn = (): void => {
@@ -972,17 +839,17 @@ if (!gotLock) {
     let lastEventTypes = new Set<string>()
     const tick = (): void => {
       const now = Date.now()
-      ensureStatsDate(now)
+      stats.ensureDate(now)
       // 陪伴统计：按实际间隔累加当前状态时长（秒），并记录到小时分段
-      if (dailyStats && lastTickAt > 0) {
-        recordStats((s) => addStateTime(s, eventRuntime.currentState(), (now - lastTickAt) / 1000, now))
+      if (stats.today() && lastTickAt > 0) {
+        stats.record((s) => addStateTime(s, eventRuntime.currentState(), (now - lastTickAt) / 1000, now))
       }
       lastTickAt = now
       passiveHub?.tick(now)
       const diff = diffEventTypes(lastEventTypes, eventRuntime.active(now))
       for (const t of diff.added) {
         notifyPet('pet:speech', t)
-        recordStats((s) => countEvent(s, t))
+        stats.record((s) => countEvent(s, t))
       }
       lastEventTypes = diff.current
       eventRuntime.syncStateAndNotify(now)
@@ -1001,8 +868,7 @@ if (!gotLock) {
     batterySampler?.stop()
     passiveHub?.stop()
     void stopPushApiService()
-    if (statsSaveTimer) clearTimeout(statsSaveTimer)
-    if (dailyStats) saveDailyStats(statsDir, dailyStats)
+    stats.dispose()
   })
 
   app.on('window-all-closed', () => {
