@@ -4,8 +4,8 @@ import type { BrowserWindow } from 'electron'
 export interface ShortcutsDeps {
   /** 当前桌宠窗口（getter：窗口可能被关闭置 null） */
   getPetWindow(): BrowserWindow | null
-  /** 打开控制中心 */
-  openCenter(): void
+  /** 打开控制中心（可带 tab） */
+  openCenter(tab?: string): void
   /** 快捷键开关（每次注册时现读 settings.shortcutsEnabled） */
   enabled(): boolean
 }

@@ -8,7 +8,7 @@ const FALLBACK_TRAY_ICON = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAA
 export interface TrayDeps {
   showPet(): void
   hidePet(): void
-  openCenter(): void
+  openCenter(tab?: string): void
 }
 
 /** 创建系统托盘：图标优先取 rabbit 头像，再依次尝试各角色主头像，缺失时回退占位图 */
