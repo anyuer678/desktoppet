@@ -1,9 +1,8 @@
-import { app, BrowserWindow, clipboard, dialog, globalShortcut, ipcMain, Menu, nativeImage, net, Notification, protocol, screen, shell, Tray } from 'electron'
+import { app, BrowserWindow, clipboard, dialog, globalShortcut, ipcMain, Menu, Notification, protocol, screen, shell } from 'electron'
 import { execFile } from 'child_process'
 import { existsSync, readFileSync, readdirSync, writeFileSync } from 'fs'
 import { join, resolve } from 'path'
 import { promisify } from 'util'
-import { pathToFileURL } from 'url'
 import type {
   AutoReportConfig,
   AutoReportFired,
@@ -25,7 +24,7 @@ import type {
   Settings,
   PassiveSourcesConfig
 } from '../shared/ipc'
-import { isWithinRoot, listCharacters, readCharacterDetail, resolvePetPath } from './character/configReader'
+import { isWithinRoot, listCharacters, readCharacterDetail } from './character/configReader'
 import { updateCharacterConfig } from './character/configEditor'
 import { importPetArchive, deletePetArchive, exportPetArchive, suggestPackFileName, validatePackId } from './character/importer'
 import {
@@ -39,6 +38,9 @@ import {
   statsRootPath
 } from './app/paths'
 import { seedDefaultCharacters, seedDefaultPlugins } from './app/seed'
+import { createShortcutsHub } from './window/shortcuts'
+import { createTray } from './window/tray'
+import { PET_SCHEME_PRIVILEGES, registerPetProtocol } from './protocol/petProtocol'
 import { DEFAULT_SETTINGS, loadSettings, saveSettings } from './storage/settingsStore'
 import {
   activeEvents,
@@ -115,7 +117,6 @@ import {
 let settings: Settings = DEFAULT_SETTINGS
 let petWindow: BrowserWindow | null = null
 let centerWindow: BrowserWindow | null = null
-let tray: Tray | null = null
 let saveTimer: NodeJS.Timeout | null = null
 let latestFps = 0
 
@@ -159,6 +160,13 @@ async function powershellRunner(cmd: string): Promise<string> {
   ])
   return stdout
 }
+
+// 全局快捷键（依赖均为惰性 getter，创建时机无关）
+const shortcuts = createShortcutsHub({
+  getPetWindow: () => petWindow,
+  openCenter,
+  enabled: () => settings.shortcutsEnabled
+})
 
 /** 生成自动报告：silent=true 仅落盘；否则气泡 + 系统通知 */
 function generateAutoReport(mode: 'week' | 'month', silent: boolean): void {
@@ -379,102 +387,6 @@ function applyPetSize(size: number): void {
   notifyPet('pet:settings-changed', { size, opacity: settings.opacity })
 }
 
-const SHORTCUTS: { accel: string; action: () => void }[] = [
-  { accel: 'Ctrl+Shift+P', action: () => togglePetVisible() },
-  { accel: 'Ctrl+Shift+C', action: () => openCenter() }
-]
-
-function togglePetVisible(): void {
-  const win = petWindow
-  if (!win) return
-  if (win.isVisible()) {
-    win.hide()
-  } else {
-    win.show()
-    win.focus()
-  }
-}
-
-function registerGlobalShortcuts(): void {
-  if (!settings.shortcutsEnabled) return
-  for (const s of SHORTCUTS) {
-    globalShortcut.register(s.accel, s.action)
-  }
-}
-
-function unregisterGlobalShortcuts(): void {
-  for (const s of SHORTCUTS) {
-    globalShortcut.unregister(s.accel)
-  }
-}
-
-function applyShortcutsEnabled(enabled: boolean): void {
-  if (enabled) {
-    if (!globalShortcut.isRegistered(SHORTCUTS[0].accel)) registerGlobalShortcuts()
-  } else {
-    unregisterGlobalShortcuts()
-  }
-}
-
-const FALLBACK_TRAY_ICON = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAFklEQVR4nGP8z8Dwn4EIwESMGBhGAAAS+wIB2x2hZQAAAABJRU5ErkJggg=='
-
-function createTray(): void {
-  const root = charactersRoot()
-  const iconCandidates = [
-    join(root, 'rabbit', 'avatar.png'),
-    ...listCharacters(root).map((c) => join(root, c.id, c.avatarMain))
-  ]
-  let icon = nativeImage.createEmpty()
-  for (const p of iconCandidates) {
-    const candidate = nativeImage.createFromPath(p)
-    if (!candidate.isEmpty()) {
-      icon = candidate
-      break
-    }
-  }
-  if (icon.isEmpty()) icon = nativeImage.createFromDataURL(FALLBACK_TRAY_ICON)
-  icon = icon.resize({ width: 16, height: 16 })
-  tray = new Tray(icon)
-  tray.setToolTip('DesktopPet')
-  tray.setContextMenu(
-    Menu.buildFromTemplate([
-      { label: '显示桌宠', click: () => showPet() },
-      { label: '隐藏桌宠', click: () => petWindow?.hide() },
-      { label: '打开控制中心', click: () => openCenter() },
-      { type: 'separator' },
-      { label: '退出', click: () => app.quit() }
-    ])
-  )
-  tray.on('double-click', () => showPet())
-}
-
-function registerPetProtocol(): void {
-  const root = resolve(charactersRoot())
-  protocol.handle('pet', async (request) => {
-    const url = new URL(request.url)
-    const host = url.hostname
-    const pathParts = url.pathname.split('/').filter(Boolean)
-    const filePath = resolvePetPath(root, host, pathParts)
-    if (!filePath) {
-      log('warn', '[pet] rejected:', request.url)
-      return new Response('forbidden', { status: 403 })
-    }
-    if (!existsSync(filePath)) {
-      log('warn', '[pet] not found:', request.url)
-      return new Response('not found', { status: 404 })
-    }
-    try {
-      const resp = await net.fetch(pathToFileURL(filePath).toString())
-      const headers = new Headers(resp.headers)
-      headers.set('Access-Control-Allow-Origin', 'http://localhost:8765')
-      return new Response(resp.body, { status: resp.status, headers })
-    } catch (err) {
-      log('warn', '[pet] fetch error:', filePath, err)
-      return new Response('error', { status: 500 })
-    }
-  })
-}
-
 function createPetWindow(): void {
   petWindow = new BrowserWindow({
     width: settings.size,
@@ -653,7 +565,7 @@ function registerIpc(): void {
       app.setLoginItemSettings({ openAtLogin: patch.autoLaunch })
     }
     if (typeof patch.shortcutsEnabled === 'boolean') {
-      applyShortcutsEnabled(patch.shortcutsEnabled)
+      shortcuts.applyEnabled(patch.shortcutsEnabled)
     }
     return settings
   })
@@ -1095,9 +1007,8 @@ function registerIpc(): void {
   })
 }
 
-protocol.registerSchemesAsPrivileged([
-  { scheme: 'pet', privileges: { standard: true, secure: true, supportFetchAPI: true } }
-])
+// 红线：协议特权声明必须在 app ready 之前执行（声明晚于 ready 会静默失效）
+protocol.registerSchemesAsPrivileged([PET_SCHEME_PRIVILEGES])
 
 app.commandLine.appendSwitch('disable-gpu-shader-disk-cache')
 
@@ -1131,12 +1042,12 @@ if (!gotLock) {
     pushApiCfg = loadPushApiConfig(pushApiConfigPath())
     passiveCfg = loadPassiveConfig(passiveConfigPath())
     startPushApiService()
-    registerPetProtocol()
+    registerPetProtocol({ log })
     registerIpc()
     ensurePetPosition()
-    createTray()
+    createTray({ showPet, hidePet: () => petWindow?.hide(), openCenter })
     createPetWindow()
-    registerGlobalShortcuts()
+    shortcuts.register()
     screen.on('display-metrics-changed', ensurePetPosition)
 
     const sampler = createSampler()
