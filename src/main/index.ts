@@ -43,16 +43,8 @@ import { createShortcutsHub } from './window/shortcuts'
 import { createTray } from './window/tray'
 import { PET_SCHEME_PRIVILEGES, registerPetProtocol } from './protocol/petProtocol'
 import { DEFAULT_SETTINGS, loadSettings, saveSettings } from './storage/settingsStore'
-import {
-  activeEvents,
-  addEvent,
-  computeState,
-  diffEventTypes,
-  pruneEvents,
-  type PetEvent,
-  type PetState
-} from './event/eventCenter'
-import { createEventHistory, recordNewEvents } from './event/eventHistory'
+import { diffEventTypes, type PetEvent } from './event/eventCenter'
+import { createEventRuntime } from './event/eventRuntime'
 import { createSampler } from './monitor/systemMonitor'
 import { createBatterySampler, type BatterySampler } from './monitor/battery'
 import { summarizePerf } from './perf/perfReport'
@@ -118,11 +110,8 @@ let settings: Settings = DEFAULT_SETTINGS
 let saveTimer: NodeJS.Timeout | null = null
 let latestFps = 0
 
-// 事件中心运行时状态（whenReady 中 tick 持续更新；events:history handler 读取）
-let events: PetEvent[] = []
-const eventHistory = createEventHistory()
-let lastState: PetState = 'idle'
-let lastReason: string | null = null
+// 事件中心运行时（活跃事件/历史/上次状态为其闭包私有状态）
+const eventRuntime = createEventRuntime({ notifyPet, notifyCenter })
 
 // 文件日志器（whenReady 中初始化，落盘到 %APPDATA%/DesktopPet/logs/）
 let logger: Logger | null = null
@@ -302,14 +291,6 @@ function notifyCenter(channel: string, payload?: unknown): void {
   windows.notifyCenter(channel, payload)
 }
 
-function applyEvent(ev: PetEvent): void {
-  if (recordNewEvents(events, [ev], eventHistory) > 0) {
-    notifyCenter('pet:events:history', { events: eventHistory.list() })
-  }
-  // 写入前惰性裁剪过期事件，防止长期运行（尤其 push 唯一 source）数组无界增长
-  events = addEvent(pruneEvents(events, Date.now()), ev)
-}
-
 /**
  * 日程触发：注入 alarm 事件到事件中心（让桌宠进入 warning 状态 6 秒），
  * 同时广播 schedule:fired 给桌宠与控制中心（气泡显示标题）。
@@ -323,18 +304,13 @@ function fireSchedule(fired: ScheduleFired): void {
     durationMs: ALARM_EVENT_DURATION_MS,
     occurredAt: now
   }
-  applyEvent(alarmEvent)
+  eventRuntime.apply(alarmEvent)
   recordStats((s) => countEvent(s, 'schedule'))
   log('info', '[schedule] fired:', fired.id, fired.title)
   notifyPet('schedule:fired', fired)
   notifyCenter('schedule:fired', fired)
   // 立即触发一次状态更新（不必等下一个 tick）
-  const { state, reason } = computeState(activeEvents(events, now))
-  if (state !== lastState) {
-    lastState = state
-    lastReason = reason
-    notifyPet('pet:state', state)
-  }
+  eventRuntime.syncStateAndNotify(now)
 }
 
 /** 读取市场目录下的预览图并转为 data URL（sandbox 渲染层无法直接 file:// 访问） */
@@ -409,7 +385,7 @@ function onPushApiEvent(body: { title: string; message: string; type?: string })
   const now = Date.now()
   recordStats((s) => countEvent(s, 'push'))
   const sourceId = `push:${(pushEventSource++ % 100000).toString(36)}-${now.toString(36).slice(-4)}`
-  applyEvent({
+  eventRuntime.apply({
     source: sourceId,
     type: body.type ?? 'notice',
     priority: 50,
@@ -425,12 +401,7 @@ function onPushApiEvent(body: { title: string; message: string; type?: string })
   }
   log('info', '[pushApi] event', fired.title)
   notifyPet('push:fired', fired)
-  const { state, reason } = computeState(activeEvents(events, now))
-  if (state !== lastState) {
-    lastState = state
-    lastReason = reason
-    notifyPet('pet:state', state)
-  }
+  eventRuntime.syncStateAndNotify(now)
 }
 
 /** 启动推送 HTTP 服务（token 就绪后监听随机空闲端口） */
@@ -588,9 +559,9 @@ function registerIpc(): void {
   })
   ipcMain.handle('center:open', (_e, tab?: string) => openCenter(tab))
   ipcMain.handle('app:version', () => app.getVersion())
-  ipcMain.handle('events:history', () => ({ ok: true, events: eventHistory.list() }))
+  ipcMain.handle('events:history', () => ({ ok: true, events: eventRuntime.history().list() }))
   ipcMain.handle('events:historyClear', () => {
-    eventHistory.clear()
+    eventRuntime.history().clear()
     notifyCenter('pet:events:history', { events: [] })
     return { ok: true }
   })
@@ -714,7 +685,7 @@ function registerIpc(): void {
       }
       const now = Date.now()
       recordStats((s) => countEvent(s, 'clipboard'))
-      applyEvent({ source: 'clipboard', type: 'clipboard', priority: 5, durationMs: 8000, occurredAt: now })
+      eventRuntime.apply({ source: 'clipboard', type: 'clipboard', priority: 5, durationMs: 8000, occurredAt: now })
       const reaction = isSensitive(text)
         ? 'clipSensitive'
         : classifyClipboard(text)
@@ -730,7 +701,7 @@ function registerIpc(): void {
       if (!hit) return { ok: false, error: '目录中无匹配当前规则的文件' }
       const now = Date.now()
       recordStats((s) => countEvent(s, 'folder'))
-      applyEvent({ source: 'folder', type: 'folder', priority: 5, durationMs: 8000, occurredAt: now })
+      eventRuntime.apply({ source: 'folder', type: 'folder', priority: 5, durationMs: 8000, occurredAt: now })
       notifyPet('push:fired', { kind: 'passive', reaction: 'folderChange', placeholder: hit })
       return { ok: true }
     }
@@ -742,7 +713,7 @@ function registerIpc(): void {
       recordStats((s) => countEvent(s, 'foreground'))
       if (!mapping || mapping.state !== 'focus') return { ok: false, error: '前台进程未命中 focus 映射' }
       const now = Date.now()
-      applyEvent({ source: 'foreground', type: 'working', priority: 4, durationMs: passiveCfg.foreground.pollMs * 2, occurredAt: now })
+      eventRuntime.apply({ source: 'foreground', type: 'working', priority: 4, durationMs: passiveCfg.foreground.pollMs * 2, occurredAt: now })
       notifyPet('push:fired', { kind: 'passive', reaction: 'foreground', placeholder: app.process })
       return { ok: true }
     }).catch(() => ({ ok: false, error: 'PowerShell 执行失败' }))
@@ -977,13 +948,8 @@ if (!gotLock) {
     batterySampler = createBatterySampler()
     batterySampler.start()
     const sourceCtx: SourceContext = {
-      inject: (ev) => applyEvent(ev),
-      replaceBySource: (prefix, evs) => {
-        if (recordNewEvents(events, evs, eventHistory) > 0) {
-          notifyCenter('pet:events:history', { events: eventHistory.list() })
-        }
-        events = [...pruneEvents(events, Date.now()).filter((e) => !e.source.startsWith(prefix)), ...evs]
-      },
+      inject: (ev) => eventRuntime.apply(ev),
+      replaceBySource: (prefix, evs) => eventRuntime.replaceBySource(prefix, evs),
       notify: notifyPet,
       count: (t) => recordStats((s) => countEvent(s, t)),
       log
@@ -1009,23 +975,17 @@ if (!gotLock) {
       ensureStatsDate(now)
       // 陪伴统计：按实际间隔累加当前状态时长（秒），并记录到小时分段
       if (dailyStats && lastTickAt > 0) {
-        recordStats((s) => addStateTime(s, lastState, (now - lastTickAt) / 1000, now))
+        recordStats((s) => addStateTime(s, eventRuntime.currentState(), (now - lastTickAt) / 1000, now))
       }
       lastTickAt = now
       passiveHub?.tick(now)
-      const diff = diffEventTypes(lastEventTypes, activeEvents(events, now))
+      const diff = diffEventTypes(lastEventTypes, eventRuntime.active(now))
       for (const t of diff.added) {
         notifyPet('pet:speech', t)
         recordStats((s) => countEvent(s, t))
       }
       lastEventTypes = diff.current
-      const { state, reason } = computeState(activeEvents(events, now))
-      const stateChanged = state !== lastState
-      lastState = state
-      lastReason = reason
-      if (stateChanged) {
-        notifyPet('pet:state', state)
-      }
+      eventRuntime.syncStateAndNotify(now)
     }
     tick()
     setInterval(tick, 4000)
