@@ -1,36 +1,37 @@
 import { app, BrowserWindow, globalShortcut, protocol, screen } from 'electron'
-import { execFile } from 'child_process'
 import { join } from 'path'
 import { promisify } from 'util'
+import { execFile } from 'child_process'
 import type { PluginManifest } from '../shared/ipc'
 import { pluginsDir } from './app/paths'
 import { seedDefaultCharacters, seedDefaultPlugins } from './app/seed'
+import { acquireSingleInstanceLock, registerQuitCleanup } from './app/lifecycle'
 import { createWindowHub } from './window/windows'
 import { createShortcutsHub } from './window/shortcuts'
 import { createTray } from './window/tray'
 import { PET_SCHEME_PRIVILEGES, registerPetProtocol } from './protocol/petProtocol'
 import { createSettingsController } from './settings/settingsController'
-import { diffEventTypes } from './event/eventCenter'
 import { createEventRuntime } from './event/eventRuntime'
 import { createPassiveRuntime } from './event/passiveRuntime'
 import { createLogger, type Logger } from './logging/logger'
 import { loadPlugins } from './plugin/pluginHost'
 import { createStatsRuntime } from './stats/statsRuntime'
 import { createAutoReportRuntime } from './stats/autoReportRuntime'
-import { addStateTime, countEvent } from './stats/dailyStats'
 import { createPushRuntime } from './push/pushRuntime'
 import { createScheduleRuntime } from './schedule/scheduleRuntime'
 import { createPerfRuntime } from './perf/perfRuntime'
+import { createTickLoop } from './runtime/tick'
 import { registerAllIpc } from './ipc'
+
+// ---------------------------------------------------------------------------
+// 组合根：只负责创建各运行时、按依赖注入接线、驱动生命周期。无业务逻辑。
+// ---------------------------------------------------------------------------
 
 // 文件日志器（whenReady 中初始化，落盘到 %APPDATA%/DesktopPet/logs/）
 let logger: Logger | null = null
 
-// 插件系统（whenReady 中加载）
+// 插件系统（whenReady 中加载；getter 现读，杜绝启动时快照）
 let loadedPlugins: PluginManifest[] = []
-
-// tick 循环状态（上一轮 tick 时间戳；步骤⑧随 tick 迁入 runtime/tick.ts）
-let lastTickAt = 0
 
 function log(level: 'info' | 'warn' | 'error', message: string, ...args: unknown[]): void {
   logger?.[level](message, ...args)
@@ -118,6 +119,14 @@ const passive = createPassiveRuntime({
 // 性能采样运行时（latestFps 为其私有状态）
 const perf = createPerfRuntime({ windows })
 
+// 主循环（4s tick；lastTickAt/lastEventTypes 为其闭包私有状态）
+const tickLoop = createTickLoop({
+  stats,
+  events: eventRuntime,
+  passive,
+  notifyPet
+})
+
 /** 切换角色：更新 settings → 落盘 → 通知渲染层 → 统计切目录 */
 function selectCharacter(id: string): void {
   settingsCtl.setActiveCharacter(id)
@@ -130,14 +139,9 @@ protocol.registerSchemesAsPrivileged([PET_SCHEME_PRIVILEGES])
 
 app.commandLine.appendSwitch('disable-gpu-shader-disk-cache')
 
-const gotLock = app.requestSingleInstanceLock()
-if (!gotLock) {
+if (!acquireSingleInstanceLock(() => windows.openCenter())) {
   app.quit()
 } else {
-  app.on('second-instance', () => {
-    windows.openCenter()
-  })
-
   app.whenReady().then(() => {
     logger = createLogger(join(app.getPath('userData'), 'logs'))
     log('info', 'DesktopPet starting, userData=', app.getPath('userData'))
@@ -184,42 +188,21 @@ if (!gotLock) {
     screen.on('display-metrics-changed', () => windows.ensurePetPosition())
 
     passive.start()
-    lastTickAt = Date.now()
-    // 上一轮活跃事件类型（新增类型才广播 pet:speech 让桌宠说话，避免持续事件刷屏）
-    let lastEventTypes = new Set<string>()
-    const tick = (): void => {
-      const now = Date.now()
-      stats.ensureDate(now)
-      // 陪伴统计：按实际间隔累加当前状态时长（秒），并记录到小时分段
-      if (stats.today() && lastTickAt > 0) {
-        stats.record((s) => addStateTime(s, eventRuntime.currentState(), (now - lastTickAt) / 1000, now))
-      }
-      lastTickAt = now
-      passive.tick(now)
-      const diff = diffEventTypes(lastEventTypes, eventRuntime.active(now))
-      for (const t of diff.added) {
-        notifyPet('pet:speech', t)
-        stats.record((s) => countEvent(s, t))
-      }
-      lastEventTypes = diff.current
-      eventRuntime.syncStateAndNotify(now)
-    }
-    tick()
-    setInterval(tick, 4000)
+    tickLoop.start()
 
     app.on('activate', () => {
       if (BrowserWindow.getAllWindows().length === 0) windows.createPet()
     })
   })
 
-  app.on('will-quit', () => {
-    globalShortcut.unregisterAll()
-    schedule.stop()
-    // passive.stop 内部保持原顺序：电池采样先停、hub 后停
-    passive.stop()
-    void push.stop()
-    stats.dispose()
-  })
+  // 退出清理顺序红线：globalShortcut → 调度器 → 被动源（电池先停、hub 后停）→ 推送 → 统计最后落盘
+  registerQuitCleanup([
+    () => globalShortcut.unregisterAll(),
+    () => schedule.stop(),
+    () => passive.stop(),
+    () => push.stop(),
+    () => stats.dispose()
+  ])
 
   app.on('window-all-closed', () => {
     app.quit()
