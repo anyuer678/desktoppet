@@ -6,6 +6,9 @@ const MAX_LOG_BYTES = 10 * 1024 * 1024
 
 export type LogLevel = 'info' | 'warn' | 'error'
 
+/** 供各运行时模块经依赖注入使用的日志函数签名（index.ts 中 log() 包装器的形态） */
+export type LogFn = (level: LogLevel, message: string, ...args: unknown[]) => void
+
 export interface Logger {
   info(message: string, ...args: unknown[]): void
   warn(message: string, ...args: unknown[]): void

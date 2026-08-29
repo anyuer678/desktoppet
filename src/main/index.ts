@@ -1,6 +1,6 @@
 import { app, BrowserWindow, clipboard, dialog, globalShortcut, ipcMain, Menu, nativeImage, net, Notification, protocol, screen, shell, Tray } from 'electron'
 import { execFile } from 'child_process'
-import { cpSync, existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'fs'
+import { existsSync, readFileSync, readdirSync, writeFileSync } from 'fs'
 import { join, resolve } from 'path'
 import { promisify } from 'util'
 import { pathToFileURL } from 'url'
@@ -28,6 +28,17 @@ import type {
 import { isWithinRoot, listCharacters, readCharacterDetail, resolvePetPath } from './character/configReader'
 import { updateCharacterConfig } from './character/configEditor'
 import { importPetArchive, deletePetArchive, exportPetArchive, suggestPackFileName, validatePackId } from './character/importer'
+import {
+  charactersRoot,
+  passiveConfigPath,
+  pluginsDir,
+  pushApiConfigPath,
+  reportOutputDir,
+  schedulesPath,
+  settingsPath,
+  statsRootPath
+} from './app/paths'
+import { seedDefaultCharacters, seedDefaultPlugins } from './app/seed'
 import { DEFAULT_SETTINGS, loadSettings, saveSettings } from './storage/settingsStore'
 import {
   activeEvents,
@@ -131,8 +142,6 @@ let batterySampler: BatterySampler | null = null
 let autoReportCfg: AutoReportConfig = { ...DEFAULT_AUTO_REPORT_CONFIG }
 let autoReportFile = ''
 let autoReportTicker: ReturnType<typeof createAutoReportTicker> | null = null
-/** 自动报告落盘目录（文档/DesktopPet/报告） */
-const reportOutputDir = (): string => join(app.getPath('documents'), 'DesktopPet', '报告')
 
 // 事件推送 API（whenReady 中初始化，配置持久化于 userData/pushApi.json）
 let pushApiCfg: PushApiConfig = { ...DEFAULT_PUSH_API_CONFIG }
@@ -142,10 +151,6 @@ let pushServer: PushHttpServer | null = null
 let passiveCfg: PassiveSourcesConfig = { ...DEFAULT_PASSIVE_SOURCES_CONFIG }
 let passiveHub: ReturnType<typeof createSourceHub> | null = null
 let rebuildPassiveHub: (() => void) | null = null
-
-function passiveConfigPath(): string {
-  return join(app.getPath('userData'), 'passiveSources.json')
-}
 
 const runPowerShell = promisify(execFile)
 async function powershellRunner(cmd: string): Promise<string> {
@@ -197,10 +202,6 @@ const STATS_SAVE_INTERVAL_MS = 2000
 // 多角色分离：统计根目录 userData/stats/ 与当前活跃角色目录 userData/stats/<角色id>/
 let statsRoot = ''
 let activeStatsRoleId = 'rabbit'
-
-function statsFilePath(): string {
-  return join(app.getPath('userData'), 'stats')
-}
 
 /** 当前角色统计目录（stats/<角色id>，缩写角色 id 已 sanitize） */
 function roleStatsDir(): string {
@@ -267,60 +268,6 @@ function hasClipboardImage(): boolean {
   } catch {
     return false
   }
-}
-
-function charactersRoot(): string {
-  // 生产模式：characters/ 在 userData 下（可写，支持导入/删除）
-  // 开发模式：characters/ 在项目根目录下
-  if (app.isPackaged) {
-    return join(app.getPath('userData'), 'characters')
-  }
-  return join(app.getAppPath(), 'characters')
-}
-
-/** 生产模式首次启动：将 extraResources 中的默认角色复制到 userData/characters/ */
-function seedDefaultCharacters(): void {
-  if (!app.isPackaged) return
-  const userChars = charactersRoot()
-  if (existsSync(join(userChars, 'rabbit'))) return // 已初始化
-  const bundledChars = join(process.resourcesPath, 'characters')
-  if (!existsSync(bundledChars)) return
-  try {
-    cpSync(bundledChars, userChars, { recursive: true })
-    log('info', '[seed] 默认角色已复制到', userChars)
-  } catch (err) {
-    log('error', '[seed] 默认角色复制失败:', err)
-  }
-}
-
-/** 生产模式首次启动：将 extraResources 中的默认插件复制到 userData/plugins/ */
-function seedDefaultPlugins(): void {
-  if (!app.isPackaged) return
-  const userPlugins = pluginsDir()
-  if (existsSync(join(userPlugins, 'sample'))) return // 已初始化
-  const bundledPlugins = join(process.resourcesPath, 'plugins')
-  if (!existsSync(bundledPlugins)) return
-  try {
-    cpSync(bundledPlugins, userPlugins, { recursive: true })
-    log('info', '[seed] 默认插件已复制到', userPlugins)
-  } catch (err) {
-    log('error', '[seed] 默认插件复制失败:', err)
-  }
-}
-
-function settingsPath(): string {
-  return join(app.getPath('userData'), 'settings.json')
-}
-
-function pluginsDir(): string {
-  if (app.isPackaged) {
-    return join(app.getPath('userData'), 'plugins')
-  }
-  return join(app.getAppPath(), 'plugins')
-}
-
-function schedulesPath(): string {
-  return join(app.getPath('userData'), 'schedules.json')
 }
 
 function debouncedSaveSettings(): void {
@@ -612,11 +559,6 @@ function startAutoReports(): void {
   })
   autoReportTicker.start()
   log('info', '[autoReport] started', JSON.stringify(autoReportCfg))
-}
-
-/** 推送 API 配置路径（userData/pushApi.json） */
-function pushApiConfigPath(): string {
-  return join(app.getPath('userData'), 'pushApi.json')
 }
 
 /** 确保服务拥有合法 token：为空/非法时生成新 token 并落盘 */
@@ -1170,15 +1112,15 @@ if (!gotLock) {
   app.whenReady().then(() => {
     logger = createLogger(join(app.getPath('userData'), 'logs'))
     log('info', 'DesktopPet starting, userData=', app.getPath('userData'))
-    seedDefaultCharacters()
-    seedDefaultPlugins()
+    seedDefaultCharacters(log)
+    seedDefaultPlugins(log)
     loadedPlugins = loadPlugins(pluginsDir())
     log('info', '[plugins] loaded', loadedPlugins.length, 'plugins from', pluginsDir())
     settings = loadSettings(settingsPath())
     scheduleRepo = new ScheduleRepository(schedulesPath(), fireSchedule)
     stopScheduler = scheduleRepo.startScheduler(1000)
     log('info', '[schedule] loaded', scheduleRepo.list().length, 'schedules from', schedulesPath())
-    statsRoot = statsFilePath()
+    statsRoot = statsRootPath()
     activeStatsRoleId = sanitizeRoleId(settings.activeCharacterId || 'rabbit')
     migrateStatsLayout(statsRoot, activeStatsRoleId)
     statsDir = join(statsRoot, activeStatsRoleId)
