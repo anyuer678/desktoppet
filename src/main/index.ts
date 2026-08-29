@@ -38,6 +38,7 @@ import {
   statsRootPath
 } from './app/paths'
 import { seedDefaultCharacters, seedDefaultPlugins } from './app/seed'
+import { createWindowHub } from './window/windows'
 import { createShortcutsHub } from './window/shortcuts'
 import { createTray } from './window/tray'
 import { PET_SCHEME_PRIVILEGES, registerPetProtocol } from './protocol/petProtocol'
@@ -54,7 +55,6 @@ import {
 import { createEventHistory, recordNewEvents } from './event/eventHistory'
 import { createSampler } from './monitor/systemMonitor'
 import { createBatterySampler, type BatterySampler } from './monitor/battery'
-import { ensurePositionVisible } from './window/placement'
 import { summarizePerf } from './perf/perfReport'
 import { readMarketCatalog, installMarketEntry } from './market/catalog'
 import { createLogger, type Logger } from './logging/logger'
@@ -115,8 +115,6 @@ import {
 } from './push/pushApiStore'
 
 let settings: Settings = DEFAULT_SETTINGS
-let petWindow: BrowserWindow | null = null
-let centerWindow: BrowserWindow | null = null
 let saveTimer: NodeJS.Timeout | null = null
 let latestFps = 0
 
@@ -161,9 +159,22 @@ async function powershellRunner(cmd: string): Promise<string> {
   return stdout
 }
 
+// 窗口运行时（pet/center 引用注册表；moved/位置修正经依赖回调回写 settings）
+const windows = createWindowHub({
+  getSettings: () => settings,
+  onPetMoved: (position) => {
+    settings = { ...settings, position }
+    debouncedSaveSettings()
+  },
+  fixPetPosition: (position) => {
+    settings = { ...settings, position }
+    saveSettings(settingsPath(), settings)
+  }
+})
+
 // 全局快捷键（依赖均为惰性 getter，创建时机无关）
 const shortcuts = createShortcutsHub({
-  getPetWindow: () => petWindow,
+  getPetWindow: () => windows.pet(),
   openCenter,
   enabled: () => settings.shortcutsEnabled
 })
@@ -284,11 +295,11 @@ function debouncedSaveSettings(): void {
 }
 
 function notifyPet(channel: string, payload?: unknown): void {
-  petWindow?.webContents.send(channel, payload)
+  windows.notifyPet(channel, payload)
 }
 
 function notifyCenter(channel: string, payload?: unknown): void {
-  centerWindow?.webContents.send(channel, payload)
+  windows.notifyCenter(channel, payload)
 }
 
 function applyEvent(ev: PetEvent): void {
@@ -350,96 +361,7 @@ function selectCharacter(id: string): void {
 }
 
 function openCenter(tab?: string): void {
-  if (!centerWindow) {
-    createCenterWindow(tab)
-  } else if (tab) {
-    void centerWindow.webContents.executeJavaScript(`window.location.hash = '#/center/${tab}'`)
-  }
-  centerWindow?.show()
-  centerWindow?.focus()
-}
-
-function ensurePetPosition(): void {
-  const workAreas = screen.getAllDisplays().map((d) => d.workArea)
-  const primary = screen.getPrimaryDisplay().workArea
-  const fixed = ensurePositionVisible(settings.position, settings.size, primary, workAreas)
-  if (!fixed) return
-  settings = { ...settings, position: fixed }
-  saveSettings(settingsPath(), settings)
-  petWindow?.setPosition(fixed.x, fixed.y)
-}
-
-function showPet(): void {
-  petWindow?.show()
-}
-
-function applyPetSize(size: number): void {
-  const win = petWindow
-  if (!win) return
-  const [x, y] = win.getPosition()
-  const [w, h] = win.getSize()
-  win.setBounds({
-    x: Math.round(x + (w - size) / 2),
-    y: Math.round(y + (h - size) / 2),
-    width: size,
-    height: size
-  })
-  notifyPet('pet:settings-changed', { size, opacity: settings.opacity })
-}
-
-function createPetWindow(): void {
-  petWindow = new BrowserWindow({
-    width: settings.size,
-    height: settings.size,
-    x: settings.position.x,
-    y: settings.position.y,
-    transparent: true,
-    frame: false,
-    resizable: false,
-    hasShadow: false,
-    skipTaskbar: true,
-    alwaysOnTop: true,
-    webPreferences: {
-      preload: join(__dirname, '../preload/index.js'),
-      sandbox: true
-    }
-  })
-  petWindow.setAlwaysOnTop(true, 'screen-saver')
-  petWindow.setOpacity(settings.opacity)
-  petWindow.on('moved', () => {
-    const [x, y] = petWindow?.getPosition() ?? [settings.position.x, settings.position.y]
-    settings = { ...settings, position: { x, y } }
-    debouncedSaveSettings()
-  })
-  petWindow.on('closed', () => {
-    petWindow = null
-  })
-  loadRenderer(petWindow, '#/pet')
-}
-
-function createCenterWindow(tab?: string): void {
-  centerWindow = new BrowserWindow({
-    width: 960,
-    height: 640,
-    frame: true,
-    show: false,
-    webPreferences: {
-      preload: join(__dirname, '../preload/index.js'),
-      sandbox: true
-    }
-  })
-  centerWindow.on('closed', () => {
-    centerWindow = null
-  })
-  loadRenderer(centerWindow, `#/center${tab ? '/' + tab : ''}`)
-}
-
-function loadRenderer(win: BrowserWindow, hash: string): void {
-  if (process.env['ELECTRON_RENDERER_URL']) {
-    void win.loadURL(process.env['ELECTRON_RENDERER_URL'] + hash)
-  } else {
-    void win.loadFile(join(__dirname, '../renderer/index.html'), { hash })
-  }
+  windows.openCenter(tab)
 }
 
 const MIN_PET_SIZE = 96
@@ -560,7 +482,7 @@ function registerIpc(): void {
     }
     settings = { ...settings, ...next }
     saveSettings(settingsPath(), settings)
-    applyPetSize(settings.size)
+    windows.applyPetSize(settings.size)
     if (typeof patch.autoLaunch === 'boolean') {
       app.setLoginItemSettings({ openAtLogin: patch.autoLaunch })
     }
@@ -638,10 +560,10 @@ function registerIpc(): void {
     if (result.canceled || !result.filePath) return { ok: false, error: '已取消导出' }
     return exportPetArchive(charactersRoot(), id, result.filePath)
   })
-  ipcMain.handle('window:hide', () => petWindow?.hide())
+  ipcMain.handle('window:hide', () => windows.hidePet())
   ipcMain.handle('window:quit', () => app.quit())
   ipcMain.handle('window:dragBy', (_e, dx: number, dy: number) => {
-    const win = petWindow
+    const win = windows.pet()
     if (!win) return
     if (typeof dx !== 'number' || !Number.isFinite(dx) || typeof dy !== 'number' || !Number.isFinite(dy)) return
     const [x, y] = win.getPosition()
@@ -650,7 +572,7 @@ function registerIpc(): void {
   ipcMain.handle('window:setSize', (_e, size: number) => {
     settings = { ...settings, size: Math.round(Math.min(MAX_PET_SIZE, Math.max(MIN_PET_SIZE, size))) }
     saveSettings(settingsPath(), settings)
-    applyPetSize(settings.size)
+    windows.applyPetSize(settings.size)
     return settings.size
   })
   ipcMain.handle('window:setOpacity', (_e, opacity: number) => {
@@ -661,7 +583,7 @@ function registerIpc(): void {
     return settings.opacity
   })
   ipcMain.handle('window:setIgnoreMouseEvents', (_e, ignore: boolean) => {
-    petWindow?.setIgnoreMouseEvents(ignore, { forward: true })
+    windows.pet()?.setIgnoreMouseEvents(ignore, { forward: true })
     log('info', '[pet-hit] ignore =', ignore)
   })
   ipcMain.handle('center:open', (_e, tab?: string) => openCenter(tab))
@@ -909,7 +831,7 @@ function registerIpc(): void {
       last = now
       let rendererMB = 0
       try {
-        const pid = petWindow?.webContents.getOSProcessId()
+        const pid = windows.pet()?.webContents.getOSProcessId()
         const metric = app.getAppMetrics().find((m) => m.pid === pid)
         rendererMB = (metric?.memory.workingSetSize ?? 0) / 1024
       } catch {
@@ -988,7 +910,7 @@ function registerIpc(): void {
           selectCharacter(next.id)
         }
       },
-      { label: '隐藏', click: () => petWindow?.hide() },
+      { label: '隐藏', click: () => windows.hidePet() },
       { type: 'separator' },
       {
         label: '切换角色',
@@ -1044,11 +966,11 @@ if (!gotLock) {
     startPushApiService()
     registerPetProtocol({ log })
     registerIpc()
-    ensurePetPosition()
-    createTray({ showPet, hidePet: () => petWindow?.hide(), openCenter })
-    createPetWindow()
+    windows.ensurePetPosition()
+    createTray({ showPet: () => windows.showPet(), hidePet: () => windows.hidePet(), openCenter })
+    windows.createPet()
     shortcuts.register()
-    screen.on('display-metrics-changed', ensurePetPosition)
+    screen.on('display-metrics-changed', () => windows.ensurePetPosition())
 
     const sampler = createSampler()
     // 电池采样（异步轮询，60s 间隔），tick 只读缓存
@@ -1109,7 +1031,7 @@ if (!gotLock) {
     setInterval(tick, 4000)
 
     app.on('activate', () => {
-      if (BrowserWindow.getAllWindows().length === 0) createPetWindow()
+      if (BrowserWindow.getAllWindows().length === 0) windows.createPet()
     })
   })
 
