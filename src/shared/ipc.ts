@@ -446,6 +446,8 @@ export interface AutoReportSetResult {
 export interface PushApiConfig {
   enabled: boolean
   token: string
+  /** 推送服务监听端口（启动后由运行时写入，关闭时删除） */
+  port?: number
 }
 
 /** pushApi:get 返回的摘要信息（port=当前实际端口，未启动为 0） */
