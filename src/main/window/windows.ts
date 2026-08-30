@@ -58,7 +58,10 @@ export function createWindowHub(deps: WindowHubDeps): WindowHub {
       alwaysOnTop: true,
       webPreferences: {
         preload: join(__dirname, '../preload/index.js'),
-        sandbox: true
+        sandbox: true,
+        // 显式声明（Electron 当前默认即如此，写死防止未来默认变化引入静默回归）
+        contextIsolation: true,
+        nodeIntegration: false
       }
     })
     petWindow.setAlwaysOnTop(true, 'screen-saver')
@@ -81,7 +84,10 @@ export function createWindowHub(deps: WindowHubDeps): WindowHub {
       show: false,
       webPreferences: {
         preload: join(__dirname, '../preload/index.js'),
-        sandbox: true
+        sandbox: true,
+        // 显式声明（Electron 当前默认即如此，写死防止未来默认变化引入静默回归）
+        contextIsolation: true,
+        nodeIntegration: false
       }
     })
     centerWindow.on('closed', () => {
