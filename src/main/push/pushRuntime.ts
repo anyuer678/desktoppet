@@ -94,6 +94,8 @@ export function createPushRuntime(deps: PushRuntimeDeps): PushRuntime {
     })
       .then((srv) => {
         pushServer = srv
+        pushApiCfg.port = srv.port
+        savePushApiConfig(pushApiConfigPath(), pushApiCfg)
         deps.log('info', '[pushApi] listening on port', srv.port)
         deps.notifyCenter('pushApi:state', { port: srv.port, enabled: true })
       })
@@ -104,6 +106,8 @@ export function createPushRuntime(deps: PushRuntimeDeps): PushRuntime {
     if (pushServer) {
       await pushServer.close()
       pushServer = null
+      pushApiCfg.port = undefined
+      savePushApiConfig(pushApiConfigPath(), pushApiCfg)
     }
   }
 
