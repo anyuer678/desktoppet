@@ -194,7 +194,7 @@ if (!acquireSingleInstanceLock(() => windows.openCenter())) {
     // 自动更新检查（启动后 30 秒延迟）
     const updater = createUpdater({
       getMainWindow: () => windows.center(),
-      log
+      log,
     })
     updater.start()
 

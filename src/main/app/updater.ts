@@ -10,11 +10,11 @@
 
 import { autoUpdater } from 'electron-updater'
 import { BrowserWindow } from 'electron'
-import { type Logger } from '../logging/logger'
+import { type LogFn } from '../logging/logger'
 
 export interface UpdaterDeps {
   getMainWindow: () => BrowserWindow | null
-  log: Logger
+  log: LogFn
 }
 
 export interface Updater {
