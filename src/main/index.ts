@@ -21,6 +21,7 @@ import { createPushRuntime } from './push/pushRuntime'
 import { createScheduleRuntime } from './schedule/scheduleRuntime'
 import { createPerfRuntime } from './perf/perfRuntime'
 import { createTickLoop } from './runtime/tick'
+import { createUpdater } from './app/updater'
 import { registerAllIpc } from './ipc'
 
 // ---------------------------------------------------------------------------
@@ -189,6 +190,13 @@ if (!acquireSingleInstanceLock(() => windows.openCenter())) {
 
     passive.start()
     tickLoop.start()
+
+    // 自动更新检查（启动后 30 秒延迟）
+    const updater = createUpdater({
+      getMainWindow: () => windows.center(),
+      log
+    })
+    updater.start()
 
     app.on('activate', () => {
       if (BrowserWindow.getAllWindows().length === 0) windows.createPet()
