@@ -21,7 +21,7 @@ describe('passiveStore', () => {
   it('默认值：结构完整（三节、字段齐全、值正确）', () => {
     expect(DEFAULT_PASSIVE_SOURCES_CONFIG).toEqual({
       clipboard: {
-        enabled: true,
+        enabled: false,
         pollMs: 3000,
         onlyPatterns: [],
         ignorePatterns: ['^\\d+$', '^\\s*$'],
