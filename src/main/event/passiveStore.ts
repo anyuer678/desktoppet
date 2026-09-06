@@ -3,8 +3,9 @@ import { dirname } from 'path'
 import type { PassiveSourcesConfig } from '../../shared/ipc'
 
 export const DEFAULT_PASSIVE_SOURCES_CONFIG: PassiveSourcesConfig = {
+  // 剪贴板是敏感输入源，默认关闭，用户在设置中显式开启
   clipboard: {
-    enabled: true,
+    enabled: false,
     pollMs: 3000,
     onlyPatterns: [],
     ignorePatterns: ['^\\d+$', '^\\s*$'],
