@@ -10,8 +10,13 @@ export interface PushServerDeps {
 
 const MAX_BODY_BYTES = 8 * 1024
 
+/** 推送服务仅允许本机回环监听（CI 可断言；禁止 0.0.0.0） */
+export const PUSH_BIND_HOST = '127.0.0.1'
+
 export interface PushHttpServer {
   port: number
+  /** 实际绑定地址，恒为 127.0.0.1 */
+  host: string
   close(): Promise<void>
 }
 
@@ -87,7 +92,7 @@ export async function handlePushRequest(
   return send(200, { ok: true })
 }
 
-/** 启动本地 HTTP 服务（127.0.0.1，随机空闲端口） */
+/** 启动本地 HTTP 服务（仅 127.0.0.1，随机空闲端口） */
 export function startPushHttpService(deps: PushServerDeps): Promise<PushHttpServer> {
   const server: Server = createServer((req, res) => {
     handlePushRequest(deps, req, res).catch((err) => {
@@ -101,12 +106,17 @@ export function startPushHttpService(deps: PushServerDeps): Promise<PushHttpServ
   server.on('error', (err) => deps.log('error', '[pushApi] server error:', err))
   return new Promise((resolve, reject) => {
     server.once('error', reject)
-    server.listen(0, '127.0.0.1', () => {
+    server.listen(0, PUSH_BIND_HOST, () => {
       server.removeListener('error', reject)
       const address = server.address()
       const port = typeof address === 'object' && address ? address.port : 0
+      const bound =
+        typeof address === 'object' && address && typeof address.address === 'string'
+          ? address.address
+          : PUSH_BIND_HOST
       resolve({
         port,
+        host: bound === '::1' ? '127.0.0.1' : bound,
         close(): Promise<void> {
           return new Promise((r) => {
             if (!server.listening) {
