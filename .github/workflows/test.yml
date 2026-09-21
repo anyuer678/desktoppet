@@ -17,5 +17,17 @@ jobs:
           node-version: 20
           cache: npm
       - run: npm ci
-      - run: npm run typecheck
-      - run: npm test
+      - name: Typecheck
+        run: npm run typecheck
+      - name: Unit + headless smoke tests
+        run: npm test
+      - name: Build (electron-vite)
+        run: npm run build
+      - name: Verify dist artifacts
+        run: |
+          set -e
+          test -f out/main/index.js
+          test -f out/preload/index.js
+          test -f out/renderer/index.html
+          echo "dist artifacts OK"
+          ls -la out/main out/preload out/renderer | head -40

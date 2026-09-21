@@ -1,91 +1,129 @@
-# DesktopPet 鍙墿灞曟闈㈠疇鐗╁钩鍙?
+# DesktopPet 可扩展桌面宠物平台
 
 > **状态**：`portfolio` · Electron 桌宠平台 · GPL-3.0 · **非**通用生产组件库  
-> 单测约 **450** 例（静态计数与 README 一致）；大二进制资产建议后续 LFS/外置。  
-> 支持与隐私：敏感剪贴板内容设计上不进 IPC；推送 API 仅本机场景使用。
+> 单测约 **450+** 例（含 headless smoke / IPC schema / 敏感剪贴板零泄漏 / 角色包失败路径 / Push 回环绑定）；CI 跑 typecheck + unit tests + build + 产物校验。  
+> 支持与隐私：敏感剪贴板内容设计上不进 IPC（有自动化断言）；推送 API 仅绑定 `127.0.0.1` + Bearer token。
 
-
-褰撳墠鐗堟湰锛?*v1.0**锛堟寮忕増锛壜?鍗忚锛?*GPL-3.0**
-
-涓€涓彲鎵╁睍鐨勬闈㈠疇鐗╁钩鍙帮細**瑙掕壊 = 璧勬簮鍖?*锛屾牳蹇冨紩鎿庝笌瑙掕壊瀹屽叏瑙ｈ€︺€傛瀹犳牴鎹郴缁熺姸鎬佷笌浜嬩欢浜х敓涓嶅悓琛ㄧ幇锛屼細璇磋瘽銆佹湁蹇冩儏锛涚敤鎴峰彲瀵煎叆鑷埗瑙掕壊锛屼篃鍙€氳繃鏈湴 API 涓庤鍔ㄦ暟鎹簮鎺ュ叆鑷繁鐨勮嚜鍔ㄥ寲銆?
-
-## 鍔熻兘鎬昏
-
-- **妗屽疇鏈綋**锛氶€忔槑缃《鎮诞绐楀彛銆佸懠鍚?娴姩鍔ㄧ敾銆佺偣鍑荤┛閫忥紙閫愬儚绱?alpha锛夈€佹嫋鍔ㄨ蹇嗕綅缃€佸鏄剧ず鍣ㄣ€佸瑙掕壊鍒囨崲銆佸闂村彔鍔犲眰
-- **鐘舵€佺郴缁?*锛歩dle / focus / sleep / happy / warning锛岀敱浜嬩欢涓績鍐崇瓥椹卞姩锛堜紭鍏堢骇 + 鍘婚噸 + 杩囨湡绠＄悊锛岀函閫昏緫鍙崟娴嬶級
-- **浜嬩欢涓績锛坴0.2+锛?*锛氬彲鎻掓嫈鏁版嵁婧愭灦鏋勶紙绯荤粺鐩戞帶 / 鎻掍欢 / 鍓创鏉?/ 鐩綍 / 鍓嶅彴搴旂敤锛夛紝缁熶竴婧愯〃椹卞姩
-- **绯荤粺鐩戞帶**锛欳PU / 鍐呭瓨 / 鐢垫睜 / 鐢ㄦ埛绌洪棽 鈫?鐘舵€佷簨浠?
-- **鍓创鏉挎嫙浜哄寲浜掑姩锛坴0.9.1锛?*锛氬鍒堕摼鎺?浠ｇ爜/闀挎枃/鍥剧墖/鏁忔劅鍐呭鏃讹紝妗屽疇鎸夌壒寰佷粠鍙嚜瀹氫箟鍙拌瘝姹犲洖搴旓紱鏁忔劅鍐呭锛坱oken/瀵嗙爜/鍗″彿/楠岃瘉鐮侊級鍘熸枃缁濅笉杩涘叆 IPC
-- **浜嬩欢閫氱煡椤碉紙v1.0锛?*锛氭帶鍒朵腑蹇冦€屼簨浠躲€嶉〉绛惧睍绀烘湰娆¤繍琛屼簨浠舵祦锛?00 鏉＄幆褰㈢紦鍐诧級锛屾潵婧?鐘舵€?楂樹紭鍏堢骇绛涢€夈€佽鎯呭睍寮€銆佹竻绌猴紱鐘舵€佸窘绔犱笌鍏斿厰鎯呯华鑹插搴?
-- **闄即缁熻锛坴0.5+锛?*锛氭椂闀?鐘舵€佸垎甯?浜掑姩/鐑姏鍥?瓒嬪娍瀵规瘮/鎴愬氨寰界珷锛汣SV/Markdown 鍛ㄦ姤鏈堟姤/Excel 骞村害瀵煎嚭锛涜嚜鍔ㄦ姤鍛婂畾鏃剁敓鎴?
-- **鏃ョ▼鎻愰啋**锛氬崟娆?姣忔棩/姣忓懆/姣忔湀瑙﹀彂锛宎larm 椹卞姩 warning 鐘舵€?
-- **浜嬩欢鎺ㄩ€?API锛坴0.8锛?*锛氭湰鍦?HTTP `POST /api/event`锛圔earer token 璁よ瘉锛夛紝绗笁鏂圭▼搴忔妸浜嬩欢鎺ㄧ粰妗屽疇杞揪
-- **鎺у埗涓績**锛氶椤?/ 瑙掕壊 / 甯傚満 / 娑堟伅锛堝彴璇嶆睜鑷畾涔夛級/ 鏃ョ▼ / 缁熻 / 鎺ㄩ€?/ 浜嬩欢 / 寮€鍙戣€?/ 璁剧疆
-- **瑙掕壊鍖咃紙.pet锛?*锛歝onfig.json 椹卞姩 + 搴忓垪甯?妯℃澘鍔ㄧ敾锛岀己绱犳潗鑷姩鍥為€€锛涙湰鍦板競鍦哄畨瑁?鍗囩骇
-- **Windows 涓€閿剼鏈?*锛歚鍚姩.bat` / `鑷.bat` / `鏋勫缓楠岃瘉.bat`
-
-## 鎶€鏈爤
-
-Electron + React 19 + TypeScript锛堜弗鏍兼ā寮忥級+ electron-vite + Tailwind CSS v4 + shadcn 椋庢牸缁勪欢 + vitest锛?50 渚嬪崟娴嬶級路 **闆惰繍琛屾椂鏂颁緷璧栵紝鍏ㄧ▼鏈湴绂荤嚎**
-
-## 蹇€熷紑濮?
-
-```bash
-npm install
-npm run dev        # 寮€鍙戞ā寮忥紙鐑洿鏂帮級
-```
-
-姝ｅ紡鏋勫缓涓庤嚜妫€锛?
-
-```bash
-npm run typecheck  # 绫诲瀷妫€鏌ワ紙node + web锛屽繀椤?0 閿欒锛?
-npm test           # 鍗曞厓娴嬭瘯锛?50 渚嬶級
-npm run build      # 鏋勫缓浜х墿鍒?out/
-```
-
-鎵撳寘锛坋lectron-builder 宸查厤缃級锛歚npx electron-builder --win`锛堥厤缃 `electron-builder.yml`锛屼骇鐗╄緭鍑哄埌 `release/`锛夈€?
-
-## 椤圭洰缁撴瀯
-
-```text
-src/main/       Electron 涓昏繘绋嬶紙绐楀彛/瑙掕壊/浜嬩欢涓績/鏁版嵁婧?鐩戞帶/缁熻/鏃ョ▼/鎺ㄩ€?瀛樺偍锛?
-src/preload/    鐧藉悕鍗?API 妗ワ紙contextIsolation + sandbox锛?
-src/renderer/   妗屽疇绐楀彛 + 鎺у埗涓績锛圧eact锛屽惈 pet/ 涓?center/ 涓や釜搴旂敤锛?
-src/shared/     璺ㄨ繘绋嬬被鍨嬩笌绾€昏緫锛圛PC 濂戠害/璇煶鍙拌瘝姹?浜嬩欢鍒嗙被锛?
-characters/     瑙掕壊鍖呬粨搴擄紙寮€鍙戞湡鐩綍褰㈠紡锛?
-plugins/        鎻掍欢鐩綍
-docs/           璁捐鏂囨。锛坰pecs/ 涓?plans/ 涓?superpowers 娴佺▼浜х墿锛?
-backup/         鐗堟湰蹇収锛坴X-final = 鍚勭増鏈渶缁堢増锛宊archive/ = 鍘嗗彶涓棿蹇収锛岃 backup/README.md锛?
-.superpowers/   SDD 寮€鍙戣繃绋嬪彴璐︼紙brief/report/ledger锛屾棤 git 涓嬬殑璁板綍锛?
-out/            鏋勫缓浜х墿锛坓itignore锛?
-dist/ release/  electron-builder 鎵撳寘浜х墿锛坓itignore锛屽彲鍐嶇敓锛?
-```
-
-## 鏂囨。
-
-- `README.md` 鈥?鏈枃浠?
-- `docs/浣跨敤璇存槑.md` 鈥?鐢ㄦ埛鎿嶄綔鎵嬪唽锛堟渶鏂扮増 v1.0锛?
-- `docs/鏋舵瀯璁捐.md` 鈥?鏋舵瀯涓庤繘绋嬫ā鍨?
-- `docs/API璁捐.md` 鈥?IPC 濂戠害涓庝簨浠朵腑蹇冿紙鍚?v1.0 浜嬩欢閫氱煡椤碉級
-- `docs/瑙掕壊鍖呰鑼?md` 鈥?瑙掕壊鍖?config.json 鏍囧噯
-- `docs/閮ㄧ讲璇存槑.md` 鈥?鐜瑕佹眰銆佹瀯寤恒€佹祴璇曘€佹墦鍖呬笌鏁呴殰鎺掓煡
-- `docs/寮€鍙戣鑼?md` 鈥?鐗堟湰绠＄悊銆佸浠姐€乁I銆佹枃妗ｈ鑼?
-- `docs/鍙鎬у垎鏋?md` 鈥?椤圭洰瀹氫綅涓庢妧鏈€夊瀷
-- `CHANGELOG.md` 鈥?鐗堟湰璁板綍锛坴0.1 鈫?v1.0 姝ｅ紡鐗堬級
-- `LICENSE` 鈥?GPL-3.0锛堝惈鍏嶈矗澹版槑锛?
-
-## 澶囦唤涓庣増鏈?
-
-`backup/` 涓嬫瘡涓?`v<澶х増鏈?-final` 鐩綍瀵瑰簲璇ュぇ鐗堟湰鐨?*鏈€缁堝揩鐓?*锛堜笌 CHANGELOG 瀵圭収锛屽唴鍚?package.json 鍙牳瀵圭湡瀹炵増鏈級锛涘巻鍙蹭腑闂村揩鐓у綊妗ｄ簬 `backup/_archive/`銆傚彂鐗堟敹鐩樺埛鏂板搴?final锛歚node .superpowers\sdd\copy-backup.js "backup\v<澶х増鏈?-final"`銆?
-
-## License
-
-鏈」鐩熀浜?**GNU General Public License v3.0** 寮€婧愶紝璇﹁ [`LICENSE`](./LICENSE)銆?
-
-### 鍗忚瑕佺偣
-
-- 鉁?鑷敱浣跨敤銆佷慨鏀广€佸垎鍙?
-- 鈿狅笍 琛嶇敓浣滃搧蹇呴』浠ョ浉鍚岃鍙瘉锛圙PL v3锛夊紑婧?
-- 鉂?绂佹闂簮鍟嗕笟鍖?
-
-> **鍏嶈矗澹版槑**锛氭湰椤圭洰浠呬緵瀛︿範浜ゆ祦涓庢紨绀虹敤閫旓紝涓嶆瀯鎴愪换浣曞舰寮忕殑鍟嗕笟鏈嶅姟鎴栨妧鏈壙璇恒€傝蒋浠舵寜銆岀幇鐘躲€嶆彁渚涳紝涓嶄綔浠讳綍鏄庣ず鎴栨殫绀虹殑淇濊瘉銆傚鎮ㄥ湪浣跨敤杩囩▼涓彂鐜扮己闄锋垨闂锛屾杩庨€氳繃 GitHub Issues 鍙嶉锛屼絾浣滆€呬笉鍥犱娇鐢ㄦ湰杞欢鎵€鐩存帴鎴栭棿鎺ヤ骇鐢熺殑浠讳綍鎹熷け鎵挎媴璐ｄ换銆?
+当前版本：**v1.0**（正式版）· 协议：**GPL-3.0**
+
+一个可扩展的桌面宠物平台：**角色 = 资源包**，核心引擎与角色完全解耦。桌宠根据系统状态与事件产生不同表现，会说话、有心情；用户可导入自制角色，也可通过本地 API 与被动数据源接入自己的自动化。
+
+## 功能总览
+
+- **桌宠本体**：透明置顶悬浮窗口、呼吸/浮动动画、点击穿透、拖动记忆位置、多显示器、多角色切换、夜间叠加层
+- **状态系统**：idle / focus / sleep / happy / warning，由事件中心决策驱动（优先级 + 去重 + 过期管理，纯逻辑可单测）
+- **事件中心**：可插拔数据源（系统监控 / 插件 / 剪贴板 / 目录 / 前台应用），统一源表驱动
+- **系统监控**：CPU / 内存 / 电池 / 用户闲置 → 状态事件
+- **剪贴板拟人互动**：复制链接/代码/长文/图片/敏感内容时按特征回应；敏感内容（token/密码/卡号/验证码）**原文不进 IPC**
+- **事件通知页**：控制中心「事件」页签展示运行事件流（环形缓冲）
+- **伴随统计**：时长/状态分布/互动热力/趋势/成就；CSV/Markdown 周报月报/Excel 年度导出
+- **日程提醒**：单次 / 每日 / 每周触发，alarm 驱动 warning 状态
+- **事件推送 API**：本机 HTTP `POST /api/event`（仅 `127.0.0.1` + Bearer token），第三方程序把事件推给桌宠
+- **控制中心**：首页 / 角色 / 市场 / 消息 / 日程 / 统计 / 推送 / 事件 / 开发者 / 设置
+- **角色包（.pet）**：config.json 驱动 + 序列帧/模板动画；缺素材自动回退；本地市场安装/升级
+- **Windows 一键脚本**：`启动.bat` / `自检.bat` / `构建验证.bat`
+
+## 技术栈
+
+Electron + React 19 + TypeScript（严格模式）+ electron-vite + Tailwind CSS v4 + shadcn 风格组件 + vitest · **零运行时新依赖，全程本地离线**
+
+## 快速开始
+
+```bash
+npm install
+npm run dev        # 开发模式（热更新）
+```
+
+正式构建与自检：
+
+```bash
+npm run typecheck  # 类型检查（node + web，必须 0 错误）
+npm test           # 单元测试 + headless smoke
+npm run build      # 构建产物到 out/
+
+# 本地一键门禁（typecheck + test + build + 产物存在性）
+powershell -ExecutionPolicy Bypass -File scripts/verify-local.ps1
+# 仅测已有 out/ 时：
+#   ... -File scripts/verify-local.ps1 -SkipBuild
+```
+
+打包（electron-builder 已配置）：`npx electron-builder --win`（配置见 `electron-builder.yml`，产物输出到 `release/`）。
+
+## 质量门禁（CI 与本地同源）
+
+| 门禁 | 命令 | 说明 |
+|------|------|------|
+| 类型 | `npm run typecheck` | tsc node + web |
+| 单测 | `npm test` | vitest，含 headless smoke |
+| 构建 | `npm run build` | electron-vite → `out/` |
+| 产物 | `scripts/verify-local.ps1` | 断言 main/preload/renderer 产物存在 |
+
+**Headless 冒烟覆盖点**（无 Electron / 无显示，适合 GitHub Actions）：
+
+- 事件中心状态决策与过期裁剪
+- Push API 载荷校验 + Bearer 鉴权
+- 角色包加载失败路径（损坏 config / 非法 id / 坏 zip）→ `ok:false` 且仓库无污染
+- **敏感剪贴板原文零泄漏**：`push:fired` 载荷仅含 `reaction`，序列化结果不含密钥片段
+- Push 服务 **仅绑定 `127.0.0.1`**（常量 + 源码契约 + 运行时 host 断言）
+- IPC 通道命名 schema（`namespace:action`）与载荷字段白名单
+
+## 项目结构
+
+```text
+src/main/       Electron 主进程（窗口/角色/事件中心/数据源/监控/统计/日程/推送/存储）
+src/preload/    白名单 API 桥（contextIsolation + sandbox）
+src/renderer/   桌宠窗口 + 控制中心（React，含 pet/ 与 center/ 两个应用）
+src/shared/     跨进程类型与纯逻辑（IPC 契约/语音台词池/事件分类）
+scripts/        本地门禁（verify-local.ps1）
+characters/     角色包仓库（开发期目录形式）
+plugins/        插件目录
+docs/           设计文档（specs/ 与 plans/）
+out/            构建产物（gitignore）
+dist/ release/  electron-builder 打包产物（gitignore，可再生）
+```
+
+## 文档
+
+- `README.md` — 本文件
+- `docs/` — 使用说明、架构设计、API/IPC 设计、角色包规范、部署说明等
+- `CHANGELOG.md` — 版本记录（v0.1 → v1.0）
+- `CONTRIBUTING.md` / `SECURITY.md` — 贡献与安全策略
+- `LICENSE` — GPL-3.0
+
+## 资产体积债务与 Git LFS 路线图（不改写历史）
+
+仓库当前包含少量**大二进制角色/图标资产**（刻意不改写 git 历史；只记录债务与迁移动作）：
+
+| 路径 | 约大小 | 说明 |
+|------|--------|------|
+| `characters/market/rabbit.pet` | ~2.3 MB | 角色包（zip） |
+| `build/icon.png` | ~2.2 MB | 应用图标 |
+| `characters/rabbit/avatar.png` | ~2.2 MB | 角色立绘（与 icon 同源冗余） |
+| `characters/**/preview.jpg` | ~160 KB ×2 | 预览图 |
+
+**路线图（按优先级）**：
+
+1. **短期（不迁移 LFS）**：压缩 `avatar.png`/`icon.png`（建议最长边 ≤512，WebP/PNG 优化）；`rabbit.pet` 内帧图去冗余。目标：单文件 < 500 KB。
+2. **中期（可选 LFS）**：对 `characters/**/*.pet`、`build/icon.png`、`characters/**/*.png` 启用 Git LFS 追踪；仅影响**后续提交**，历史 blob 仍在 Git 对象库中（符合「不改写历史」）。
+3. **长期（若需要瘦身克隆）**：将示例角色包改为「发布资产 / Release 附件」下载，仓库只保留 `config.json` + 小体积占位图；或使用 `git filter-repo` **另行维护 thin 分支**（不 force-push `main`）。
+
+LFS 启用示例（迁移前请先开分支验证）：
+
+```bash
+git lfs install
+git lfs track "characters/**/*.pet" "build/icon.png" "characters/**/*.png"
+git add .gitattributes
+# 后续新提交的大文件自动走 LFS；旧历史保持原样
+```
+
+## License
+
+本项目基于 **GNU General Public License v3.0** 开源，详见 [`LICENSE`](./LICENSE)。
+
+### 协议要点
+
+- ✅ 自由使用、修改、分发
+- ⚠️ 衍生作品必须以相同许可证（GPL v3）开源
+- ❌ 禁止闭源商业化
+
+> **免责声明**：本项目仅供学习交流与演示用途，不构成任何形式的商业服务或技术承诺。软件按「现状」提供，不作任何明示或暗示的保证。
