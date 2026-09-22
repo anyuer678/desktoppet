@@ -13,3 +13,7 @@ backup/
 .reasonix/
 .superpowers/
 reasonix.toml
+
+# vitest/istanbul coverage output
+coverage/
+
