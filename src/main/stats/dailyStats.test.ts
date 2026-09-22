@@ -90,7 +90,10 @@ describe('文件持久化', () => {
 
   it('缺失/损坏文件回退空统计', () => {
     const dir = tempDir('dp-stats-')
-    expect(loadDailyStats(dir, '2026-08-05')).toEqual(emptyStats('2026-08-05'))
+    // updatedAt 来自 Date.now()，两次 emptyStats 可能差 1ms——归零后比较
+    const a = loadDailyStats(dir, '2026-08-05')
+    const b = emptyStats('2026-08-05')
+    expect({ ...a, updatedAt: 0 }).toEqual({ ...b, updatedAt: 0 })
     writeFileSync(dailyStatsPath(dir, '2026-08-04'), '{broken')
     expect(loadDailyStats(dir, '2026-08-04').secondsByState).toEqual({})
     rmSync(dir, { recursive: true, force: true })
