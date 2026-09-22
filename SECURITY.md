@@ -25,3 +25,7 @@ Do not deploy portfolio agents (e.g. lumen) or local MCP tools to the public int
 - Never commit API keys, tokens, or `.env` files.
 - Prefer environment variables or the local `keyvault` tooling.
 - CI secret-scan workflows are enabled on several repositories; treat failures as blocking when `GITLEAKS_STRICT` is turned on.
+
+## Residual dependency risk
+
+See [`docs/SECURITY-NOTES.md`](docs/SECURITY-NOTES.md) for accepted residual advisories (e.g. `extract-zip` via electron-builder; no npm patch yet) and the operational mitigations we apply instead of inventing a fake fix.

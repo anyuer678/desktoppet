@@ -19,8 +19,8 @@ jobs:
       - run: npm ci
       - name: Typecheck
         run: npm run typecheck
-      - name: Unit + headless smoke tests
-        run: npm test
+      - name: Unit + headless smoke tests with coverage floor
+        run: npm run test:coverage
       - name: Build (electron-vite)
         run: npm run build
       - name: Verify dist artifacts

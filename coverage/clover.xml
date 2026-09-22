@@ -1,0 +1,2650 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<coverage generated="1790068320675" clover="3.2.0">
+  <project timestamp="1790068320676" name="All files">
+    <metrics statements="2356" coveredstatements="1325" conditionals="1754" coveredconditionals="1187" methods="709" coveredmethods="293" elements="4819" coveredelements="2805" complexity="0" loc="2356" ncloc="2356" packages="23" files="73" classes="73"/>
+    <package name="main">
+      <metrics statements="81" coveredstatements="0" conditionals="4" coveredconditionals="0" methods="34" coveredmethods="0"/>
+      <file name="index.ts" path="C:\Users\30816\Desktop\anyuer678-improve\04-patches\repos\desktoppet\src\main\index.ts">
+        <metrics statements="81" coveredstatements="0" conditionals="4" coveredconditionals="0" methods="34" coveredmethods="0"/>
+        <line num="32" count="0" type="stmt"/>
+        <line num="35" count="0" type="stmt"/>
+        <line num="38" count="0" type="stmt"/>
+        <line num="42" count="0" type="stmt"/>
+        <line num="43" count="0" type="stmt"/>
+        <line num="44" count="0" type="stmt"/>
+        <line num="45" count="0" type="stmt"/>
+        <line num="49" count="0" type="stmt"/>
+        <line num="50" count="0" type="stmt"/>
+        <line num="51" count="0" type="stmt"/>
+        <line num="52" count="0" type="stmt"/>
+        <line num="56" count="0" type="stmt"/>
+        <line num="57" count="0" type="stmt"/>
+        <line num="58" count="0" type="stmt"/>
+        <line num="59" count="0" type="stmt"/>
+        <line num="63" count="0" type="stmt"/>
+        <line num="64" count="0" type="stmt"/>
+        <line num="67" count="0" type="stmt"/>
+        <line num="70" count="0" type="stmt"/>
+        <line num="71" count="0" type="stmt"/>
+        <line num="76" count="0" type="stmt"/>
+        <line num="77" count="0" type="stmt"/>
+        <line num="84" count="0" type="stmt"/>
+        <line num="93" count="0" type="stmt"/>
+        <line num="102" count="0" type="stmt"/>
+        <line num="103" count="0" type="stmt"/>
+        <line num="104" count="0" type="stmt"/>
+        <line num="107" count="0" type="stmt"/>
+        <line num="111" count="0" type="stmt"/>
+        <line num="115" count="0" type="stmt"/>
+        <line num="121" count="0" type="stmt"/>
+        <line num="124" count="0" type="stmt"/>
+        <line num="133" count="0" type="stmt"/>
+        <line num="134" count="0" type="stmt"/>
+        <line num="135" count="0" type="stmt"/>
+        <line num="139" count="0" type="stmt"/>
+        <line num="141" count="0" type="stmt"/>
+        <line num="143" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="144" count="0" type="stmt"/>
+        <line num="146" count="0" type="stmt"/>
+        <line num="147" count="0" type="stmt"/>
+        <line num="148" count="0" type="stmt"/>
+        <line num="149" count="0" type="stmt"/>
+        <line num="150" count="0" type="stmt"/>
+        <line num="151" count="0" type="stmt"/>
+        <line num="152" count="0" type="stmt"/>
+        <line num="153" count="0" type="stmt"/>
+        <line num="154" count="0" type="stmt"/>
+        <line num="155" count="0" type="stmt"/>
+        <line num="156" count="0" type="stmt"/>
+        <line num="157" count="0" type="stmt"/>
+        <line num="158" count="0" type="stmt"/>
+        <line num="159" count="0" type="stmt"/>
+        <line num="160" count="0" type="stmt"/>
+        <line num="162" count="0" type="stmt"/>
+        <line num="176" count="0" type="stmt"/>
+        <line num="178" count="0" type="stmt"/>
+        <line num="179" count="0" type="stmt"/>
+        <line num="181" count="0" type="stmt"/>
+        <line num="182" count="0" type="stmt"/>
+        <line num="183" count="0" type="stmt"/>
+        <line num="184" count="0" type="stmt"/>
+        <line num="185" count="0" type="stmt"/>
+        <line num="187" count="0" type="stmt"/>
+        <line num="188" count="0" type="stmt"/>
+        <line num="189" count="0" type="stmt"/>
+        <line num="191" count="0" type="stmt"/>
+        <line num="192" count="0" type="stmt"/>
+        <line num="195" count="0" type="stmt"/>
+        <line num="196" count="0" type="stmt"/>
+        <line num="199" count="0" type="stmt"/>
+        <line num="201" count="0" type="stmt"/>
+        <line num="202" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="207" count="0" type="stmt"/>
+        <line num="208" count="0" type="stmt"/>
+        <line num="209" count="0" type="stmt"/>
+        <line num="210" count="0" type="stmt"/>
+        <line num="211" count="0" type="stmt"/>
+        <line num="212" count="0" type="stmt"/>
+        <line num="215" count="0" type="stmt"/>
+        <line num="216" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="main.app">
+      <metrics statements="72" coveredstatements="0" conditionals="28" coveredconditionals="0" methods="29" coveredmethods="0"/>
+      <file name="lifecycle.ts" path="C:\Users\30816\Desktop\anyuer678-improve\04-patches\repos\desktoppet\src\main\app\lifecycle.ts">
+        <metrics statements="8" coveredstatements="0" conditionals="2" coveredconditionals="0" methods="4" coveredmethods="0"/>
+        <line num="8" count="0" type="stmt"/>
+        <line num="9" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="10" count="0" type="stmt"/>
+        <line num="11" count="0" type="stmt"/>
+        <line num="14" count="0" type="stmt"/>
+        <line num="23" count="0" type="stmt"/>
+        <line num="24" count="0" type="stmt"/>
+        <line num="25" count="0" type="stmt"/>
+      </file>
+      <file name="paths.ts" path="C:\Users\30816\Desktop\anyuer678-improve\04-patches\repos\desktoppet\src\main\app\paths.ts">
+        <metrics statements="12" coveredstatements="0" conditionals="4" coveredconditionals="0" methods="8" coveredmethods="0"/>
+        <line num="11" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="12" count="0" type="stmt"/>
+        <line num="14" count="0" type="stmt"/>
+        <line num="19" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="20" count="0" type="stmt"/>
+        <line num="22" count="0" type="stmt"/>
+        <line num="26" count="0" type="stmt"/>
+        <line num="30" count="0" type="stmt"/>
+        <line num="35" count="0" type="stmt"/>
+        <line num="40" count="0" type="stmt"/>
+        <line num="45" count="0" type="stmt"/>
+        <line num="50" count="0" type="stmt"/>
+      </file>
+      <file name="seed.ts" path="C:\Users\30816\Desktop\anyuer678-improve\04-patches\repos\desktoppet\src\main\app\seed.ts">
+        <metrics statements="18" coveredstatements="0" conditionals="12" coveredconditionals="0" methods="2" coveredmethods="0"/>
+        <line num="9" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="10" count="0" type="stmt"/>
+        <line num="11" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="12" count="0" type="stmt"/>
+        <line num="13" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="14" count="0" type="stmt"/>
+        <line num="15" count="0" type="stmt"/>
+        <line num="16" count="0" type="stmt"/>
+        <line num="18" count="0" type="stmt"/>
+        <line num="24" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="25" count="0" type="stmt"/>
+        <line num="26" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="27" count="0" type="stmt"/>
+        <line num="28" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="29" count="0" type="stmt"/>
+        <line num="30" count="0" type="stmt"/>
+        <line num="31" count="0" type="stmt"/>
+        <line num="33" count="0" type="stmt"/>
+      </file>
+      <file name="updater.ts" path="C:\Users\30816\Desktop\anyuer678-improve\04-patches\repos\desktoppet\src\main\app\updater.ts">
+        <metrics statements="34" coveredstatements="0" conditionals="10" coveredconditionals="0" methods="15" coveredmethods="0"/>
+        <line num="28" count="0" type="stmt"/>
+        <line num="29" count="0" type="stmt"/>
+        <line num="32" count="0" type="stmt"/>
+        <line num="33" count="0" type="stmt"/>
+        <line num="34" count="0" type="stmt"/>
+        <line num="35" count="0" type="stmt"/>
+        <line num="36" count="0" type="stmt"/>
+        <line num="37" count="0" type="stmt"/>
+        <line num="42" count="0" type="stmt"/>
+        <line num="43" count="0" type="stmt"/>
+        <line num="44" count="0" type="stmt"/>
+        <line num="45" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="46" count="0" type="stmt"/>
+        <line num="54" count="0" type="stmt"/>
+        <line num="55" count="0" type="stmt"/>
+        <line num="59" count="0" type="stmt"/>
+        <line num="60" count="0" type="stmt"/>
+        <line num="64" count="0" type="stmt"/>
+        <line num="65" count="0" type="stmt"/>
+        <line num="66" count="0" type="stmt"/>
+        <line num="67" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="68" count="0" type="stmt"/>
+        <line num="75" count="0" type="stmt"/>
+        <line num="76" count="0" type="stmt"/>
+        <line num="77" count="0" type="stmt"/>
+        <line num="81" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="82" count="0" type="stmt"/>
+        <line num="83" count="0" type="stmt"/>
+        <line num="84" count="0" type="stmt"/>
+        <line num="85" count="0" type="stmt"/>
+        <line num="87" count="0" type="stmt"/>
+        <line num="91" count="0" type="stmt"/>
+        <line num="94" count="0" type="stmt"/>
+        <line num="95" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="main.character">
+      <metrics statements="256" coveredstatements="234" conditionals="358" coveredconditionals="291" methods="27" coveredmethods="26"/>
+      <file name="configEditor.ts" path="C:\Users\30816\Desktop\anyuer678-improve\04-patches\repos\desktoppet\src\main\character\configEditor.ts">
+        <metrics statements="81" coveredstatements="78" conditionals="149" coveredconditionals="120" methods="6" coveredmethods="6"/>
+        <line num="7" count="24" type="cond" truecount="4" falsecount="0"/>
+        <line num="8" count="21" type="stmt"/>
+        <line num="17" count="6" type="cond" truecount="4" falsecount="0"/>
+        <line num="21" count="6" type="cond" truecount="4" falsecount="0"/>
+        <line num="25" count="6" type="cond" truecount="2" falsecount="0"/>
+        <line num="26" count="6" type="cond" truecount="2" falsecount="0"/>
+        <line num="27" count="6" type="cond" truecount="2" falsecount="0"/>
+        <line num="28" count="6" type="cond" truecount="2" falsecount="0"/>
+        <line num="30" count="6" type="cond" truecount="2" falsecount="0"/>
+        <line num="31" count="6" type="cond" truecount="2" falsecount="0"/>
+        <line num="32" count="6" type="stmt"/>
+        <line num="37" count="5" type="cond" truecount="3" falsecount="1"/>
+        <line num="38" count="5" type="stmt"/>
+        <line num="43" count="5" type="cond" truecount="4" falsecount="0"/>
+        <line num="58" count="17" type="cond" truecount="2" falsecount="0"/>
+        <line num="60" count="16" type="stmt"/>
+        <line num="61" count="16" type="stmt"/>
+        <line num="63" count="1" type="stmt"/>
+        <line num="65" count="15" type="cond" truecount="4" falsecount="1"/>
+        <line num="66" count="0" type="stmt"/>
+        <line num="69" count="15" type="cond" truecount="2" falsecount="0"/>
+        <line num="70" count="2" type="cond" truecount="4" falsecount="0"/>
+        <line num="71" count="1" type="stmt"/>
+        <line num="73" count="14" type="cond" truecount="2" falsecount="0"/>
+        <line num="74" count="2" type="cond" truecount="4" falsecount="0"/>
+        <line num="75" count="1" type="stmt"/>
+        <line num="77" count="13" type="cond" truecount="2" falsecount="0"/>
+        <line num="78" count="1" type="stmt"/>
+        <line num="83" count="13" type="cond" truecount="1" falsecount="1"/>
+        <line num="84" count="0" type="stmt"/>
+        <line num="90" count="13" type="cond" truecount="2" falsecount="0"/>
+        <line num="92" count="3" type="cond" truecount="4" falsecount="0"/>
+        <line num="95" count="3" type="cond" truecount="1" falsecount="1"/>
+        <line num="96" count="3" type="stmt"/>
+        <line num="98" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="99" count="1" type="stmt"/>
+        <line num="101" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="102" count="1" type="stmt"/>
+        <line num="104" count="3" type="stmt"/>
+        <line num="108" count="13" type="cond" truecount="3" falsecount="1"/>
+        <line num="112" count="17" type="cond" truecount="3" falsecount="1"/>
+        <line num="116" count="17" type="stmt"/>
+        <line num="118" count="6" type="cond" truecount="4" falsecount="0"/>
+        <line num="122" count="6" type="cond" truecount="4" falsecount="0"/>
+        <line num="125" count="6" type="stmt"/>
+        <line num="126" count="6" type="cond" truecount="2" falsecount="0"/>
+        <line num="127" count="6" type="stmt"/>
+        <line num="130" count="17" type="cond" truecount="2" falsecount="0"/>
+        <line num="131" count="13" type="cond" truecount="2" falsecount="0"/>
+        <line num="132" count="2" type="stmt"/>
+        <line num="133" count="3" type="cond" truecount="1" falsecount="1"/>
+        <line num="136" count="13" type="cond" truecount="4" falsecount="0"/>
+        <line num="137" count="5" type="stmt"/>
+        <line num="138" count="5" type="stmt"/>
+        <line num="141" count="13" type="cond" truecount="2" falsecount="0"/>
+        <line num="142" count="3" type="stmt"/>
+        <line num="144" count="3" type="cond" truecount="2" falsecount="2"/>
+        <line num="148" count="3" type="cond" truecount="2" falsecount="2"/>
+        <line num="152" count="3" type="cond" truecount="2" falsecount="2"/>
+        <line num="155" count="3" type="cond" truecount="2" falsecount="2"/>
+        <line num="157" count="3" type="cond" truecount="2" falsecount="2"/>
+        <line num="160" count="3" type="cond" truecount="1" falsecount="1"/>
+        <line num="161" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="162" count="3" type="stmt"/>
+        <line num="164" count="3" type="stmt"/>
+        <line num="166" count="3" type="cond" truecount="2" falsecount="2"/>
+        <line num="169" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="171" count="3" type="cond" truecount="2" falsecount="2"/>
+        <line num="174" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="175" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="176" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="177" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="178" count="3" type="stmt"/>
+        <line num="179" count="3" type="stmt"/>
+        <line num="180" count="3" type="stmt"/>
+        <line num="183" count="13" type="stmt"/>
+        <line num="185" count="13" type="stmt"/>
+        <line num="186" count="13" type="stmt"/>
+        <line num="187" count="13" type="stmt"/>
+        <line num="189" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="191" count="13" type="stmt"/>
+      </file>
+      <file name="configReader.ts" path="C:\Users\30816\Desktop\anyuer678-improve\04-patches\repos\desktoppet\src\main\character\configReader.ts">
+        <metrics statements="77" coveredstatements="77" conditionals="145" coveredconditionals="125" methods="11" coveredmethods="11"/>
+        <line num="24" count="83" type="stmt"/>
+        <line num="25" count="83" type="stmt"/>
+        <line num="26" count="83" type="cond" truecount="2" falsecount="0"/>
+        <line num="30" count="3" type="stmt"/>
+        <line num="31" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="35" count="5" type="stmt"/>
+        <line num="39" count="12" type="cond" truecount="5" falsecount="0"/>
+        <line num="40" count="5" type="stmt"/>
+        <line num="41" count="5" type="cond" truecount="1" falsecount="1"/>
+        <line num="42" count="5" type="stmt"/>
+        <line num="43" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="48" count="15" type="cond" truecount="4" falsecount="0"/>
+        <line num="54" count="34" type="cond" truecount="2" falsecount="0"/>
+        <line num="55" count="32" type="stmt"/>
+        <line num="56" count="32" type="stmt"/>
+        <line num="63" count="32" type="cond" truecount="4" falsecount="0"/>
+        <line num="66" count="25" type="cond" truecount="4" falsecount="0"/>
+        <line num="70" count="34" type="cond" truecount="4" falsecount="0"/>
+        <line num="74" count="34" type="stmt"/>
+        <line num="84" count="2" type="stmt"/>
+        <line num="89" count="8" type="cond" truecount="1" falsecount="1"/>
+        <line num="90" count="8" type="stmt"/>
+        <line num="91" count="8" type="stmt"/>
+        <line num="92" count="10" type="stmt"/>
+        <line num="94" count="10" type="cond" truecount="4" falsecount="0"/>
+        <line num="96" count="8" type="stmt"/>
+        <line num="100" count="10" type="stmt"/>
+        <line num="101" count="10" type="cond" truecount="2" falsecount="0"/>
+        <line num="102" count="8" type="stmt"/>
+        <line num="103" count="8" type="stmt"/>
+        <line num="113" count="8" type="cond" truecount="5" falsecount="0"/>
+        <line num="115" count="5" type="stmt"/>
+        <line num="116" count="5" type="cond" truecount="3" falsecount="1"/>
+        <line num="117" count="5" type="stmt"/>
+        <line num="118" count="5" type="stmt"/>
+        <line num="119" count="5" type="stmt"/>
+        <line num="129" count="5" type="stmt"/>
+        <line num="131" count="5" type="cond" truecount="3" falsecount="1"/>
+        <line num="135" count="10" type="stmt"/>
+        <line num="137" count="10" type="stmt"/>
+        <line num="159" count="1" type="stmt"/>
+        <line num="164" count="3" type="cond" truecount="3" falsecount="1"/>
+        <line num="165" count="3" type="stmt"/>
+        <line num="166" count="3" type="cond" truecount="4" falsecount="0"/>
+        <line num="167" count="2" type="cond" truecount="3" falsecount="1"/>
+        <line num="168" count="2" type="stmt"/>
+        <line num="172" count="4" type="cond" truecount="3" falsecount="1"/>
+        <line num="173" count="4" type="stmt"/>
+        <line num="176" count="4" type="cond" truecount="4" falsecount="0"/>
+        <line num="177" count="3" type="cond" truecount="1" falsecount="1"/>
+        <line num="178" count="3" type="stmt"/>
+        <line num="179" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="180" count="2" type="stmt"/>
+        <line num="183" count="3" type="cond" truecount="3" falsecount="1"/>
+        <line num="184" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="186" count="2" type="stmt"/>
+        <line num="190" count="5" type="cond" truecount="4" falsecount="0"/>
+        <line num="191" count="1" type="stmt"/>
+        <line num="192" count="1" type="stmt"/>
+        <line num="193" count="4" type="stmt"/>
+        <line num="194" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="196" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="200" count="3" type="stmt"/>
+        <line num="201" count="3" type="stmt"/>
+        <line num="202" count="3" type="cond" truecount="4" falsecount="0"/>
+        <line num="203" count="2" type="stmt"/>
+        <line num="205" count="3" type="cond" truecount="4" falsecount="0"/>
+        <line num="206" count="2" type="stmt"/>
+        <line num="207" count="2" type="stmt"/>
+        <line num="208" count="2" type="cond" truecount="4" falsecount="0"/>
+        <line num="209" count="1" type="stmt"/>
+        <line num="211" count="2" type="cond" truecount="4" falsecount="0"/>
+        <line num="212" count="1" type="stmt"/>
+        <line num="214" count="2" type="cond" truecount="5" falsecount="0"/>
+        <line num="215" count="1" type="stmt"/>
+        <line num="217" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="219" count="3" type="cond" truecount="2" falsecount="0"/>
+      </file>
+      <file name="importer.ts" path="C:\Users\30816\Desktop\anyuer678-improve\04-patches\repos\desktoppet\src\main\character\importer.ts">
+        <metrics statements="98" coveredstatements="79" conditionals="64" coveredconditionals="46" methods="10" coveredmethods="9"/>
+        <line num="19" count="3" type="stmt"/>
+        <line num="26" count="3" type="stmt"/>
+        <line num="30" count="82" type="stmt"/>
+        <line num="31" count="82" type="cond" truecount="2" falsecount="0"/>
+        <line num="32" count="81" type="cond" truecount="2" falsecount="0"/>
+        <line num="33" count="80" type="stmt"/>
+        <line num="34" count="95" type="cond" truecount="6" falsecount="0"/>
+        <line num="35" count="11" type="stmt"/>
+        <line num="37" count="69" type="stmt"/>
+        <line num="41" count="35" type="stmt"/>
+        <line num="45" count="43" type="cond" truecount="2" falsecount="0"/>
+        <line num="59" count="25" type="stmt"/>
+        <line num="60" count="25" type="stmt"/>
+        <line num="62" count="2" type="stmt"/>
+        <line num="65" count="23" type="stmt"/>
+        <line num="66" count="23" type="stmt"/>
+        <line num="67" count="23" type="stmt"/>
+        <line num="68" count="23" type="cond" truecount="1" falsecount="1"/>
+        <line num="69" count="0" type="stmt"/>
+        <line num="71" count="32" type="stmt"/>
+        <line num="72" count="23" type="cond" truecount="2" falsecount="0"/>
+        <line num="74" count="21" type="stmt"/>
+        <line num="75" count="21" type="stmt"/>
+        <line num="76" count="21" type="stmt"/>
+        <line num="77" count="31" type="cond" truecount="1" falsecount="1"/>
+        <line num="78" count="31" type="stmt"/>
+        <line num="79" count="31" type="cond" truecount="2" falsecount="0"/>
+        <line num="80" count="30" type="stmt"/>
+        <line num="81" count="30" type="cond" truecount="1" falsecount="1"/>
+        <line num="82" count="0" type="stmt"/>
+        <line num="84" count="30" type="stmt"/>
+        <line num="85" count="30" type="cond" truecount="3" falsecount="1"/>
+        <line num="86" count="0" type="stmt"/>
+        <line num="88" count="30" type="stmt"/>
+        <line num="89" count="30" type="stmt"/>
+        <line num="90" count="30" type="stmt"/>
+        <line num="93" count="20" type="stmt"/>
+        <line num="94" count="20" type="cond" truecount="2" falsecount="0"/>
+        <line num="95" count="19" type="stmt"/>
+        <line num="96" count="19" type="cond" truecount="2" falsecount="0"/>
+        <line num="98" count="18" type="stmt"/>
+        <line num="99" count="18" type="cond" truecount="1" falsecount="1"/>
+        <line num="100" count="18" type="cond" truecount="2" falsecount="0"/>
+        <line num="101" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="102" count="2" type="stmt"/>
+        <line num="105" count="2" type="stmt"/>
+        <line num="106" count="2" type="stmt"/>
+        <line num="107" count="2" type="stmt"/>
+        <line num="109" count="0" type="stmt"/>
+        <line num="111" count="2" type="stmt"/>
+        <line num="112" count="2" type="stmt"/>
+        <line num="113" count="2" type="stmt"/>
+        <line num="115" count="0" type="stmt"/>
+        <line num="117" count="2" type="stmt"/>
+        <line num="118" count="2" type="stmt"/>
+        <line num="121" count="0" type="stmt"/>
+        <line num="122" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="123" count="0" type="stmt"/>
+        <line num="127" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="130" count="14" type="stmt"/>
+        <line num="131" count="14" type="stmt"/>
+        <line num="132" count="14" type="stmt"/>
+        <line num="134" count="0" type="stmt"/>
+        <line num="136" count="14" type="stmt"/>
+        <line num="138" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="140" count="23" type="cond" truecount="2" falsecount="0"/>
+        <line num="145" count="0" type="stmt"/>
+        <line num="146" count="0" type="stmt"/>
+        <line num="147" count="0" type="stmt"/>
+        <line num="148" count="0" type="stmt"/>
+        <line num="149" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="150" count="0" type="stmt"/>
+        <line num="152" count="0" type="stmt"/>
+        <line num="159" count="5" type="stmt"/>
+        <line num="160" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="161" count="4" type="stmt"/>
+        <line num="162" count="4" type="cond" truecount="1" falsecount="1"/>
+        <line num="163" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="164" count="3" type="stmt"/>
+        <line num="165" count="3" type="stmt"/>
+        <line num="170" count="6" type="stmt"/>
+        <line num="171" count="6" type="cond" truecount="2" falsecount="0"/>
+        <line num="172" count="5" type="stmt"/>
+        <line num="173" count="5" type="cond" truecount="1" falsecount="1"/>
+        <line num="174" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="175" count="4" type="stmt"/>
+        <line num="176" count="4" type="cond" truecount="1" falsecount="1"/>
+        <line num="177" count="4" type="stmt"/>
+        <line num="178" count="4" type="stmt"/>
+        <line num="179" count="4" type="stmt"/>
+        <line num="180" count="4" type="stmt"/>
+        <line num="181" count="4" type="stmt"/>
+        <line num="183" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="189" count="3" type="stmt"/>
+        <line num="190" count="3" type="stmt"/>
+        <line num="191" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="192" count="3" type="stmt"/>
+        <line num="193" count="3" type="stmt"/>
+      </file>
+    </package>
+    <package name="main.event">
+      <metrics statements="259" coveredstatements="162" conditionals="206" coveredconditionals="144" methods="86" coveredmethods="46"/>
+      <file name="clipboard.ts" path="C:\Users\30816\Desktop\anyuer678-improve\04-patches\repos\desktoppet\src\main\event\clipboard.ts">
+        <metrics statements="19" coveredstatements="19" conditionals="12" coveredconditionals="12" methods="2" coveredmethods="2"/>
+        <line num="11" count="30" type="cond" truecount="2" falsecount="0"/>
+        <line num="12" count="2" type="stmt"/>
+        <line num="14" count="28" type="stmt"/>
+        <line num="15" count="5" type="stmt"/>
+        <line num="16" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="17" count="2" type="stmt"/>
+        <line num="23" count="26" type="cond" truecount="2" falsecount="0"/>
+        <line num="24" count="4" type="stmt"/>
+        <line num="25" count="4" type="stmt"/>
+        <line num="26" count="4" type="stmt"/>
+        <line num="27" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="28" count="1" type="stmt"/>
+        <line num="29" count="1" type="stmt"/>
+        <line num="35" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="36" count="3" type="stmt"/>
+        <line num="39" count="23" type="stmt"/>
+        <line num="43" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="44" count="2" type="stmt"/>
+        <line num="46" count="1" type="stmt"/>
+      </file>
+      <file name="eventCenter.ts" path="C:\Users\30816\Desktop\anyuer678-improve\04-patches\repos\desktoppet\src\main\event\eventCenter.ts">
+        <metrics statements="29" coveredstatements="29" conditionals="20" coveredconditionals="19" methods="14" coveredmethods="14"/>
+        <line num="15" count="3" type="stmt"/>
+        <line num="18" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="19" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="20" count="1" type="stmt"/>
+        <line num="21" count="1" type="stmt"/>
+        <line num="22" count="1" type="stmt"/>
+        <line num="24" count="2" type="stmt"/>
+        <line num="33" count="5" type="stmt"/>
+        <line num="37" count="9" type="stmt"/>
+        <line num="41" count="8" type="cond" truecount="2" falsecount="0"/>
+        <line num="46" count="6" type="stmt"/>
+        <line num="47" count="6" type="stmt"/>
+        <line num="48" count="7" type="cond" truecount="2" falsecount="0"/>
+        <line num="49" count="6" type="stmt"/>
+        <line num="51" count="6" type="stmt"/>
+        <line num="55" count="11" type="cond" truecount="2" falsecount="0"/>
+        <line num="56" count="9" type="stmt"/>
+        <line num="57" count="9" type="stmt"/>
+        <line num="58" count="9" type="stmt"/>
+        <line num="59" count="9" type="stmt"/>
+        <line num="60" count="45" type="cond" truecount="2" falsecount="0"/>
+        <line num="61" count="52" type="stmt"/>
+        <line num="62" count="36" type="stmt"/>
+        <line num="63" count="36" type="stmt"/>
+        <line num="64" count="36" type="cond" truecount="6" falsecount="0"/>
+        <line num="65" count="11" type="stmt"/>
+        <line num="66" count="11" type="stmt"/>
+        <line num="67" count="11" type="cond" truecount="1" falsecount="1"/>
+        <line num="70" count="9" type="stmt"/>
+      </file>
+      <file name="eventHistory.ts" path="C:\Users\30816\Desktop\anyuer678-improve\04-patches\repos\desktoppet\src\main\event\eventHistory.ts">
+        <metrics statements="12" coveredstatements="12" conditionals="4" coveredconditionals="4" methods="7" coveredmethods="7"/>
+        <line num="11" count="9" type="stmt"/>
+        <line num="13" count="12" type="stmt"/>
+        <line num="14" count="12" type="stmt"/>
+        <line num="17" count="7" type="stmt"/>
+        <line num="20" count="1" type="stmt"/>
+        <line num="22" count="9" type="stmt"/>
+        <line num="26" count="4" type="stmt"/>
+        <line num="27" count="4" type="stmt"/>
+        <line num="28" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="29" count="3" type="stmt"/>
+        <line num="30" count="3" type="stmt"/>
+        <line num="33" count="4" type="stmt"/>
+      </file>
+      <file name="eventRuntime.ts" path="C:\Users\30816\Desktop\anyuer678-improve\04-patches\repos\desktoppet\src\main\event\eventRuntime.ts">
+        <metrics statements="21" coveredstatements="0" conditionals="6" coveredconditionals="0" methods="8" coveredmethods="0"/>
+        <line num="47" count="0" type="stmt"/>
+        <line num="48" count="0" type="stmt"/>
+        <line num="49" count="0" type="stmt"/>
+        <line num="50" count="0" type="stmt"/>
+        <line num="53" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="54" count="0" type="stmt"/>
+        <line num="57" count="0" type="stmt"/>
+        <line num="61" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="62" count="0" type="stmt"/>
+        <line num="64" count="0" type="stmt"/>
+        <line num="68" count="0" type="stmt"/>
+        <line num="69" count="0" type="stmt"/>
+        <line num="70" count="0" type="stmt"/>
+        <line num="71" count="0" type="stmt"/>
+        <line num="72" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="73" count="0" type="stmt"/>
+        <line num="75" count="0" type="stmt"/>
+        <line num="78" count="0" type="stmt"/>
+        <line num="81" count="0" type="stmt"/>
+        <line num="82" count="0" type="stmt"/>
+        <line num="83" count="0" type="stmt"/>
+      </file>
+      <file name="passiveRuntime.ts" path="C:\Users\30816\Desktop\anyuer678-improve\04-patches\repos\desktoppet\src\main\event\passiveRuntime.ts">
+        <metrics statements="68" coveredstatements="0" conditionals="32" coveredconditionals="0" methods="29" coveredmethods="0"/>
+        <line num="65" count="0" type="stmt"/>
+        <line num="66" count="0" type="stmt"/>
+        <line num="67" count="0" type="stmt"/>
+        <line num="68" count="0" type="stmt"/>
+        <line num="71" count="0" type="stmt"/>
+        <line num="72" count="0" type="stmt"/>
+        <line num="74" count="0" type="stmt"/>
+        <line num="79" count="0" type="stmt"/>
+        <line num="80" count="0" type="stmt"/>
+        <line num="81" count="0" type="stmt"/>
+        <line num="83" count="0" type="stmt"/>
+        <line num="89" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="90" count="0" type="stmt"/>
+        <line num="91" count="0" type="stmt"/>
+        <line num="92" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="93" count="0" type="stmt"/>
+        <line num="95" count="0" type="stmt"/>
+        <line num="96" count="0" type="stmt"/>
+        <line num="98" count="0" type="stmt"/>
+        <line num="99" count="0" type="stmt"/>
+        <line num="101" count="0" type="stmt"/>
+        <line num="105" count="0" type="stmt"/>
+        <line num="109" count="0" type="stmt"/>
+        <line num="111" count="0" type="stmt"/>
+        <line num="112" count="0" type="stmt"/>
+        <line num="113" count="0" type="stmt"/>
+        <line num="117" count="0" type="stmt"/>
+        <line num="118" count="0" type="stmt"/>
+        <line num="122" count="0" type="stmt"/>
+        <line num="126" count="0" type="stmt"/>
+        <line num="130" count="0" type="stmt"/>
+        <line num="131" count="0" type="stmt"/>
+        <line num="135" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="136" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="137" count="0" type="stmt"/>
+        <line num="138" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="139" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="140" count="0" type="stmt"/>
+        <line num="142" count="0" type="stmt"/>
+        <line num="143" count="0" type="stmt"/>
+        <line num="144" count="0" type="stmt"/>
+        <line num="145" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="148" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="149" count="0" type="stmt"/>
+        <line num="150" count="0" type="stmt"/>
+        <line num="152" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="153" count="0" type="stmt"/>
+        <line num="154" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="155" count="0" type="stmt"/>
+        <line num="156" count="0" type="stmt"/>
+        <line num="157" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="158" count="0" type="stmt"/>
+        <line num="159" count="0" type="stmt"/>
+        <line num="160" count="0" type="stmt"/>
+        <line num="161" count="0" type="stmt"/>
+        <line num="162" count="0" type="stmt"/>
+        <line num="165" count="0" type="stmt"/>
+        <line num="166" count="0" type="stmt"/>
+        <line num="167" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="168" count="0" type="stmt"/>
+        <line num="169" count="0" type="stmt"/>
+        <line num="170" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="171" count="0" type="stmt"/>
+        <line num="172" count="0" type="stmt"/>
+        <line num="173" count="0" type="stmt"/>
+        <line num="174" count="0" type="stmt"/>
+        <line num="175" count="0" type="stmt"/>
+        <line num="178" count="0" type="stmt"/>
+      </file>
+      <file name="passiveStore.ts" path="C:\Users\30816\Desktop\anyuer678-improve\04-patches\repos\desktoppet\src\main\event\passiveStore.ts">
+        <metrics statements="61" coveredstatements="53" conditionals="89" coveredconditionals="71" methods="18" coveredmethods="15"/>
+        <line num="5" count="1" type="stmt"/>
+        <line num="27" count="1" type="stmt"/>
+        <line num="28" count="1" type="stmt"/>
+        <line num="29" count="1" type="stmt"/>
+        <line num="32" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="33" count="0" type="stmt"/>
+        <line num="38" count="9" type="cond" truecount="2" falsecount="0"/>
+        <line num="39" count="6" type="stmt"/>
+        <line num="43" count="0" type="stmt"/>
+        <line num="48" count="12" type="cond" truecount="4" falsecount="0"/>
+        <line num="49" count="4" type="cond" truecount="3" falsecount="1"/>
+        <line num="50" count="4" type="stmt"/>
+        <line num="54" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="55" count="3" type="stmt"/>
+        <line num="65" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="66" count="3" type="stmt"/>
+        <line num="75" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="76" count="3" type="stmt"/>
+        <line num="84" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="85" count="1" type="stmt"/>
+        <line num="86" count="1" type="cond" truecount="2" falsecount="0"/>
+        <line num="89" count="1" type="cond" truecount="2" falsecount="1"/>
+        <line num="92" count="1" type="stmt"/>
+        <line num="96" count="5" type="stmt"/>
+        <line num="97" count="5" type="stmt"/>
+        <line num="98" count="5" type="stmt"/>
+        <line num="104" count="2" type="stmt"/>
+        <line num="113" count="1" type="stmt"/>
+        <line num="114" count="1" type="stmt"/>
+        <line num="115" count="1" type="stmt"/>
+        <line num="116" count="1" type="stmt"/>
+        <line num="117" count="1" type="stmt"/>
+        <line num="119" count="0" type="stmt"/>
+        <line num="124" count="6" type="cond" truecount="3" falsecount="1"/>
+        <line num="125" count="6" type="stmt"/>
+        <line num="126" count="6" type="cond" truecount="1" falsecount="1"/>
+        <line num="127" count="6" type="cond" truecount="1" falsecount="1"/>
+        <line num="128" count="6" type="cond" truecount="1" falsecount="1"/>
+        <line num="130" count="6" type="cond" truecount="5" falsecount="0"/>
+        <line num="131" count="2" type="stmt"/>
+        <line num="133" count="4" type="cond" truecount="4" falsecount="1"/>
+        <line num="134" count="0" type="stmt"/>
+        <line num="136" count="4" type="cond" truecount="1" falsecount="1"/>
+        <line num="137" count="4" type="cond" truecount="1" falsecount="1"/>
+        <line num="138" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="139" count="3" type="cond" truecount="4" falsecount="1"/>
+        <line num="140" count="0" type="stmt"/>
+        <line num="142" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="143" count="2" type="cond" truecount="4" falsecount="1"/>
+        <line num="144" count="0" type="stmt"/>
+        <line num="146" count="2" type="cond" truecount="1" falsecount="1"/>
+        <line num="147" count="2" type="stmt"/>
+        <line num="148" count="1" type="cond" truecount="3" falsecount="1"/>
+        <line num="149" count="1" type="stmt"/>
+        <line num="150" count="1" type="cond" truecount="3" falsecount="1"/>
+        <line num="151" count="0" type="stmt"/>
+        <line num="153" count="1" type="cond" truecount="3" falsecount="1"/>
+        <line num="154" count="1" type="stmt"/>
+        <line num="157" count="1" type="stmt"/>
+        <line num="161" count="11" type="cond" truecount="1" falsecount="1"/>
+        <line num="162" count="11" type="cond" truecount="2" falsecount="0"/>
+      </file>
+      <file name="sourceClassifier.ts" path="C:\Users\30816\Desktop\anyuer678-improve\04-patches\repos\desktoppet\src\main\event\sourceClassifier.ts">
+        <metrics statements="32" coveredstatements="32" conditionals="33" coveredconditionals="29" methods="4" coveredmethods="4"/>
+        <line num="1" count="4" type="stmt"/>
+        <line num="2" count="4" type="stmt"/>
+        <line num="3" count="4" type="stmt"/>
+        <line num="9" count="15" type="stmt"/>
+        <line num="10" count="15" type="cond" truecount="4" falsecount="0"/>
+        <line num="11" count="10" type="cond" truecount="4" falsecount="1"/>
+        <line num="12" count="8" type="cond" truecount="2" falsecount="0"/>
+        <line num="13" count="7" type="cond" truecount="2" falsecount="0"/>
+        <line num="14" count="6" type="stmt"/>
+        <line num="18" count="4" type="stmt"/>
+        <line num="19" count="4" type="stmt"/>
+        <line num="20" count="4" type="stmt"/>
+        <line num="24" count="6" type="stmt"/>
+        <line num="25" count="6" type="stmt"/>
+        <line num="26" count="6" type="stmt"/>
+        <line num="27" count="93" type="stmt"/>
+        <line num="28" count="93" type="cond" truecount="3" falsecount="1"/>
+        <line num="29" count="93" type="cond" truecount="2" falsecount="0"/>
+        <line num="30" count="45" type="stmt"/>
+        <line num="31" count="45" type="cond" truecount="2" falsecount="0"/>
+        <line num="33" count="93" type="stmt"/>
+        <line num="34" count="93" type="stmt"/>
+        <line num="36" count="6" type="stmt"/>
+        <line num="40" count="37" type="cond" truecount="4" falsecount="0"/>
+        <line num="41" count="14" type="stmt"/>
+        <line num="42" count="14" type="cond" truecount="2" falsecount="0"/>
+        <line num="46" count="5" type="stmt"/>
+        <line num="47" count="5" type="stmt"/>
+        <line num="48" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="49" count="4" type="stmt"/>
+        <line num="50" count="4" type="cond" truecount="1" falsecount="1"/>
+        <line num="51" count="4" type="cond" truecount="1" falsecount="1"/>
+      </file>
+      <file name="sourceHub.ts" path="C:\Users\30816\Desktop\anyuer678-improve\04-patches\repos\desktoppet\src\main\event\sourceHub.ts">
+        <metrics statements="17" coveredstatements="17" conditionals="10" coveredconditionals="9" methods="4" coveredmethods="4"/>
+        <line num="33" count="7" type="stmt"/>
+        <line num="36" count="4" type="stmt"/>
+        <line num="37" count="6" type="cond" truecount="2" falsecount="0"/>
+        <line num="38" count="4" type="cond" truecount="1" falsecount="1"/>
+        <line num="39" count="4" type="stmt"/>
+        <line num="40" count="4" type="stmt"/>
+        <line num="45" count="3" type="stmt"/>
+        <line num="46" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="47" count="2" type="stmt"/>
+        <line num="48" count="2" type="stmt"/>
+        <line num="53" count="4" type="stmt"/>
+        <line num="54" count="7" type="cond" truecount="2" falsecount="0"/>
+        <line num="55" count="6" type="cond" truecount="2" falsecount="0"/>
+        <line num="56" count="5" type="stmt"/>
+        <line num="57" count="5" type="stmt"/>
+        <line num="59" count="1" type="stmt"/>
+        <line num="64" count="7" type="stmt"/>
+      </file>
+    </package>
+    <package name="main.event.sources">
+      <metrics statements="145" coveredstatements="118" conditionals="89" coveredconditionals="66" methods="40" coveredmethods="24"/>
+      <file name="clipboardSource.ts" path="C:\Users\30816\Desktop\anyuer678-improve\04-patches\repos\desktoppet\src\main\event\sources\clipboardSource.ts">
+        <metrics statements="43" coveredstatements="38" conditionals="38" coveredconditionals="27" methods="6" coveredmethods="4"/>
+        <line num="6" count="3" type="stmt"/>
+        <line num="12" count="18" type="stmt"/>
+        <line num="13" count="18" type="stmt"/>
+        <line num="14" count="18" type="stmt"/>
+        <line num="15" count="18" type="stmt"/>
+        <line num="18" count="20" type="cond" truecount="1" falsecount="1"/>
+        <line num="19" count="20" type="stmt"/>
+        <line num="23" count="23" type="cond" truecount="1" falsecount="1"/>
+        <line num="24" count="23" type="cond" truecount="1" falsecount="1"/>
+        <line num="25" count="23" type="stmt"/>
+        <line num="26" count="23" type="stmt"/>
+        <line num="27" count="23" type="cond" truecount="3" falsecount="1"/>
+        <line num="28" count="23" type="cond" truecount="3" falsecount="2"/>
+        <line num="29" count="23" type="cond" truecount="3" falsecount="1"/>
+        <line num="30" count="0" type="stmt"/>
+        <line num="31" count="0" type="stmt"/>
+        <line num="33" count="23" type="stmt"/>
+        <line num="34" count="23" type="cond" truecount="2" falsecount="0"/>
+        <line num="36" count="23" type="cond" truecount="2" falsecount="0"/>
+        <line num="37" count="23" type="cond" truecount="2" falsecount="0"/>
+        <line num="38" count="3" type="stmt"/>
+        <line num="39" count="3" type="stmt"/>
+        <line num="41" count="20" type="stmt"/>
+        <line num="42" count="20" type="cond" truecount="1" falsecount="1"/>
+        <line num="43" count="0" type="stmt"/>
+        <line num="44" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="46" count="20" type="stmt"/>
+        <line num="47" count="20" type="stmt"/>
+        <line num="48" count="20" type="cond" truecount="2" falsecount="0"/>
+        <line num="49" count="4" type="stmt"/>
+        <line num="50" count="4" type="stmt"/>
+        <line num="51" count="4" type="stmt"/>
+        <line num="53" count="16" type="cond" truecount="2" falsecount="0"/>
+        <line num="54" count="11" type="stmt"/>
+        <line num="55" count="11" type="stmt"/>
+        <line num="56" count="11" type="stmt"/>
+        <line num="58" count="5" type="stmt"/>
+        <line num="59" count="5" type="cond" truecount="3" falsecount="1"/>
+        <line num="60" count="23" type="stmt"/>
+        <line num="61" count="23" type="stmt"/>
+        <line num="64" count="18" type="stmt"/>
+        <line num="67" count="0" type="stmt"/>
+        <line num="68" count="18" type="stmt"/>
+      </file>
+      <file name="folderSource.ts" path="C:\Users\30816\Desktop\anyuer678-improve\04-patches\repos\desktoppet\src\main\event\sources\folderSource.ts">
+        <metrics statements="58" coveredstatements="50" conditionals="26" coveredconditionals="22" methods="13" coveredmethods="12"/>
+        <line num="5" count="1" type="stmt"/>
+        <line num="8" count="1" type="stmt"/>
+        <line num="11" count="7" type="stmt"/>
+        <line num="12" count="7" type="cond" truecount="2" falsecount="0"/>
+        <line num="13" count="2" type="stmt"/>
+        <line num="14" count="2" type="stmt"/>
+        <line num="15" count="13" type="cond" truecount="3" falsecount="1"/>
+        <line num="16" count="0" type="stmt"/>
+        <line num="17" count="10" type="cond" truecount="2" falsecount="0"/>
+        <line num="19" count="2" type="stmt"/>
+        <line num="21" count="2" type="cond" truecount="1" falsecount="1"/>
+        <line num="22" count="2" type="stmt"/>
+        <line num="26" count="10" type="cond" truecount="4" falsecount="0"/>
+        <line num="27" count="3" type="stmt"/>
+        <line num="29" count="7" type="stmt"/>
+        <line num="33" count="10" type="stmt"/>
+        <line num="34" count="10" type="stmt"/>
+        <line num="36" count="0" type="stmt"/>
+        <line num="44" count="6" type="stmt"/>
+        <line num="45" count="6" type="stmt"/>
+        <line num="46" count="6" type="stmt"/>
+        <line num="47" count="6" type="stmt"/>
+        <line num="50" count="4" type="cond" truecount="1" falsecount="1"/>
+        <line num="51" count="4" type="stmt"/>
+        <line num="52" count="4" type="stmt"/>
+        <line num="53" count="4" type="stmt"/>
+        <line num="54" count="7" type="stmt"/>
+        <line num="55" count="4" type="stmt"/>
+        <line num="56" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="57" count="3" type="stmt"/>
+        <line num="58" count="3" type="stmt"/>
+        <line num="65" count="3" type="stmt"/>
+        <line num="67" count="4" type="stmt"/>
+        <line num="69" count="0" type="stmt"/>
+        <line num="73" count="6" type="stmt"/>
+        <line num="74" count="9" type="cond" truecount="2" falsecount="0"/>
+        <line num="75" count="9" type="stmt"/>
+        <line num="76" count="4" type="stmt"/>
+        <line num="77" count="4" type="stmt"/>
+        <line num="82" count="7" type="stmt"/>
+        <line num="83" count="7" type="stmt"/>
+        <line num="84" count="7" type="cond" truecount="2" falsecount="0"/>
+        <line num="85" count="1" type="stmt"/>
+        <line num="86" count="1" type="stmt"/>
+        <line num="88" count="6" type="stmt"/>
+        <line num="89" count="6" type="stmt"/>
+        <line num="90" count="6" type="stmt"/>
+        <line num="92" count="0" type="stmt"/>
+        <line num="93" count="0" type="stmt"/>
+        <line num="98" count="8" type="cond" truecount="1" falsecount="1"/>
+        <line num="99" count="0" type="stmt"/>
+        <line num="100" count="0" type="stmt"/>
+        <line num="102" count="8" type="cond" truecount="2" falsecount="0"/>
+        <line num="103" count="6" type="stmt"/>
+        <line num="104" count="6" type="stmt"/>
+        <line num="108" count="6" type="stmt"/>
+        <line num="112" count="6" type="stmt"/>
+        <line num="115" count="0" type="stmt"/>
+      </file>
+      <file name="foregroundSource.ts" path="C:\Users\30816\Desktop\anyuer678-improve\04-patches\repos\desktoppet\src\main\event\sources\foregroundSource.ts">
+        <metrics statements="32" coveredstatements="30" conditionals="20" coveredconditionals="17" methods="11" coveredmethods="8"/>
+        <line num="10" count="1" type="stmt"/>
+        <line num="16" count="15" type="stmt"/>
+        <line num="17" count="15" type="stmt"/>
+        <line num="19" count="1" type="stmt"/>
+        <line num="21" count="14" type="cond" truecount="2" falsecount="0"/>
+        <line num="22" count="13" type="stmt"/>
+        <line num="23" count="13" type="stmt"/>
+        <line num="34" count="14" type="stmt"/>
+        <line num="35" count="13" type="cond" truecount="2" falsecount="0"/>
+        <line num="44" count="6" type="stmt"/>
+        <line num="45" count="6" type="stmt"/>
+        <line num="46" count="6" type="stmt"/>
+        <line num="47" count="6" type="stmt"/>
+        <line num="50" count="12" type="cond" truecount="1" falsecount="1"/>
+        <line num="51" count="12" type="cond" truecount="2" falsecount="0"/>
+        <line num="52" count="11" type="stmt"/>
+        <line num="53" count="11" type="cond" truecount="1" falsecount="1"/>
+        <line num="54" count="11" type="stmt"/>
+        <line num="55" count="11" type="stmt"/>
+        <line num="56" count="11" type="stmt"/>
+        <line num="58" count="11" type="cond" truecount="4" falsecount="0"/>
+        <line num="59" count="10" type="stmt"/>
+        <line num="60" count="10" type="stmt"/>
+        <line num="61" count="10" type="stmt"/>
+        <line num="62" count="10" type="cond" truecount="4" falsecount="0"/>
+        <line num="63" count="3" type="stmt"/>
+        <line num="70" count="3" type="stmt"/>
+        <line num="74" count="0" type="stmt"/>
+        <line num="76" count="11" type="stmt"/>
+        <line num="80" count="6" type="stmt"/>
+        <line num="83" count="0" type="stmt"/>
+        <line num="85" count="6" type="stmt"/>
+      </file>
+      <file name="pluginSource.ts" path="C:\Users\30816\Desktop\anyuer678-improve\04-patches\repos\desktoppet\src\main\event\sources\pluginSource.ts">
+        <metrics statements="6" coveredstatements="0" conditionals="2" coveredconditionals="0" methods="5" coveredmethods="0"/>
+        <line num="6" count="0" type="stmt"/>
+        <line num="7" count="0" type="stmt"/>
+        <line num="10" count="0" type="stmt"/>
+        <line num="11" count="0" type="stmt"/>
+        <line num="14" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="15" count="0" type="stmt"/>
+      </file>
+      <file name="systemSource.ts" path="C:\Users\30816\Desktop\anyuer678-improve\04-patches\repos\desktoppet\src\main\event\sources\systemSource.ts">
+        <metrics statements="6" coveredstatements="0" conditionals="3" coveredconditionals="0" methods="5" coveredmethods="0"/>
+        <line num="9" count="0" type="stmt"/>
+        <line num="10" count="0" type="stmt"/>
+        <line num="13" count="0" type="stmt"/>
+        <line num="14" count="0" type="stmt"/>
+        <line num="17" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="18" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="main.ipc">
+      <metrics statements="254" coveredstatements="0" conditionals="151" coveredconditionals="0" methods="86" coveredmethods="0"/>
+      <file name="autoReportIpc.ts" path="C:\Users\30816\Desktop\anyuer678-improve\04-patches\repos\desktoppet\src\main\ipc\autoReportIpc.ts">
+        <metrics statements="6" coveredstatements="0" conditionals="2" coveredconditionals="0" methods="3" coveredmethods="0"/>
+        <line num="12" count="0" type="stmt"/>
+        <line num="13" count="0" type="stmt"/>
+        <line num="14" count="0" type="stmt"/>
+        <line num="15" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="16" count="0" type="stmt"/>
+        <line num="17" count="0" type="stmt"/>
+      </file>
+      <file name="characterIpc.ts" path="C:\Users\30816\Desktop\anyuer678-improve\04-patches\repos\desktoppet\src\main\ipc\characterIpc.ts">
+        <metrics statements="43" coveredstatements="0" conditionals="34" coveredconditionals="0" methods="11" coveredmethods="0"/>
+        <line num="28" count="0" type="stmt"/>
+        <line num="29" count="0" type="stmt"/>
+        <line num="30" count="0" type="stmt"/>
+        <line num="33" count="0" type="stmt"/>
+        <line num="34" count="0" type="stmt"/>
+        <line num="42" count="0" type="stmt"/>
+        <line num="43" count="0" type="stmt"/>
+        <line num="44" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="45" count="0" type="stmt"/>
+        <line num="46" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="48" count="0" type="stmt"/>
+        <line num="49" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="50" count="0" type="stmt"/>
+        <line num="52" count="0" type="stmt"/>
+        <line num="53" count="0" type="stmt"/>
+        <line num="55" count="0" type="stmt"/>
+        <line num="56" count="0" type="stmt"/>
+        <line num="57" count="0" type="stmt"/>
+        <line num="62" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="65" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="66" count="0" type="stmt"/>
+        <line num="68" count="0" type="stmt"/>
+        <line num="69" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="71" count="0" type="stmt"/>
+        <line num="72" count="0" type="stmt"/>
+        <line num="73" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="74" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="75" count="0" type="stmt"/>
+        <line num="76" count="0" type="stmt"/>
+        <line num="77" count="0" type="stmt"/>
+        <line num="79" count="0" type="stmt"/>
+        <line num="81" count="0" type="stmt"/>
+        <line num="82" count="0" type="stmt"/>
+        <line num="83" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="84" count="0" type="stmt"/>
+        <line num="85" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="86" count="0" type="stmt"/>
+        <line num="88" count="0" type="stmt"/>
+        <line num="89" count="0" type="stmt"/>
+        <line num="90" count="0" type="stmt"/>
+        <line num="95" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="98" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="99" count="0" type="stmt"/>
+      </file>
+      <file name="eventsIpc.ts" path="C:\Users\30816\Desktop\anyuer678-improve\04-patches\repos\desktoppet\src\main\ipc\eventsIpc.ts">
+        <metrics statements="8" coveredstatements="0" conditionals="5" coveredconditionals="0" methods="5" coveredmethods="0"/>
+        <line num="15" count="0" type="stmt"/>
+        <line num="16" count="0" type="stmt"/>
+        <line num="17" count="0" type="stmt"/>
+        <line num="18" count="0" type="stmt"/>
+        <line num="19" count="0" type="stmt"/>
+        <line num="21" count="0" type="stmt"/>
+        <line num="22" count="0" type="cond" truecount="0" falsecount="5"/>
+        <line num="23" count="0" type="stmt"/>
+      </file>
+      <file name="index.ts" path="C:\Users\30816\Desktop\anyuer678-improve\04-patches\repos\desktoppet\src\main\ipc\index.ts">
+        <metrics statements="12" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="0"/>
+        <line num="54" count="0" type="stmt"/>
+        <line num="55" count="0" type="stmt"/>
+        <line num="56" count="0" type="stmt"/>
+        <line num="57" count="0" type="stmt"/>
+        <line num="58" count="0" type="stmt"/>
+        <line num="59" count="0" type="stmt"/>
+        <line num="60" count="0" type="stmt"/>
+        <line num="61" count="0" type="stmt"/>
+        <line num="62" count="0" type="stmt"/>
+        <line num="63" count="0" type="stmt"/>
+        <line num="64" count="0" type="stmt"/>
+        <line num="65" count="0" type="stmt"/>
+      </file>
+      <file name="marketIpc.ts" path="C:\Users\30816\Desktop\anyuer678-improve\04-patches\repos\desktoppet\src\main\ipc\marketIpc.ts">
+        <metrics statements="20" coveredstatements="0" conditionals="18" coveredconditionals="0" methods="7" coveredmethods="0"/>
+        <line num="19" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="20" count="0" type="stmt"/>
+        <line num="21" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="22" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="23" count="0" type="cond" truecount="0" falsecount="8"/>
+        <line num="24" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="25" count="0" type="stmt"/>
+        <line num="26" count="0" type="stmt"/>
+        <line num="27" count="0" type="stmt"/>
+        <line num="29" count="0" type="stmt"/>
+        <line num="35" count="0" type="stmt"/>
+        <line num="36" count="0" type="stmt"/>
+        <line num="37" count="0" type="stmt"/>
+        <line num="38" count="0" type="stmt"/>
+        <line num="39" count="0" type="stmt"/>
+        <line num="40" count="0" type="stmt"/>
+        <line num="47" count="0" type="stmt"/>
+        <line num="48" count="0" type="stmt"/>
+        <line num="49" count="0" type="stmt"/>
+        <line num="51" count="0" type="stmt"/>
+      </file>
+      <file name="menuIpc.ts" path="C:\Users\30816\Desktop\anyuer678-improve\04-patches\repos\desktoppet\src\main\ipc\menuIpc.ts">
+        <metrics statements="17" coveredstatements="0" conditionals="4" coveredconditionals="0" methods="11" coveredmethods="0"/>
+        <line num="16" count="0" type="stmt"/>
+        <line num="17" count="0" type="stmt"/>
+        <line num="18" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="19" count="0" type="stmt"/>
+        <line num="20" count="0" type="stmt"/>
+        <line num="21" count="0" type="stmt"/>
+        <line num="25" count="0" type="stmt"/>
+        <line num="26" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="27" count="0" type="stmt"/>
+        <line num="28" count="0" type="stmt"/>
+        <line num="29" count="0" type="stmt"/>
+        <line num="32" count="0" type="stmt"/>
+        <line num="36" count="0" type="stmt"/>
+        <line num="40" count="0" type="stmt"/>
+        <line num="43" count="0" type="stmt"/>
+        <line num="45" count="0" type="stmt"/>
+        <line num="47" count="0" type="stmt"/>
+      </file>
+      <file name="passiveIpc.ts" path="C:\Users\30816\Desktop\anyuer678-improve\04-patches\repos\desktoppet\src\main\ipc\passiveIpc.ts">
+        <metrics statements="9" coveredstatements="0" conditionals="2" coveredconditionals="0" methods="4" coveredmethods="0"/>
+        <line num="14" count="0" type="stmt"/>
+        <line num="15" count="0" type="stmt"/>
+        <line num="16" count="0" type="stmt"/>
+        <line num="17" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="18" count="0" type="stmt"/>
+        <line num="19" count="0" type="stmt"/>
+        <line num="20" count="0" type="stmt"/>
+        <line num="21" count="0" type="stmt"/>
+        <line num="23" count="0" type="stmt"/>
+      </file>
+      <file name="perfIpc.ts" path="C:\Users\30816\Desktop\anyuer678-improve\04-patches\repos\desktoppet\src\main\ipc\perfIpc.ts">
+        <metrics statements="3" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="3" coveredmethods="0"/>
+        <line num="10" count="0" type="stmt"/>
+        <line num="11" count="0" type="stmt"/>
+        <line num="13" count="0" type="stmt"/>
+      </file>
+      <file name="pushIpc.ts" path="C:\Users\30816\Desktop\anyuer678-improve\04-patches\repos\desktoppet\src\main\ipc\pushIpc.ts">
+        <metrics statements="14" coveredstatements="0" conditionals="4" coveredconditionals="0" methods="6" coveredmethods="0"/>
+        <line num="11" count="0" type="stmt"/>
+        <line num="19" count="0" type="stmt"/>
+        <line num="20" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="21" count="0" type="stmt"/>
+        <line num="22" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="23" count="0" type="stmt"/>
+        <line num="25" count="0" type="stmt"/>
+        <line num="27" count="0" type="stmt"/>
+        <line num="29" count="0" type="stmt"/>
+        <line num="30" count="0" type="stmt"/>
+        <line num="31" count="0" type="stmt"/>
+        <line num="33" count="0" type="stmt"/>
+        <line num="34" count="0" type="stmt"/>
+        <line num="35" count="0" type="stmt"/>
+      </file>
+      <file name="scheduleIpc.ts" path="C:\Users\30816\Desktop\anyuer678-improve\04-patches\repos\desktoppet\src\main\ipc\scheduleIpc.ts">
+        <metrics statements="20" coveredstatements="0" conditionals="14" coveredconditionals="0" methods="7" coveredmethods="0"/>
+        <line num="11" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="12" count="0" type="stmt"/>
+        <line num="13" count="0" type="stmt"/>
+        <line num="14" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="15" count="0" type="stmt"/>
+        <line num="16" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="18" count="0" type="stmt"/>
+        <line num="19" count="0" type="stmt"/>
+        <line num="20" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="21" count="0" type="stmt"/>
+        <line num="22" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="24" count="0" type="stmt"/>
+        <line num="25" count="0" type="stmt"/>
+        <line num="26" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="27" count="0" type="stmt"/>
+        <line num="29" count="0" type="stmt"/>
+        <line num="30" count="0" type="stmt"/>
+        <line num="31" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="32" count="0" type="stmt"/>
+        <line num="34" count="0" type="stmt"/>
+      </file>
+      <file name="settingsIpc.ts" path="C:\Users\30816\Desktop\anyuer678-improve\04-patches\repos\desktoppet\src\main\ipc\settingsIpc.ts">
+        <metrics statements="3" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="4" coveredmethods="0"/>
+        <line num="11" count="0" type="stmt"/>
+        <line num="12" count="0" type="stmt"/>
+        <line num="13" count="0" type="stmt"/>
+      </file>
+      <file name="statsIpc.ts" path="C:\Users\30816\Desktop\anyuer678-improve\04-patches\repos\desktoppet\src\main\ipc\statsIpc.ts">
+        <metrics statements="84" coveredstatements="0" conditionals="60" coveredconditionals="0" methods="15" coveredmethods="0"/>
+        <line num="30" count="0" type="stmt"/>
+        <line num="31" count="0" type="stmt"/>
+        <line num="33" count="0" type="stmt"/>
+        <line num="34" count="0" type="stmt"/>
+        <line num="35" count="0" type="stmt"/>
+        <line num="41" count="0" type="stmt"/>
+        <line num="42" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="43" count="0" type="stmt"/>
+        <line num="45" count="0" type="stmt"/>
+        <line num="46" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="47" count="0" type="stmt"/>
+        <line num="49" count="0" type="stmt"/>
+        <line num="50" count="0" type="cond" truecount="0" falsecount="6"/>
+        <line num="51" count="0" type="stmt"/>
+        <line num="53" count="0" type="stmt"/>
+        <line num="55" count="0" type="stmt"/>
+        <line num="56" count="0" type="cond" truecount="0" falsecount="6"/>
+        <line num="57" count="0" type="stmt"/>
+        <line num="59" count="0" type="stmt"/>
+        <line num="61" count="0" type="stmt"/>
+        <line num="65" count="0" type="stmt"/>
+        <line num="66" count="0" type="stmt"/>
+        <line num="67" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="68" count="0" type="stmt"/>
+        <line num="69" count="0" type="stmt"/>
+        <line num="70" count="0" type="stmt"/>
+        <line num="71" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="72" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="73" count="0" type="stmt"/>
+        <line num="74" count="0" type="stmt"/>
+        <line num="76" count="0" type="stmt"/>
+        <line num="77" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="78" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="79" count="0" type="stmt"/>
+        <line num="80" count="0" type="stmt"/>
+        <line num="85" count="0" type="stmt"/>
+        <line num="86" count="0" type="stmt"/>
+        <line num="88" count="0" type="stmt"/>
+        <line num="89" count="0" type="stmt"/>
+        <line num="92" count="0" type="stmt"/>
+        <line num="93" count="0" type="stmt"/>
+        <line num="94" count="0" type="stmt"/>
+        <line num="95" count="0" type="stmt"/>
+        <line num="96" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="97" count="0" type="stmt"/>
+        <line num="99" count="0" type="stmt"/>
+        <line num="100" count="0" type="stmt"/>
+        <line num="103" count="0" type="stmt"/>
+        <line num="104" count="0" type="cond" truecount="0" falsecount="6"/>
+        <line num="105" count="0" type="stmt"/>
+        <line num="107" count="0" type="stmt"/>
+        <line num="108" count="0" type="stmt"/>
+        <line num="113" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="114" count="0" type="stmt"/>
+        <line num="115" count="0" type="stmt"/>
+        <line num="116" count="0" type="stmt"/>
+        <line num="117" count="0" type="stmt"/>
+        <line num="118" count="0" type="stmt"/>
+        <line num="120" count="0" type="stmt"/>
+        <line num="121" count="0" type="stmt"/>
+        <line num="124" count="0" type="stmt"/>
+        <line num="125" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="126" count="0" type="stmt"/>
+        <line num="128" count="0" type="stmt"/>
+        <line num="129" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="130" count="0" type="stmt"/>
+        <line num="131" count="0" type="stmt"/>
+        <line num="132" count="0" type="stmt"/>
+        <line num="137" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="138" count="0" type="stmt"/>
+        <line num="139" count="0" type="stmt"/>
+        <line num="140" count="0" type="stmt"/>
+        <line num="141" count="0" type="stmt"/>
+        <line num="143" count="0" type="stmt"/>
+        <line num="144" count="0" type="stmt"/>
+        <line num="147" count="0" type="stmt"/>
+        <line num="148" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="149" count="0" type="stmt"/>
+        <line num="151" count="0" type="stmt"/>
+        <line num="152" count="0" type="stmt"/>
+        <line num="154" count="0" type="stmt"/>
+        <line num="155" count="0" type="stmt"/>
+        <line num="156" count="0" type="stmt"/>
+        <line num="157" count="0" type="stmt"/>
+      </file>
+      <file name="windowIpc.ts" path="C:\Users\30816\Desktop\anyuer678-improve\04-patches\repos\desktoppet\src\main\ipc\windowIpc.ts">
+        <metrics statements="15" coveredstatements="0" conditionals="8" coveredconditionals="0" methods="9" coveredmethods="0"/>
+        <line num="14" count="0" type="stmt"/>
+        <line num="15" count="0" type="stmt"/>
+        <line num="16" count="0" type="stmt"/>
+        <line num="17" count="0" type="stmt"/>
+        <line num="18" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="19" count="0" type="cond" truecount="0" falsecount="6"/>
+        <line num="20" count="0" type="stmt"/>
+        <line num="21" count="0" type="stmt"/>
+        <line num="23" count="0" type="stmt"/>
+        <line num="24" count="0" type="stmt"/>
+        <line num="25" count="0" type="stmt"/>
+        <line num="26" count="0" type="stmt"/>
+        <line num="27" count="0" type="stmt"/>
+        <line num="29" count="0" type="stmt"/>
+        <line num="30" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="main.logging">
+      <metrics statements="31" coveredstatements="29" conditionals="16" coveredconditionals="15" methods="9" coveredmethods="9"/>
+      <file name="logger.ts" path="C:\Users\30816\Desktop\anyuer678-improve\04-patches\repos\desktoppet\src\main\logging\logger.ts">
+        <metrics statements="31" coveredstatements="29" conditionals="16" coveredconditionals="15" methods="9" coveredmethods="9"/>
+        <line num="5" count="1" type="stmt"/>
+        <line num="20" count="18" type="stmt"/>
+        <line num="21" count="18" type="stmt"/>
+        <line num="22" count="18" type="stmt"/>
+        <line num="23" count="18" type="stmt"/>
+        <line num="28" count="10" type="stmt"/>
+        <line num="32" count="20" type="cond" truecount="2" falsecount="0"/>
+        <line num="33" count="2" type="stmt"/>
+        <line num="34" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="45" count="6" type="cond" truecount="2" falsecount="0"/>
+        <line num="46" count="1" type="stmt"/>
+        <line num="50" count="10" type="stmt"/>
+        <line num="51" count="10" type="stmt"/>
+        <line num="52" count="10" type="stmt"/>
+        <line num="53" count="10" type="stmt"/>
+        <line num="54" count="10" type="stmt"/>
+        <line num="56" count="10" type="stmt"/>
+        <line num="57" count="10" type="cond" truecount="3" falsecount="1"/>
+        <line num="58" count="0" type="stmt"/>
+        <line num="59" count="0" type="stmt"/>
+        <line num="64" count="10" type="stmt"/>
+        <line num="69" count="10" type="stmt"/>
+        <line num="70" count="10" type="cond" truecount="2" falsecount="0"/>
+        <line num="71" count="1" type="stmt"/>
+        <line num="72" count="9" type="cond" truecount="2" falsecount="0"/>
+        <line num="73" count="1" type="stmt"/>
+        <line num="75" count="8" type="stmt"/>
+        <line num="79" count="6" type="stmt"/>
+        <line num="80" count="8" type="stmt"/>
+        <line num="81" count="1" type="stmt"/>
+        <line num="82" count="1" type="stmt"/>
+      </file>
+    </package>
+    <package name="main.market">
+      <metrics statements="28" coveredstatements="27" conditionals="31" coveredconditionals="29" methods="5" coveredmethods="5"/>
+      <file name="catalog.ts" path="C:\Users\30816\Desktop\anyuer678-improve\04-patches\repos\desktoppet\src\main\market\catalog.ts">
+        <metrics statements="28" coveredstatements="27" conditionals="31" coveredconditionals="29" methods="5" coveredmethods="5"/>
+        <line num="9" count="11" type="cond" truecount="3" falsecount="1"/>
+        <line num="10" count="11" type="stmt"/>
+        <line num="11" count="11" type="cond" truecount="2" falsecount="0"/>
+        <line num="20" count="2" type="stmt"/>
+        <line num="22" count="9" type="stmt"/>
+        <line num="40" count="13" type="stmt"/>
+        <line num="41" count="13" type="cond" truecount="2" falsecount="0"/>
+        <line num="42" count="12" type="stmt"/>
+        <line num="43" count="12" type="stmt"/>
+        <line num="44" count="12" type="cond" truecount="2" falsecount="0"/>
+        <line num="45" count="10" type="stmt"/>
+        <line num="46" count="10" type="stmt"/>
+        <line num="47" count="11" type="stmt"/>
+        <line num="48" count="11" type="cond" truecount="2" falsecount="0"/>
+        <line num="49" count="9" type="stmt"/>
+        <line num="50" count="9" type="cond" truecount="2" falsecount="0"/>
+        <line num="51" count="8" type="stmt"/>
+        <line num="53" count="10" type="stmt"/>
+        <line num="55" count="1" type="stmt"/>
+        <line num="61" count="7" type="cond" truecount="2" falsecount="0"/>
+        <line num="74" count="5" type="stmt"/>
+        <line num="75" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="76" count="4" type="stmt"/>
+        <line num="77" count="4" type="cond" truecount="1" falsecount="1"/>
+        <line num="78" count="0" type="stmt"/>
+        <line num="80" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="81" count="1" type="stmt"/>
+        <line num="83" count="3" type="stmt"/>
+      </file>
+    </package>
+    <package name="main.monitor">
+      <metrics statements="71" coveredstatements="47" conditionals="44" coveredconditionals="27" methods="17" coveredmethods="11"/>
+      <file name="battery.ts" path="C:\Users\30816\Desktop\anyuer678-improve\04-patches\repos\desktoppet\src\main\monitor\battery.ts">
+        <metrics statements="36" coveredstatements="20" conditionals="24" coveredconditionals="9" methods="10" coveredmethods="7"/>
+        <line num="12" count="15" type="cond" truecount="2" falsecount="0"/>
+        <line num="13" count="7" type="cond" truecount="2" falsecount="0"/>
+        <line num="14" count="5" type="stmt"/>
+        <line num="19" count="0" type="stmt"/>
+        <line num="20" count="0" type="stmt"/>
+        <line num="30" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="31" count="0" type="stmt"/>
+        <line num="32" count="0" type="stmt"/>
+        <line num="34" count="0" type="stmt"/>
+        <line num="35" count="0" type="stmt"/>
+        <line num="36" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="37" count="0" type="stmt"/>
+        <line num="38" count="0" type="stmt"/>
+        <line num="39" count="0" type="stmt"/>
+        <line num="40" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="41" count="0" type="stmt"/>
+        <line num="42" count="0" type="stmt"/>
+        <line num="44" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="46" count="0" type="stmt"/>
+        <line num="69" count="3" type="stmt"/>
+        <line num="70" count="3" type="stmt"/>
+        <line num="71" count="3" type="stmt"/>
+        <line num="73" count="3" type="stmt"/>
+        <line num="74" count="4" type="cond" truecount="1" falsecount="1"/>
+        <line num="75" count="4" type="stmt"/>
+        <line num="76" count="4" type="stmt"/>
+        <line num="77" count="4" type="stmt"/>
+        <line num="79" count="1" type="stmt"/>
+        <line num="81" count="4" type="stmt"/>
+        <line num="85" count="3" type="stmt"/>
+        <line num="87" count="3" type="cond" truecount="1" falsecount="1"/>
+        <line num="88" count="3" type="stmt"/>
+        <line num="89" count="3" type="stmt"/>
+        <line num="92" count="3" type="cond" truecount="1" falsecount="1"/>
+        <line num="93" count="3" type="stmt"/>
+        <line num="96" count="4" type="stmt"/>
+      </file>
+      <file name="systemMonitor.ts" path="C:\Users\30816\Desktop\anyuer678-improve\04-patches\repos\desktoppet\src\main\monitor\systemMonitor.ts">
+        <metrics statements="35" coveredstatements="27" conditionals="20" coveredconditionals="18" methods="7" coveredmethods="4"/>
+        <line num="29" count="1" type="stmt"/>
+        <line num="38" count="4" type="cond" truecount="4" falsecount="0"/>
+        <line num="39" count="2" type="stmt"/>
+        <line num="40" count="2" type="stmt"/>
+        <line num="41" count="2" type="stmt"/>
+        <line num="42" count="3" type="stmt"/>
+        <line num="43" count="3" type="stmt"/>
+        <line num="45" count="3" type="stmt"/>
+        <line num="46" count="3" type="stmt"/>
+        <line num="47" count="3" type="stmt"/>
+        <line num="48" count="3" type="stmt"/>
+        <line num="50" count="2" type="cond" truecount="1" falsecount="1"/>
+        <line num="51" count="2" type="stmt"/>
+        <line num="55" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="56" count="1" type="stmt"/>
+        <line num="59" count="1" type="stmt"/>
+        <line num="68" count="10" type="stmt"/>
+        <line num="69" count="10" type="stmt"/>
+        <line num="70" count="10" type="cond" truecount="2" falsecount="0"/>
+        <line num="71" count="1" type="stmt"/>
+        <line num="73" count="10" type="cond" truecount="2" falsecount="0"/>
+        <line num="74" count="1" type="stmt"/>
+        <line num="76" count="10" type="cond" truecount="2" falsecount="0"/>
+        <line num="77" count="1" type="stmt"/>
+        <line num="79" count="10" type="cond" truecount="4" falsecount="0"/>
+        <line num="80" count="1" type="stmt"/>
+        <line num="82" count="10" type="stmt"/>
+        <line num="87" count="0" type="stmt"/>
+        <line num="88" count="0" type="stmt"/>
+        <line num="89" count="0" type="stmt"/>
+        <line num="90" count="0" type="stmt"/>
+        <line num="91" count="0" type="stmt"/>
+        <line num="92" count="0" type="stmt"/>
+        <line num="93" count="0" type="stmt"/>
+        <line num="94" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="main.perf">
+      <metrics statements="29" coveredstatements="11" conditionals="8" coveredconditionals="2" methods="13" coveredmethods="8"/>
+      <file name="perfReport.ts" path="C:\Users\30816\Desktop\anyuer678-improve\04-patches\repos\desktoppet\src\main\perf\perfReport.ts">
+        <metrics statements="11" coveredstatements="11" conditionals="2" coveredconditionals="2" methods="8" coveredmethods="8"/>
+        <line num="4" count="3" type="stmt"/>
+        <line num="5" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="6" count="1" type="stmt"/>
+        <line num="8" count="2" type="stmt"/>
+        <line num="9" count="16" type="stmt"/>
+        <line num="10" count="2" type="stmt"/>
+        <line num="12" count="4" type="stmt"/>
+        <line num="13" count="4" type="stmt"/>
+        <line num="14" count="4" type="stmt"/>
+        <line num="15" count="4" type="stmt"/>
+        <line num="16" count="4" type="stmt"/>
+      </file>
+      <file name="perfRuntime.ts" path="C:\Users\30816\Desktop\anyuer678-improve\04-patches\repos\desktoppet\src\main\perf\perfRuntime.ts">
+        <metrics statements="18" coveredstatements="0" conditionals="6" coveredconditionals="0" methods="5" coveredmethods="0"/>
+        <line num="20" count="0" type="stmt"/>
+        <line num="23" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="27" count="0" type="stmt"/>
+        <line num="28" count="0" type="stmt"/>
+        <line num="29" count="0" type="stmt"/>
+        <line num="30" count="0" type="stmt"/>
+        <line num="31" count="0" type="stmt"/>
+        <line num="32" count="0" type="stmt"/>
+        <line num="33" count="0" type="stmt"/>
+        <line num="34" count="0" type="stmt"/>
+        <line num="35" count="0" type="stmt"/>
+        <line num="36" count="0" type="stmt"/>
+        <line num="37" count="0" type="stmt"/>
+        <line num="38" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="40" count="0" type="stmt"/>
+        <line num="42" count="0" type="stmt"/>
+        <line num="49" count="0" type="stmt"/>
+        <line num="52" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="main.plugin">
+      <metrics statements="42" coveredstatements="40" conditionals="45" coveredconditionals="39" methods="6" coveredmethods="6"/>
+      <file name="pluginHost.ts" path="C:\Users\30816\Desktop\anyuer678-improve\04-patches\repos\desktoppet\src\main\plugin\pluginHost.ts">
+        <metrics statements="42" coveredstatements="40" conditionals="45" coveredconditionals="39" methods="6" coveredmethods="6"/>
+        <line num="8" count="14" type="cond" truecount="3" falsecount="1"/>
+        <line num="9" count="14" type="stmt"/>
+        <line num="10" count="14" type="cond" truecount="4" falsecount="0"/>
+        <line num="11" count="13" type="cond" truecount="5" falsecount="0"/>
+        <line num="12" count="12" type="cond" truecount="4" falsecount="0"/>
+        <line num="13" count="11" type="stmt"/>
+        <line num="18" count="11" type="cond" truecount="3" falsecount="1"/>
+        <line num="19" count="11" type="stmt"/>
+        <line num="20" count="11" type="cond" truecount="4" falsecount="0"/>
+        <line num="21" count="10" type="cond" truecount="3" falsecount="1"/>
+        <line num="22" count="10" type="cond" truecount="1" falsecount="1"/>
+        <line num="23" count="10" type="cond" truecount="1" falsecount="1"/>
+        <line num="24" count="10" type="cond" truecount="1" falsecount="1"/>
+        <line num="25" count="10" type="stmt"/>
+        <line num="26" count="10" type="stmt"/>
+        <line num="27" count="14" type="stmt"/>
+        <line num="28" count="14" type="cond" truecount="2" falsecount="0"/>
+        <line num="29" count="11" type="stmt"/>
+        <line num="31" count="10" type="stmt"/>
+        <line num="41" count="11" type="cond" truecount="2" falsecount="0"/>
+        <line num="42" count="10" type="stmt"/>
+        <line num="44" count="10" type="stmt"/>
+        <line num="45" count="10" type="stmt"/>
+        <line num="47" count="0" type="stmt"/>
+        <line num="49" count="10" type="stmt"/>
+        <line num="50" count="14" type="stmt"/>
+        <line num="51" count="14" type="stmt"/>
+        <line num="52" count="14" type="cond" truecount="2" falsecount="0"/>
+        <line num="54" count="0" type="stmt"/>
+        <line num="56" count="13" type="stmt"/>
+        <line num="57" count="13" type="cond" truecount="2" falsecount="0"/>
+        <line num="58" count="12" type="stmt"/>
+        <line num="59" count="12" type="stmt"/>
+        <line num="60" count="12" type="stmt"/>
+        <line num="61" count="12" type="cond" truecount="2" falsecount="0"/>
+        <line num="66" count="10" type="stmt"/>
+        <line num="71" count="3" type="stmt"/>
+        <line num="72" count="3" type="stmt"/>
+        <line num="73" count="3" type="stmt"/>
+        <line num="74" count="4" type="stmt"/>
+        <line num="83" count="3" type="stmt"/>
+        <line num="88" count="1" type="stmt"/>
+      </file>
+    </package>
+    <package name="main.protocol">
+      <metrics statements="22" coveredstatements="0" conditionals="4" coveredconditionals="0" methods="2" coveredmethods="0"/>
+      <file name="petProtocol.ts" path="C:\Users\30816\Desktop\anyuer678-improve\04-patches\repos\desktoppet\src\main\protocol\petProtocol.ts">
+        <metrics statements="22" coveredstatements="0" conditionals="4" coveredconditionals="0" methods="2" coveredmethods="0"/>
+        <line num="10" count="0" type="stmt"/>
+        <line num="17" count="0" type="stmt"/>
+        <line num="27" count="0" type="stmt"/>
+        <line num="28" count="0" type="stmt"/>
+        <line num="29" count="0" type="stmt"/>
+        <line num="30" count="0" type="stmt"/>
+        <line num="31" count="0" type="stmt"/>
+        <line num="32" count="0" type="stmt"/>
+        <line num="33" count="0" type="stmt"/>
+        <line num="34" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="35" count="0" type="stmt"/>
+        <line num="36" count="0" type="stmt"/>
+        <line num="38" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="39" count="0" type="stmt"/>
+        <line num="40" count="0" type="stmt"/>
+        <line num="42" count="0" type="stmt"/>
+        <line num="43" count="0" type="stmt"/>
+        <line num="44" count="0" type="stmt"/>
+        <line num="45" count="0" type="stmt"/>
+        <line num="46" count="0" type="stmt"/>
+        <line num="48" count="0" type="stmt"/>
+        <line num="49" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="main.push">
+      <metrics statements="146" coveredstatements="103" conditionals="99" coveredconditionals="77" methods="34" coveredmethods="19"/>
+      <file name="httpService.ts" path="C:\Users\30816\Desktop\anyuer678-improve\04-patches\repos\desktoppet\src\main\push\httpService.ts">
+        <metrics statements="63" coveredstatements="59" conditionals="38" coveredconditionals="31" methods="15" coveredmethods="13"/>
+        <line num="11" count="2" type="stmt"/>
+        <line num="14" count="2" type="stmt"/>
+        <line num="28" count="4" type="stmt"/>
+        <line num="29" count="4" type="stmt"/>
+        <line num="30" count="4" type="stmt"/>
+        <line num="31" count="4" type="stmt"/>
+        <line num="32" count="4" type="stmt"/>
+        <line num="33" count="4" type="stmt"/>
+        <line num="34" count="4" type="cond" truecount="4" falsecount="0"/>
+        <line num="35" count="1" type="stmt"/>
+        <line num="36" count="1" type="stmt"/>
+        <line num="37" count="1" type="stmt"/>
+        <line num="38" count="1" type="stmt"/>
+        <line num="40" count="3" type="cond" truecount="1" falsecount="1"/>
+        <line num="42" count="4" type="stmt"/>
+        <line num="43" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="45" count="4" type="stmt"/>
+        <line num="55" count="9" type="stmt"/>
+        <line num="56" count="9" type="cond" truecount="1" falsecount="1"/>
+        <line num="57" count="9" type="stmt"/>
+        <line num="58" count="9" type="stmt"/>
+        <line num="61" count="9" type="cond" truecount="2" falsecount="0"/>
+        <line num="62" count="1" type="stmt"/>
+        <line num="63" count="1" type="stmt"/>
+        <line num="65" count="8" type="cond" truecount="2" falsecount="0"/>
+        <line num="66" count="1" type="stmt"/>
+        <line num="69" count="7" type="stmt"/>
+        <line num="70" count="7" type="cond" truecount="2" falsecount="0"/>
+        <line num="71" count="1" type="stmt"/>
+        <line num="73" count="6" type="cond" truecount="2" falsecount="0"/>
+        <line num="74" count="2" type="stmt"/>
+        <line num="77" count="4" type="stmt"/>
+        <line num="78" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="79" count="1" type="stmt"/>
+        <line num="82" count="3" type="stmt"/>
+        <line num="83" count="3" type="stmt"/>
+        <line num="85" count="1" type="stmt"/>
+        <line num="87" count="2" type="stmt"/>
+        <line num="88" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="89" count="1" type="stmt"/>
+        <line num="91" count="1" type="stmt"/>
+        <line num="92" count="1" type="stmt"/>
+        <line num="97" count="11" type="stmt"/>
+        <line num="98" count="9" type="stmt"/>
+        <line num="99" count="0" type="stmt"/>
+        <line num="100" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="101" count="0" type="stmt"/>
+        <line num="103" count="0" type="stmt"/>
+        <line num="106" count="11" type="stmt"/>
+        <line num="107" count="11" type="stmt"/>
+        <line num="108" count="11" type="stmt"/>
+        <line num="109" count="11" type="stmt"/>
+        <line num="110" count="11" type="stmt"/>
+        <line num="111" count="11" type="stmt"/>
+        <line num="112" count="11" type="cond" truecount="3" falsecount="1"/>
+        <line num="114" count="11" type="cond" truecount="4" falsecount="1"/>
+        <line num="117" count="11" type="stmt"/>
+        <line num="121" count="13" type="stmt"/>
+        <line num="122" count="13" type="cond" truecount="2" falsecount="0"/>
+        <line num="123" count="2" type="stmt"/>
+        <line num="124" count="2" type="stmt"/>
+        <line num="126" count="11" type="stmt"/>
+        <line num="127" count="11" type="stmt"/>
+      </file>
+      <file name="pushApi.ts" path="C:\Users\30816\Desktop\anyuer678-improve\04-patches\repos\desktoppet\src\main\push\pushApi.ts">
+        <metrics statements="28" coveredstatements="28" conditionals="32" coveredconditionals="32" methods="3" coveredmethods="3"/>
+        <line num="13" count="4" type="stmt"/>
+        <line num="14" count="4" type="stmt"/>
+        <line num="15" count="4" type="stmt"/>
+        <line num="16" count="4" type="stmt"/>
+        <line num="24" count="21" type="cond" truecount="5" falsecount="0"/>
+        <line num="25" count="4" type="stmt"/>
+        <line num="27" count="17" type="stmt"/>
+        <line num="28" count="17" type="cond" truecount="4" falsecount="0"/>
+        <line num="29" count="4" type="stmt"/>
+        <line num="31" count="13" type="cond" truecount="2" falsecount="0"/>
+        <line num="32" count="2" type="stmt"/>
+        <line num="34" count="11" type="cond" truecount="4" falsecount="0"/>
+        <line num="35" count="1" type="stmt"/>
+        <line num="37" count="10" type="cond" truecount="2" falsecount="0"/>
+        <line num="38" count="1" type="stmt"/>
+        <line num="40" count="9" type="stmt"/>
+        <line num="41" count="9" type="cond" truecount="4" falsecount="0"/>
+        <line num="42" count="4" type="cond" truecount="5" falsecount="0"/>
+        <line num="43" count="2" type="stmt"/>
+        <line num="45" count="2" type="stmt"/>
+        <line num="47" count="7" type="stmt"/>
+        <line num="52" count="14" type="cond" truecount="2" falsecount="0"/>
+        <line num="53" count="13" type="cond" truecount="2" falsecount="0"/>
+        <line num="54" count="10" type="stmt"/>
+        <line num="55" count="10" type="stmt"/>
+        <line num="56" count="10" type="cond" truecount="2" falsecount="0"/>
+        <line num="57" count="9" type="stmt"/>
+        <line num="62" count="4" type="stmt"/>
+      </file>
+      <file name="pushApiStore.ts" path="C:\Users\30816\Desktop\anyuer678-improve\04-patches\repos\desktoppet\src\main\push\pushApiStore.ts">
+        <metrics statements="17" coveredstatements="16" conditionals="14" coveredconditionals="14" methods="3" coveredmethods="3"/>
+        <line num="5" count="1" type="stmt"/>
+        <line num="11" count="5" type="stmt"/>
+        <line num="12" count="5" type="stmt"/>
+        <line num="13" count="5" type="stmt"/>
+        <line num="18" count="2" type="stmt"/>
+        <line num="23" count="2" type="stmt"/>
+        <line num="24" count="2" type="stmt"/>
+        <line num="25" count="2" type="stmt"/>
+        <line num="26" count="2" type="stmt"/>
+        <line num="27" count="2" type="stmt"/>
+        <line num="29" count="0" type="stmt"/>
+        <line num="34" count="6" type="cond" truecount="4" falsecount="0"/>
+        <line num="35" count="5" type="stmt"/>
+        <line num="36" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="37" count="4" type="cond" truecount="4" falsecount="0"/>
+        <line num="38" count="3" type="stmt"/>
+        <line num="40" count="1" type="stmt"/>
+      </file>
+      <file name="pushRuntime.ts" path="C:\Users\30816\Desktop\anyuer678-improve\04-patches\repos\desktoppet\src\main\push\pushRuntime.ts">
+        <metrics statements="38" coveredstatements="0" conditionals="15" coveredconditionals="0" methods="13" coveredmethods="0"/>
+        <line num="45" count="0" type="stmt"/>
+        <line num="46" count="0" type="stmt"/>
+        <line num="47" count="0" type="stmt"/>
+        <line num="50" count="0" type="stmt"/>
+        <line num="54" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="55" count="0" type="stmt"/>
+        <line num="56" count="0" type="stmt"/>
+        <line num="61" count="0" type="stmt"/>
+        <line num="62" count="0" type="stmt"/>
+        <line num="63" count="0" type="stmt"/>
+        <line num="64" count="0" type="stmt"/>
+        <line num="71" count="0" type="stmt"/>
+        <line num="78" count="0" type="stmt"/>
+        <line num="79" count="0" type="stmt"/>
+        <line num="80" count="0" type="stmt"/>
+        <line num="84" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="85" count="0" type="stmt"/>
+        <line num="86" count="0" type="stmt"/>
+        <line num="88" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="89" count="0" type="stmt"/>
+        <line num="90" count="0" type="stmt"/>
+        <line num="91" count="0" type="stmt"/>
+        <line num="96" count="0" type="stmt"/>
+        <line num="97" count="0" type="stmt"/>
+        <line num="98" count="0" type="stmt"/>
+        <line num="99" count="0" type="stmt"/>
+        <line num="100" count="0" type="stmt"/>
+        <line num="102" count="0" type="stmt"/>
+        <line num="106" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="107" count="0" type="stmt"/>
+        <line num="108" count="0" type="stmt"/>
+        <line num="109" count="0" type="stmt"/>
+        <line num="110" count="0" type="stmt"/>
+        <line num="115" count="0" type="stmt"/>
+        <line num="116" count="0" type="stmt"/>
+        <line num="119" count="0" type="stmt"/>
+        <line num="123" count="0" type="stmt"/>
+        <line num="126" count="0" type="cond" truecount="0" falsecount="2"/>
+      </file>
+    </package>
+    <package name="main.runtime">
+      <metrics statements="18" coveredstatements="0" conditionals="4" coveredconditionals="0" methods="5" coveredmethods="0"/>
+      <file name="tick.ts" path="C:\Users\30816\Desktop\anyuer678-improve\04-patches\repos\desktoppet\src\main\runtime\tick.ts">
+        <metrics statements="18" coveredstatements="0" conditionals="4" coveredconditionals="0" methods="5" coveredmethods="0"/>
+        <line num="28" count="0" type="stmt"/>
+        <line num="29" count="0" type="stmt"/>
+        <line num="32" count="0" type="stmt"/>
+        <line num="33" count="0" type="stmt"/>
+        <line num="35" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="36" count="0" type="stmt"/>
+        <line num="38" count="0" type="stmt"/>
+        <line num="39" count="0" type="stmt"/>
+        <line num="40" count="0" type="stmt"/>
+        <line num="41" count="0" type="stmt"/>
+        <line num="42" count="0" type="stmt"/>
+        <line num="43" count="0" type="stmt"/>
+        <line num="45" count="0" type="stmt"/>
+        <line num="46" count="0" type="stmt"/>
+        <line num="49" count="0" type="stmt"/>
+        <line num="52" count="0" type="stmt"/>
+        <line num="53" count="0" type="stmt"/>
+        <line num="54" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="main.schedule">
+      <metrics statements="156" coveredstatements="126" conditionals="144" coveredconditionals="111" methods="49" coveredmethods="33"/>
+      <file name="scheduleRuntime.ts" path="C:\Users\30816\Desktop\anyuer678-improve\04-patches\repos\desktoppet\src\main\schedule\scheduleRuntime.ts">
+        <metrics statements="22" coveredstatements="0" conditionals="4" coveredconditionals="0" methods="8" coveredmethods="0"/>
+        <line num="11" count="0" type="stmt"/>
+        <line num="12" count="0" type="stmt"/>
+        <line num="37" count="0" type="stmt"/>
+        <line num="38" count="0" type="stmt"/>
+        <line num="41" count="0" type="stmt"/>
+        <line num="42" count="0" type="stmt"/>
+        <line num="49" count="0" type="stmt"/>
+        <line num="50" count="0" type="stmt"/>
+        <line num="51" count="0" type="stmt"/>
+        <line num="52" count="0" type="stmt"/>
+        <line num="53" count="0" type="stmt"/>
+        <line num="55" count="0" type="stmt"/>
+        <line num="59" count="0" type="stmt"/>
+        <line num="60" count="0" type="stmt"/>
+        <line num="61" count="0" type="stmt"/>
+        <line num="65" count="0" type="stmt"/>
+        <line num="69" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="70" count="0" type="stmt"/>
+        <line num="71" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="72" count="0" type="stmt"/>
+        <line num="78" count="0" type="stmt"/>
+        <line num="81" count="0" type="stmt"/>
+      </file>
+      <file name="scheduler.ts" path="C:\Users\30816\Desktop\anyuer678-improve\04-patches\repos\desktoppet\src\main\schedule\scheduler.ts">
+        <metrics statements="89" coveredstatements="83" conditionals="58" coveredconditionals="44" methods="28" coveredmethods="20"/>
+        <line num="12" count="14" type="cond" truecount="2" falsecount="0"/>
+        <line num="13" count="13" type="stmt"/>
+        <line num="15" count="13" type="cond" truecount="4" falsecount="0"/>
+        <line num="17" count="11" type="stmt"/>
+        <line num="18" count="11" type="stmt"/>
+        <line num="19" count="11" type="stmt"/>
+        <line num="21" count="11" type="cond" truecount="2" falsecount="0"/>
+        <line num="23" count="3" type="stmt"/>
+        <line num="24" count="3" type="cond" truecount="1" falsecount="1"/>
+        <line num="25" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="27" count="8" type="cond" truecount="2" falsecount="0"/>
+        <line num="28" count="6" type="stmt"/>
+        <line num="31" count="2" type="cond" truecount="1" falsecount="1"/>
+        <line num="32" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="33" count="1" type="stmt"/>
+        <line num="35" count="0" type="stmt"/>
+        <line num="40" count="4" type="stmt"/>
+        <line num="41" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="42" count="2" type="stmt"/>
+        <line num="50" count="4" type="cond" truecount="1" falsecount="1"/>
+        <line num="79" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="80" count="5" type="cond" truecount="1" falsecount="1"/>
+        <line num="81" count="5" type="stmt"/>
+        <line num="83" count="5" type="cond" truecount="1" falsecount="0"/>
+        <line num="84" count="5" type="stmt"/>
+        <line num="85" count="5" type="cond" truecount="1" falsecount="1"/>
+        <line num="86" count="5" type="stmt"/>
+        <line num="87" count="5" type="stmt"/>
+        <line num="88" count="5" type="stmt"/>
+        <line num="89" count="5" type="stmt"/>
+        <line num="90" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="91" count="3" type="stmt"/>
+        <line num="97" count="3" type="stmt"/>
+        <line num="99" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="101" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="102" count="3" type="stmt"/>
+        <line num="103" count="3" type="stmt"/>
+        <line num="104" count="3" type="stmt"/>
+        <line num="106" count="5" type="stmt"/>
+        <line num="109" count="5" type="stmt"/>
+        <line num="112" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="113" count="1" type="stmt"/>
+        <line num="116" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="117" count="1" type="stmt"/>
+        <line num="118" count="1" type="stmt"/>
+        <line num="127" count="5" type="stmt"/>
+        <line num="130" count="5" type="stmt"/>
+        <line num="131" count="5" type="stmt"/>
+        <line num="133" count="5" type="stmt"/>
+        <line num="137" count="7" type="stmt"/>
+        <line num="141" count="4" type="stmt"/>
+        <line num="142" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="143" count="3" type="stmt"/>
+        <line num="144" count="3" type="stmt"/>
+        <line num="145" count="3" type="stmt"/>
+        <line num="146" count="3" type="stmt"/>
+        <line num="150" count="1" type="stmt"/>
+        <line num="151" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="152" count="1" type="stmt"/>
+        <line num="153" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="154" count="1" type="stmt"/>
+        <line num="155" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="156" count="1" type="stmt"/>
+        <line num="157" count="1" type="stmt"/>
+        <line num="161" count="1" type="stmt"/>
+        <line num="162" count="1" type="stmt"/>
+        <line num="163" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="164" count="1" type="stmt"/>
+        <line num="165" count="1" type="stmt"/>
+        <line num="169" count="1" type="stmt"/>
+        <line num="170" count="1" type="stmt"/>
+        <line num="171" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="172" count="1" type="stmt"/>
+        <line num="173" count="1" type="stmt"/>
+        <line num="175" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="176" count="1" type="stmt"/>
+        <line num="177" count="1" type="stmt"/>
+        <line num="182" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="183" count="1" type="stmt"/>
+        <line num="184" count="0" type="stmt"/>
+        <line num="186" count="0" type="stmt"/>
+        <line num="191" count="0" type="stmt"/>
+        <line num="194" count="1" type="stmt"/>
+        <line num="195" count="1" type="stmt"/>
+        <line num="200" count="0" type="stmt"/>
+        <line num="205" count="0" type="stmt"/>
+        <line num="210" count="6" type="stmt"/>
+        <line num="211" count="6" type="stmt"/>
+        <line num="212" count="6" type="stmt"/>
+      </file>
+      <file name="store.ts" path="C:\Users\30816\Desktop\anyuer678-improve\04-patches\repos\desktoppet\src\main\schedule\store.ts">
+        <metrics statements="45" coveredstatements="43" conditionals="82" coveredconditionals="67" methods="13" coveredmethods="13"/>
+        <line num="7" count="9" type="stmt"/>
+        <line num="12" count="23" type="stmt"/>
+        <line num="17" count="6" type="stmt"/>
+        <line num="22" count="15" type="cond" truecount="3" falsecount="1"/>
+        <line num="23" count="15" type="cond" truecount="4" falsecount="0"/>
+        <line num="24" count="13" type="cond" truecount="2" falsecount="0"/>
+        <line num="25" count="12" type="cond" truecount="3" falsecount="1"/>
+        <line num="26" count="12" type="cond" truecount="4" falsecount="1"/>
+        <line num="27" count="0" type="stmt"/>
+        <line num="29" count="12" type="cond" truecount="2" falsecount="0"/>
+        <line num="30" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="32" count="10" type="cond" truecount="2" falsecount="0"/>
+        <line num="34" count="9" type="cond" truecount="2" falsecount="0"/>
+        <line num="35" count="4" type="cond" truecount="1" falsecount="1"/>
+        <line num="36" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="37" count="4" type="cond" truecount="5" falsecount="0"/>
+        <line num="38" count="1" type="stmt"/>
+        <line num="41" count="7" type="cond" truecount="1" falsecount="1"/>
+        <line num="42" count="7" type="stmt"/>
+        <line num="46" count="3" type="stmt"/>
+        <line num="50" count="8" type="stmt"/>
+        <line num="51" count="8" type="stmt"/>
+        <line num="52" count="8" type="cond" truecount="1" falsecount="1"/>
+        <line num="53" count="3" type="stmt"/>
+        <line num="55" count="5" type="stmt"/>
+        <line num="61" count="8" type="stmt"/>
+        <line num="62" count="8" type="stmt"/>
+        <line num="63" count="8" type="stmt"/>
+        <line num="65" count="0" type="stmt"/>
+        <line num="71" count="13" type="cond" truecount="3" falsecount="1"/>
+        <line num="72" count="13" type="stmt"/>
+        <line num="73" count="13" type="cond" truecount="3" falsecount="1"/>
+        <line num="74" count="13" type="cond" truecount="4" falsecount="0"/>
+        <line num="75" count="11" type="cond" truecount="1" falsecount="1"/>
+        <line num="76" count="11" type="cond" truecount="4" falsecount="1"/>
+        <line num="77" count="11" type="cond" truecount="1" falsecount="1"/>
+        <line num="78" count="11" type="cond" truecount="7" falsecount="0"/>
+        <line num="79" count="1" type="stmt"/>
+        <line num="81" count="10" type="cond" truecount="1" falsecount="1"/>
+        <line num="82" count="10" type="cond" truecount="2" falsecount="2"/>
+        <line num="83" count="10" type="cond" truecount="1" falsecount="1"/>
+        <line num="84" count="10" type="stmt"/>
+        <line num="89" count="9" type="stmt"/>
+        <line num="104" count="2" type="stmt"/>
+        <line num="117" count="5" type="stmt"/>
+      </file>
+    </package>
+    <package name="main.settings">
+      <metrics statements="41" coveredstatements="0" conditionals="17" coveredconditionals="0" methods="12" coveredmethods="0"/>
+      <file name="settingsController.ts" path="C:\Users\30816\Desktop\anyuer678-improve\04-patches\repos\desktoppet\src\main\settings\settingsController.ts">
+        <metrics statements="41" coveredstatements="0" conditionals="17" coveredconditionals="0" methods="12" coveredmethods="0"/>
+        <line num="7" count="0" type="stmt"/>
+        <line num="8" count="0" type="stmt"/>
+        <line num="41" count="0" type="stmt"/>
+        <line num="45" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="46" count="0" type="stmt"/>
+        <line num="49" count="0" type="stmt"/>
+        <line num="50" count="0" type="stmt"/>
+        <line num="51" count="0" type="stmt"/>
+        <line num="53" count="0" type="stmt"/>
+        <line num="56" count="0" type="stmt"/>
+        <line num="57" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="58" count="0" type="stmt"/>
+        <line num="60" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="61" count="0" type="stmt"/>
+        <line num="64" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="65" count="0" type="stmt"/>
+        <line num="66" count="0" type="cond" truecount="0" falsecount="5"/>
+        <line num="67" count="0" type="stmt"/>
+        <line num="70" count="0" type="stmt"/>
+        <line num="71" count="0" type="stmt"/>
+        <line num="73" count="0" type="stmt"/>
+        <line num="74" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="75" count="0" type="stmt"/>
+        <line num="77" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="78" count="0" type="stmt"/>
+        <line num="80" count="0" type="stmt"/>
+        <line num="83" count="0" type="stmt"/>
+        <line num="84" count="0" type="stmt"/>
+        <line num="85" count="0" type="stmt"/>
+        <line num="86" count="0" type="stmt"/>
+        <line num="89" count="0" type="stmt"/>
+        <line num="90" count="0" type="stmt"/>
+        <line num="91" count="0" type="stmt"/>
+        <line num="92" count="0" type="stmt"/>
+        <line num="93" count="0" type="stmt"/>
+        <line num="96" count="0" type="stmt"/>
+        <line num="97" count="0" type="stmt"/>
+        <line num="100" count="0" type="stmt"/>
+        <line num="101" count="0" type="stmt"/>
+        <line num="104" count="0" type="stmt"/>
+        <line num="105" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="main.stats">
+      <metrics statements="413" coveredstatements="307" conditionals="304" coveredconditionals="222" methods="109" coveredmethods="75"/>
+      <file name="achievements.ts" path="C:\Users\30816\Desktop\anyuer678-improve\04-patches\repos\desktoppet\src\main\stats\achievements.ts">
+        <metrics statements="25" coveredstatements="25" conditionals="14" coveredconditionals="11" methods="6" coveredmethods="6"/>
+        <line num="4" count="1" type="stmt"/>
+        <line num="5" count="1" type="stmt"/>
+        <line num="18" count="6" type="stmt"/>
+        <line num="22" count="3" type="stmt"/>
+        <line num="24" count="1749" type="stmt"/>
+        <line num="25" count="8" type="stmt"/>
+        <line num="26" count="8" type="stmt"/>
+        <line num="27" count="3" type="stmt"/>
+        <line num="28" count="3" type="stmt"/>
+        <line num="30" count="3" type="stmt"/>
+        <line num="31" count="3" type="stmt"/>
+        <line num="32" count="3" type="stmt"/>
+        <line num="33" count="3" type="stmt"/>
+        <line num="34" count="3" type="stmt"/>
+        <line num="35" count="8" type="cond" truecount="3" falsecount="1"/>
+        <line num="36" count="8" type="cond" truecount="1" falsecount="1"/>
+        <line num="37" count="8" type="stmt"/>
+        <line num="40" count="3" type="stmt"/>
+        <line num="41" count="3" type="stmt"/>
+        <line num="42" count="30" type="cond" truecount="2" falsecount="0"/>
+        <line num="44" count="3" type="cond" truecount="1" falsecount="1"/>
+        <line num="46" count="3" type="stmt"/>
+        <line num="47" count="27" type="cond" truecount="4" falsecount="0"/>
+        <line num="48" count="27" type="stmt"/>
+        <line num="51" count="3" type="stmt"/>
+      </file>
+      <file name="autoReport.ts" path="C:\Users\30816\Desktop\anyuer678-improve\04-patches\repos\desktoppet\src\main\stats\autoReport.ts">
+        <metrics statements="18" coveredstatements="18" conditionals="16" coveredconditionals="14" methods="6" coveredmethods="6"/>
+        <line num="7" count="21" type="stmt"/>
+        <line num="12" count="10" type="stmt"/>
+        <line num="16" count="12" type="stmt"/>
+        <line num="17" count="12" type="cond" truecount="2" falsecount="0"/>
+        <line num="18" count="9" type="cond" truecount="2" falsecount="0"/>
+        <line num="19" count="7" type="stmt"/>
+        <line num="23" count="12" type="stmt"/>
+        <line num="24" count="12" type="cond" truecount="2" falsecount="0"/>
+        <line num="25" count="11" type="cond" truecount="2" falsecount="0"/>
+        <line num="26" count="3" type="stmt"/>
+        <line num="35" count="4" type="stmt"/>
+        <line num="36" count="4" type="cond" truecount="1" falsecount="1"/>
+        <line num="37" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="38" count="2" type="stmt"/>
+        <line num="47" count="3" type="stmt"/>
+        <line num="48" count="3" type="cond" truecount="1" falsecount="1"/>
+        <line num="49" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="50" count="2" type="stmt"/>
+      </file>
+      <file name="autoReportRuntime.ts" path="C:\Users\30816\Desktop\anyuer678-improve\04-patches\repos\desktoppet\src\main\stats\autoReportRuntime.ts">
+        <metrics statements="36" coveredstatements="0" conditionals="10" coveredconditionals="0" methods="12" coveredmethods="0"/>
+        <line num="32" count="0" type="stmt"/>
+        <line num="33" count="0" type="stmt"/>
+        <line num="34" count="0" type="stmt"/>
+        <line num="38" count="0" type="stmt"/>
+        <line num="39" count="0" type="stmt"/>
+        <line num="44" count="0" type="stmt"/>
+        <line num="45" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="46" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="47" count="0" type="stmt"/>
+        <line num="48" count="0" type="stmt"/>
+        <line num="49" count="0" type="stmt"/>
+        <line num="50" count="0" type="stmt"/>
+        <line num="51" count="0" type="stmt"/>
+        <line num="53" count="0" type="stmt"/>
+        <line num="56" count="0" type="stmt"/>
+        <line num="61" count="0" type="stmt"/>
+        <line num="62" count="0" type="stmt"/>
+        <line num="63" count="0" type="stmt"/>
+        <line num="64" count="0" type="stmt"/>
+        <line num="65" count="0" type="stmt"/>
+        <line num="66" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="68" count="0" type="stmt"/>
+        <line num="71" count="0" type="stmt"/>
+        <line num="72" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="73" count="0" type="stmt"/>
+        <line num="75" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="76" count="0" type="stmt"/>
+        <line num="78" count="0" type="stmt"/>
+        <line num="79" count="0" type="stmt"/>
+        <line num="80" count="0" type="stmt"/>
+        <line num="81" count="0" type="stmt"/>
+        <line num="83" count="0" type="stmt"/>
+        <line num="84" count="0" type="stmt"/>
+        <line num="88" count="0" type="stmt"/>
+        <line num="89" count="0" type="stmt"/>
+        <line num="92" count="0" type="stmt"/>
+      </file>
+      <file name="autoReportStore.ts" path="C:\Users\30816\Desktop\anyuer678-improve\04-patches\repos\desktoppet\src\main\stats\autoReportStore.ts">
+        <metrics statements="26" coveredstatements="25" conditionals="44" coveredconditionals="40" methods="4" coveredmethods="4"/>
+        <line num="6" count="1" type="stmt"/>
+        <line num="12" count="4" type="stmt"/>
+        <line num="13" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="14" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="15" count="4" type="stmt"/>
+        <line num="25" count="4" type="stmt"/>
+        <line num="26" count="4" type="stmt"/>
+        <line num="27" count="4" type="stmt"/>
+        <line num="32" count="2" type="stmt"/>
+        <line num="37" count="1" type="stmt"/>
+        <line num="38" count="1" type="stmt"/>
+        <line num="39" count="1" type="stmt"/>
+        <line num="41" count="0" type="stmt"/>
+        <line num="46" count="5" type="cond" truecount="3" falsecount="1"/>
+        <line num="47" count="5" type="stmt"/>
+        <line num="48" count="5" type="stmt"/>
+        <line num="49" count="8" type="stmt"/>
+        <line num="50" count="8" type="cond" truecount="3" falsecount="1"/>
+        <line num="51" count="8" type="cond" truecount="2" falsecount="0"/>
+        <line num="52" count="7" type="cond" truecount="2" falsecount="0"/>
+        <line num="58" count="1" type="stmt"/>
+        <line num="60" count="6" type="cond" truecount="2" falsecount="0"/>
+        <line num="66" count="1" type="stmt"/>
+        <line num="68" count="5" type="cond" truecount="4" falsecount="0"/>
+        <line num="69" count="1" type="stmt"/>
+        <line num="72" count="1" type="stmt"/>
+      </file>
+      <file name="autoReportTicker.ts" path="C:\Users\30816\Desktop\anyuer678-improve\04-patches\repos\desktoppet\src\main\stats\autoReportTicker.ts">
+        <metrics statements="19" coveredstatements="14" conditionals="13" coveredconditionals="8" methods="6" coveredmethods="2"/>
+        <line num="17" count="6" type="cond" truecount="1" falsecount="1"/>
+        <line num="18" count="6" type="stmt"/>
+        <line num="19" count="6" type="stmt"/>
+        <line num="21" count="6" type="cond" truecount="1" falsecount="0"/>
+        <line num="22" count="9" type="stmt"/>
+        <line num="23" count="9" type="cond" truecount="2" falsecount="0"/>
+        <line num="24" count="8" type="stmt"/>
+        <line num="26" count="8" type="cond" truecount="2" falsecount="0"/>
+        <line num="27" count="5" type="stmt"/>
+        <line num="28" count="5" type="stmt"/>
+        <line num="30" count="8" type="cond" truecount="2" falsecount="0"/>
+        <line num="31" count="2" type="stmt"/>
+        <line num="32" count="2" type="stmt"/>
+        <line num="36" count="6" type="stmt"/>
+        <line num="39" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="40" count="0" type="stmt"/>
+        <line num="43" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="44" count="0" type="stmt"/>
+        <line num="45" count="0" type="stmt"/>
+      </file>
+      <file name="dailyStats.ts" path="C:\Users\30816\Desktop\anyuer678-improve\04-patches\repos\desktoppet\src\main\stats\dailyStats.ts">
+        <metrics statements="155" coveredstatements="151" conditionals="123" coveredconditionals="108" methods="37" coveredmethods="37"/>
+        <line num="6" count="3595" type="stmt"/>
+        <line num="7" count="3595" type="stmt"/>
+        <line num="8" count="3595" type="stmt"/>
+        <line num="12" count="82" type="stmt"/>
+        <line num="13" count="82" type="cond" truecount="3" falsecount="0"/>
+        <line num="21" count="42" type="stmt"/>
+        <line num="22" count="42" type="stmt"/>
+        <line num="23" count="42" type="cond" truecount="4" falsecount="0"/>
+        <line num="24" count="40" type="cond" truecount="2" falsecount="0"/>
+        <line num="25" count="39" type="cond" truecount="2" falsecount="0"/>
+        <line num="26" count="38" type="stmt"/>
+        <line num="27" count="38" type="stmt"/>
+        <line num="28" count="38" type="cond" truecount="2" falsecount="0"/>
+        <line num="29" count="36" type="stmt"/>
+        <line num="30" count="36" type="stmt"/>
+        <line num="31" count="36" type="stmt"/>
+        <line num="32" count="3518" type="stmt"/>
+        <line num="33" count="3518" type="stmt"/>
+        <line num="35" count="36" type="stmt"/>
+        <line num="40" count="28" type="stmt"/>
+        <line num="41" count="2768" type="stmt"/>
+        <line num="42" count="2768" type="cond" truecount="2" falsecount="0"/>
+        <line num="47" count="52" type="stmt"/>
+        <line num="48" count="52" type="cond" truecount="2" falsecount="0"/>
+        <line num="49" count="50" type="stmt"/>
+        <line num="50" count="1200" type="stmt"/>
+        <line num="51" count="1200" type="cond" truecount="3" falsecount="1"/>
+        <line num="53" count="50" type="stmt"/>
+        <line num="57" count="3541" type="stmt"/>
+        <line num="73" count="7" type="cond" truecount="2" falsecount="0"/>
+        <line num="74" count="6" type="stmt"/>
+        <line num="75" count="6" type="cond" truecount="1" falsecount="1"/>
+        <line num="76" count="7" type="stmt"/>
+        <line num="82" count="144" type="cond" truecount="2" falsecount="0"/>
+        <line num="88" count="2" type="stmt"/>
+        <line num="96" count="1" type="stmt"/>
+        <line num="107" count="64" type="stmt"/>
+        <line num="112" count="3628" type="cond" truecount="5" falsecount="0"/>
+        <line num="113" count="4" type="stmt"/>
+        <line num="115" count="3624" type="stmt"/>
+        <line num="119" count="52" type="cond" truecount="3" falsecount="1"/>
+        <line num="120" count="52" type="stmt"/>
+        <line num="122" count="52" type="cond" truecount="3" falsecount="1"/>
+        <line num="124" count="52" type="cond" truecount="4" falsecount="0"/>
+        <line num="127" count="52" type="cond" truecount="4" falsecount="0"/>
+        <line num="128" count="208" type="cond" truecount="5" falsecount="0"/>
+        <line num="129" count="52" type="stmt"/>
+        <line num="132" count="50" type="stmt"/>
+        <line num="135" count="2" type="stmt"/>
+        <line num="146" count="66" type="stmt"/>
+        <line num="147" count="66" type="stmt"/>
+        <line num="148" count="66" type="stmt"/>
+        <line num="150" count="14" type="stmt"/>
+        <line num="155" count="45" type="stmt"/>
+        <line num="156" count="45" type="stmt"/>
+        <line num="157" count="45" type="stmt"/>
+        <line num="159" count="0" type="stmt"/>
+        <line num="165" count="3" type="stmt"/>
+        <line num="166" count="3" type="stmt"/>
+        <line num="167" count="3" type="cond" truecount="1" falsecount="1"/>
+        <line num="168" count="3" type="stmt"/>
+        <line num="169" count="3" type="cond" truecount="1" falsecount="1"/>
+        <line num="171" count="3" type="stmt"/>
+        <line num="172" count="3" type="cond" truecount="1" falsecount="1"/>
+        <line num="173" count="3" type="stmt"/>
+        <line num="174" count="9" type="cond" truecount="2" falsecount="0"/>
+        <line num="175" count="3" type="stmt"/>
+        <line num="176" count="3" type="stmt"/>
+        <line num="177" count="3" type="stmt"/>
+        <line num="178" count="3" type="stmt"/>
+        <line num="179" count="1" type="cond" truecount="2" falsecount="0"/>
+        <line num="181" count="3" type="stmt"/>
+        <line num="182" count="3" type="stmt"/>
+        <line num="183" count="3" type="stmt"/>
+        <line num="185" count="3" type="stmt"/>
+        <line num="188" count="6" type="stmt"/>
+        <line num="193" count="8" type="stmt"/>
+        <line num="194" count="21" type="stmt"/>
+        <line num="195" count="21" type="stmt"/>
+        <line num="197" count="33" type="stmt"/>
+        <line num="198" count="8" type="stmt"/>
+        <line num="199" count="8" type="cond" truecount="2" falsecount="0"/>
+        <line num="200" count="8" type="stmt"/>
+        <line num="201" count="17" type="stmt"/>
+        <line num="202" count="17" type="stmt"/>
+        <line num="204" count="8" type="stmt"/>
+        <line num="209" count="730" type="stmt"/>
+        <line num="210" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="211" count="1" type="stmt"/>
+        <line num="212" count="1" type="stmt"/>
+        <line num="213" count="1" type="stmt"/>
+        <line num="214" count="3" type="stmt"/>
+        <line num="215" count="3" type="stmt"/>
+        <line num="216" count="3" type="cond" truecount="4" falsecount="0"/>
+        <line num="218" count="1" type="stmt"/>
+        <line num="229" count="2" type="stmt"/>
+        <line num="230" count="2" type="stmt"/>
+        <line num="231" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="232" count="1" type="stmt"/>
+        <line num="233" count="1" type="stmt"/>
+        <line num="243" count="2" type="stmt"/>
+        <line num="248" count="2" type="stmt"/>
+        <line num="249" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="250" count="1" type="stmt"/>
+        <line num="251" count="1" type="stmt"/>
+        <line num="252" count="1" type="stmt"/>
+        <line num="254" count="0" type="stmt"/>
+        <line num="260" count="2" type="cond" truecount="1" falsecount="1"/>
+        <line num="261" count="2" type="stmt"/>
+        <line num="262" count="2" type="stmt"/>
+        <line num="263" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="264" count="2" type="stmt"/>
+        <line num="265" count="2" type="stmt"/>
+        <line num="266" count="2" type="stmt"/>
+        <line num="271" count="2" type="stmt"/>
+        <line num="279" count="5" type="stmt"/>
+        <line num="280" count="5" type="cond" truecount="4" falsecount="0"/>
+        <line num="281" count="4" type="stmt"/>
+        <line num="282" count="4" type="stmt"/>
+        <line num="283" count="4" type="stmt"/>
+        <line num="284" count="4" type="stmt"/>
+        <line num="285" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="286" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="287" count="2" type="stmt"/>
+        <line num="288" count="2" type="cond" truecount="1" falsecount="1"/>
+        <line num="289" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="290" count="1" type="stmt"/>
+        <line num="295" count="14" type="cond" truecount="1" falsecount="1"/>
+        <line num="296" count="14" type="cond" truecount="2" falsecount="0"/>
+        <line num="304" count="4" type="cond" truecount="1" falsecount="1"/>
+        <line num="305" count="4" type="stmt"/>
+        <line num="306" count="4" type="stmt"/>
+        <line num="307" count="4" type="stmt"/>
+        <line num="308" count="4" type="stmt"/>
+        <line num="309" count="6" type="cond" truecount="2" falsecount="0"/>
+        <line num="310" count="4" type="stmt"/>
+        <line num="311" count="4" type="stmt"/>
+        <line num="312" count="4" type="stmt"/>
+        <line num="313" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="315" count="1" type="stmt"/>
+        <line num="316" count="1" type="stmt"/>
+        <line num="317" count="1" type="stmt"/>
+        <line num="318" count="1" type="cond" truecount="3" falsecount="3"/>
+        <line num="319" count="1" type="stmt"/>
+        <line num="320" count="1" type="stmt"/>
+        <line num="322" count="0" type="stmt"/>
+        <line num="325" count="0" type="stmt"/>
+        <line num="328" count="3" type="stmt"/>
+        <line num="330" count="4" type="stmt"/>
+        <line num="332" count="4" type="stmt"/>
+        <line num="337" count="2" type="stmt"/>
+        <line num="338" count="2" type="stmt"/>
+        <line num="339" count="2" type="stmt"/>
+        <line num="340" count="731" type="stmt"/>
+        <line num="341" count="731" type="cond" truecount="2" falsecount="0"/>
+      </file>
+      <file name="report.ts" path="C:\Users\30816\Desktop\anyuer678-improve\04-patches\repos\desktoppet\src\main\stats\report.ts">
+        <metrics statements="55" coveredstatements="55" conditionals="32" coveredconditionals="29" methods="14" coveredmethods="12"/>
+        <line num="7" count="16" type="stmt"/>
+        <line num="8" count="16" type="stmt"/>
+        <line num="9" count="16" type="stmt"/>
+        <line num="10" count="16" type="stmt"/>
+        <line num="11" count="16" type="stmt"/>
+        <line num="12" count="212" type="cond" truecount="2" falsecount="0"/>
+        <line num="13" count="7" type="stmt"/>
+        <line num="14" count="7" type="stmt"/>
+        <line num="15" count="7" type="stmt"/>
+        <line num="16" count="7" type="stmt"/>
+        <line num="18" count="16" type="stmt"/>
+        <line num="29" count="8" type="stmt"/>
+        <line num="30" count="8" type="stmt"/>
+        <line num="32" count="8" type="cond" truecount="2" falsecount="0"/>
+        <line num="35" count="8" type="stmt"/>
+        <line num="46" count="6" type="stmt"/>
+        <line num="47" count="12" type="stmt"/>
+        <line num="48" count="12" type="stmt"/>
+        <line num="49" count="12" type="cond" truecount="2" falsecount="0"/>
+        <line num="51" count="6" type="stmt"/>
+        <line num="52" count="6" type="cond" truecount="3" falsecount="1"/>
+        <line num="53" count="6" type="stmt"/>
+        <line num="72" count="6" type="stmt"/>
+        <line num="76" count="1" type="stmt"/>
+        <line num="80" count="6" type="stmt"/>
+        <line num="84" count="12" type="stmt"/>
+        <line num="85" count="12" type="stmt"/>
+        <line num="86" count="12" type="cond" truecount="2" falsecount="0"/>
+        <line num="87" count="12" type="stmt"/>
+        <line num="91" count="3" type="stmt"/>
+        <line num="96" count="6" type="stmt"/>
+        <line num="101" count="6" type="stmt"/>
+        <line num="106" count="6" type="stmt"/>
+        <line num="107" count="6" type="stmt"/>
+        <line num="108" count="6" type="stmt"/>
+        <line num="109" count="6" type="stmt"/>
+        <line num="119" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="120" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="121" count="5" type="stmt"/>
+        <line num="122" count="5" type="stmt"/>
+        <line num="123" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="125" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="128" count="5" type="stmt"/>
+        <line num="129" count="5" type="stmt"/>
+        <line num="130" count="5" type="stmt"/>
+        <line num="131" count="5" type="stmt"/>
+        <line num="132" count="74" type="cond" truecount="2" falsecount="0"/>
+        <line num="133" count="4" type="cond" truecount="0" falsecount="2"/>
+        <line num="135" count="5" type="stmt"/>
+        <line num="137" count="5" type="stmt"/>
+        <line num="145" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="146" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="147" count="5" type="stmt"/>
+        <line num="148" count="5" type="stmt"/>
+        <line num="149" count="5" type="stmt"/>
+      </file>
+      <file name="spreadsheet.ts" path="C:\Users\30816\Desktop\anyuer678-improve\04-patches\repos\desktoppet\src\main\stats\spreadsheet.ts">
+        <metrics statements="19" coveredstatements="19" conditionals="16" coveredconditionals="12" methods="8" coveredmethods="8"/>
+        <line num="6" count="4" type="stmt"/>
+        <line num="14" count="4" type="stmt"/>
+        <line num="19" count="4" type="stmt"/>
+        <line num="20" count="4" type="stmt"/>
+        <line num="21" count="2" type="cond" truecount="1" falsecount="1"/>
+        <line num="22" count="2" type="stmt"/>
+        <line num="26" count="1" type="stmt"/>
+        <line num="27" count="1" type="stmt"/>
+        <line num="28" count="1" type="stmt"/>
+        <line num="29" count="11" type="cond" truecount="1" falsecount="1"/>
+        <line num="30" count="1" type="stmt"/>
+        <line num="31" count="1" type="stmt"/>
+        <line num="32" count="2" type="stmt"/>
+        <line num="34" count="1" type="stmt"/>
+        <line num="35" count="3" type="cond" truecount="1" falsecount="1"/>
+        <line num="36" count="1" type="stmt"/>
+        <line num="37" count="1" type="stmt"/>
+        <line num="38" count="1" type="stmt"/>
+        <line num="40" count="1" type="stmt"/>
+      </file>
+      <file name="statsRuntime.ts" path="C:\Users\30816\Desktop\anyuer678-improve\04-patches\repos\desktoppet\src\main\stats\statsRuntime.ts">
+        <metrics statements="60" coveredstatements="0" conditionals="36" coveredconditionals="0" methods="16" coveredmethods="0"/>
+        <line num="20" count="0" type="stmt"/>
+        <line num="60" count="0" type="stmt"/>
+        <line num="61" count="0" type="stmt"/>
+        <line num="62" count="0" type="stmt"/>
+        <line num="63" count="0" type="stmt"/>
+        <line num="64" count="0" type="stmt"/>
+        <line num="65" count="0" type="stmt"/>
+        <line num="66" count="0" type="stmt"/>
+        <line num="69" count="0" type="stmt"/>
+        <line num="76" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="77" count="0" type="stmt"/>
+        <line num="78" count="0" type="stmt"/>
+        <line num="79" count="0" type="stmt"/>
+        <line num="80" count="0" type="stmt"/>
+        <line num="81" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="86" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="87" count="0" type="stmt"/>
+        <line num="88" count="0" type="stmt"/>
+        <line num="92" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="93" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="94" count="0" type="stmt"/>
+        <line num="95" count="0" type="stmt"/>
+        <line num="96" count="0" type="stmt"/>
+        <line num="97" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="98" count="0" type="stmt"/>
+        <line num="102" count="0" type="stmt"/>
+        <line num="103" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="104" count="0" type="stmt"/>
+        <line num="105" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="106" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="107" count="0" type="stmt"/>
+        <line num="108" count="0" type="stmt"/>
+        <line num="109" count="0" type="stmt"/>
+        <line num="110" count="0" type="stmt"/>
+        <line num="111" count="0" type="stmt"/>
+        <line num="113" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="114" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="115" count="0" type="stmt"/>
+        <line num="116" count="0" type="stmt"/>
+        <line num="120" count="0" type="stmt"/>
+        <line num="121" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="122" count="0" type="stmt"/>
+        <line num="123" count="0" type="stmt"/>
+        <line num="124" count="0" type="stmt"/>
+        <line num="125" count="0" type="stmt"/>
+        <line num="126" count="0" type="stmt"/>
+        <line num="130" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="134" count="0" type="stmt"/>
+        <line num="135" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="136" count="0" type="stmt"/>
+        <line num="141" count="0" type="stmt"/>
+        <line num="142" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="143" count="0" type="stmt"/>
+        <line num="147" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="148" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="151" count="0" type="stmt"/>
+        <line num="157" count="0" type="stmt"/>
+        <line num="158" count="0" type="stmt"/>
+        <line num="159" count="0" type="stmt"/>
+        <line num="160" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="main.storage">
+      <metrics statements="9" coveredstatements="8" conditionals="27" coveredconditionals="27" methods="2" coveredmethods="2"/>
+      <file name="settingsStore.ts" path="C:\Users\30816\Desktop\anyuer678-improve\04-patches\repos\desktoppet\src\main\storage\settingsStore.ts">
+        <metrics statements="9" coveredstatements="8" conditionals="27" coveredconditionals="27" methods="2" coveredmethods="2"/>
+        <line num="6" count="1" type="stmt"/>
+        <line num="17" count="7" type="stmt"/>
+        <line num="18" count="7" type="stmt"/>
+        <line num="19" count="7" type="stmt"/>
+        <line num="44" count="2" type="stmt"/>
+        <line num="49" count="1" type="stmt"/>
+        <line num="50" count="1" type="stmt"/>
+        <line num="51" count="1" type="stmt"/>
+        <line num="53" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="main.window">
+      <metrics statements="90" coveredstatements="6" conditionals="36" coveredconditionals="8" methods="35" coveredmethods="3"/>
+      <file name="placement.ts" path="C:\Users\30816\Desktop\anyuer678-improve\04-patches\repos\desktoppet\src\main\window\placement.ts">
+        <metrics statements="6" coveredstatements="6" conditionals="8" coveredconditionals="8" methods="3" coveredmethods="3"/>
+        <line num="9" count="10" type="cond" truecount="4" falsecount="0"/>
+        <line num="18" count="7" type="cond" truecount="2" falsecount="0"/>
+        <line num="19" count="6" type="stmt"/>
+        <line num="20" count="7" type="stmt"/>
+        <line num="21" count="6" type="cond" truecount="2" falsecount="0"/>
+        <line num="22" count="2" type="stmt"/>
+      </file>
+      <file name="shortcuts.ts" path="C:\Users\30816\Desktop\anyuer678-improve\04-patches\repos\desktoppet\src\main\window\shortcuts.ts">
+        <metrics statements="18" coveredstatements="0" conditionals="10" coveredconditionals="0" methods="8" coveredmethods="0"/>
+        <line num="19" count="0" type="stmt"/>
+        <line num="20" count="0" type="stmt"/>
+        <line num="21" count="0" type="stmt"/>
+        <line num="25" count="0" type="stmt"/>
+        <line num="26" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="27" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="28" count="0" type="stmt"/>
+        <line num="30" count="0" type="stmt"/>
+        <line num="31" count="0" type="stmt"/>
+        <line num="38" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="39" count="0" type="stmt"/>
+        <line num="40" count="0" type="stmt"/>
+        <line num="45" count="0" type="stmt"/>
+        <line num="46" count="0" type="stmt"/>
+        <line num="51" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="52" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="54" count="0" type="stmt"/>
+        <line num="58" count="0" type="stmt"/>
+      </file>
+      <file name="tray.ts" path="C:\Users\30816\Desktop\anyuer678-improve\04-patches\repos\desktoppet\src\main\window\tray.ts">
+        <metrics statements="21" coveredstatements="0" conditionals="4" coveredconditionals="0" methods="7" coveredmethods="0"/>
+        <line num="6" count="0" type="stmt"/>
+        <line num="16" count="0" type="stmt"/>
+        <line num="17" count="0" type="stmt"/>
+        <line num="19" count="0" type="stmt"/>
+        <line num="21" count="0" type="stmt"/>
+        <line num="22" count="0" type="stmt"/>
+        <line num="23" count="0" type="stmt"/>
+        <line num="24" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="25" count="0" type="stmt"/>
+        <line num="26" count="0" type="stmt"/>
+        <line num="29" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="30" count="0" type="stmt"/>
+        <line num="31" count="0" type="stmt"/>
+        <line num="32" count="0" type="stmt"/>
+        <line num="33" count="0" type="stmt"/>
+        <line num="35" count="0" type="stmt"/>
+        <line num="36" count="0" type="stmt"/>
+        <line num="37" count="0" type="stmt"/>
+        <line num="39" count="0" type="stmt"/>
+        <line num="42" count="0" type="stmt"/>
+        <line num="43" count="0" type="stmt"/>
+      </file>
+      <file name="windows.ts" path="C:\Users\30816\Desktop\anyuer678-improve\04-patches\repos\desktoppet\src\main\window\windows.ts">
+        <metrics statements="45" coveredstatements="0" conditionals="14" coveredconditionals="0" methods="17" coveredmethods="0"/>
+        <line num="35" count="0" type="stmt"/>
+        <line num="36" count="0" type="stmt"/>
+        <line num="39" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="40" count="0" type="stmt"/>
+        <line num="42" count="0" type="stmt"/>
+        <line num="47" count="0" type="stmt"/>
+        <line num="48" count="0" type="stmt"/>
+        <line num="67" count="0" type="stmt"/>
+        <line num="68" count="0" type="stmt"/>
+        <line num="69" count="0" type="stmt"/>
+        <line num="70" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="71" count="0" type="stmt"/>
+        <line num="73" count="0" type="stmt"/>
+        <line num="74" count="0" type="stmt"/>
+        <line num="76" count="0" type="stmt"/>
+        <line num="80" count="0" type="stmt"/>
+        <line num="93" count="0" type="stmt"/>
+        <line num="94" count="0" type="stmt"/>
+        <line num="96" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="100" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="101" count="0" type="stmt"/>
+        <line num="102" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="103" count="0" type="stmt"/>
+        <line num="105" count="0" type="stmt"/>
+        <line num="106" count="0" type="stmt"/>
+        <line num="110" count="0" type="stmt"/>
+        <line num="114" count="0" type="stmt"/>
+        <line num="118" count="0" type="stmt"/>
+        <line num="119" count="0" type="stmt"/>
+        <line num="120" count="0" type="stmt"/>
+        <line num="121" count="0" type="stmt"/>
+        <line num="122" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="123" count="0" type="stmt"/>
+        <line num="124" count="0" type="stmt"/>
+        <line num="128" count="0" type="stmt"/>
+        <line num="132" count="0" type="stmt"/>
+        <line num="136" count="0" type="stmt"/>
+        <line num="137" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="138" count="0" type="stmt"/>
+        <line num="139" count="0" type="stmt"/>
+        <line num="140" count="0" type="stmt"/>
+        <line num="146" count="0" type="stmt"/>
+        <line num="149" count="0" type="stmt"/>
+        <line num="150" count="0" type="stmt"/>
+        <line num="151" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="preload">
+      <metrics statements="85" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="82" coveredmethods="0"/>
+      <file name="index.ts" path="C:\Users\30816\Desktop\anyuer678-improve\04-patches\repos\desktoppet\src\preload\index.ts">
+        <metrics statements="85" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="82" coveredmethods="0"/>
+        <line num="44" count="0" type="stmt"/>
+        <line num="45" count="0" type="stmt"/>
+        <line num="47" count="0" type="stmt"/>
+        <line num="48" count="0" type="stmt"/>
+        <line num="49" count="0" type="stmt"/>
+        <line num="52" count="0" type="stmt"/>
+        <line num="54" count="0" type="stmt"/>
+        <line num="55" count="0" type="stmt"/>
+        <line num="56" count="0" type="stmt"/>
+        <line num="58" count="0" type="stmt"/>
+        <line num="59" count="0" type="stmt"/>
+        <line num="60" count="0" type="stmt"/>
+        <line num="62" count="0" type="stmt"/>
+        <line num="65" count="0" type="stmt"/>
+        <line num="66" count="0" type="stmt"/>
+        <line num="67" count="0" type="stmt"/>
+        <line num="68" count="0" type="stmt"/>
+        <line num="69" count="0" type="stmt"/>
+        <line num="71" count="0" type="stmt"/>
+        <line num="74" count="0" type="stmt"/>
+        <line num="75" count="0" type="stmt"/>
+        <line num="78" count="0" type="stmt"/>
+        <line num="81" count="0" type="stmt"/>
+        <line num="83" count="0" type="stmt"/>
+        <line num="85" count="0" type="stmt"/>
+        <line num="86" count="0" type="stmt"/>
+        <line num="88" count="0" type="stmt"/>
+        <line num="89" count="0" type="stmt"/>
+        <line num="92" count="0" type="stmt"/>
+        <line num="94" count="0" type="stmt"/>
+        <line num="95" count="0" type="stmt"/>
+        <line num="96" count="0" type="stmt"/>
+        <line num="97" count="0" type="stmt"/>
+        <line num="99" count="0" type="stmt"/>
+        <line num="101" count="0" type="stmt"/>
+        <line num="102" count="0" type="stmt"/>
+        <line num="104" count="0" type="stmt"/>
+        <line num="106" count="0" type="stmt"/>
+        <line num="107" count="0" type="stmt"/>
+        <line num="108" count="0" type="stmt"/>
+        <line num="109" count="0" type="stmt"/>
+        <line num="112" count="0" type="stmt"/>
+        <line num="114" count="0" type="stmt"/>
+        <line num="117" count="0" type="stmt"/>
+        <line num="119" count="0" type="stmt"/>
+        <line num="120" count="0" type="stmt"/>
+        <line num="121" count="0" type="stmt"/>
+        <line num="124" count="0" type="stmt"/>
+        <line num="126" count="0" type="stmt"/>
+        <line num="128" count="0" type="stmt"/>
+        <line num="131" count="0" type="stmt"/>
+        <line num="134" count="0" type="stmt"/>
+        <line num="137" count="0" type="stmt"/>
+        <line num="138" count="0" type="stmt"/>
+        <line num="142" count="0" type="stmt"/>
+        <line num="143" count="0" type="stmt"/>
+        <line num="144" count="0" type="stmt"/>
+        <line num="147" count="0" type="stmt"/>
+        <line num="148" count="0" type="stmt"/>
+        <line num="149" count="0" type="stmt"/>
+        <line num="152" count="0" type="stmt"/>
+        <line num="153" count="0" type="stmt"/>
+        <line num="154" count="0" type="stmt"/>
+        <line num="157" count="0" type="stmt"/>
+        <line num="158" count="0" type="stmt"/>
+        <line num="159" count="0" type="stmt"/>
+        <line num="162" count="0" type="stmt"/>
+        <line num="163" count="0" type="stmt"/>
+        <line num="164" count="0" type="stmt"/>
+        <line num="167" count="0" type="stmt"/>
+        <line num="168" count="0" type="stmt"/>
+        <line num="169" count="0" type="stmt"/>
+        <line num="172" count="0" type="stmt"/>
+        <line num="173" count="0" type="stmt"/>
+        <line num="174" count="0" type="stmt"/>
+        <line num="176" count="0" type="stmt"/>
+        <line num="177" count="0" type="stmt"/>
+        <line num="179" count="0" type="stmt"/>
+        <line num="180" count="0" type="stmt"/>
+        <line num="181" count="0" type="stmt"/>
+        <line num="184" count="0" type="stmt"/>
+        <line num="185" count="0" type="stmt"/>
+        <line num="186" count="0" type="stmt"/>
+        <line num="187" count="0" type="stmt"/>
+        <line num="192" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="renderer.src.lib">
+      <metrics statements="1" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="0"/>
+      <file name="utils.ts" path="C:\Users\30816\Desktop\anyuer678-improve\04-patches\repos\desktoppet\src\renderer\src\lib\utils.ts">
+        <metrics statements="1" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="0"/>
+        <line num="5" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="renderer.src.pet">
+      <metrics statements="53" coveredstatements="53" conditionals="70" coveredconditionals="64" methods="11" coveredmethods="11"/>
+      <file name="animationState.ts" path="C:\Users\30816\Desktop\anyuer678-improve\04-patches\repos\desktoppet\src\renderer\src\pet\animationState.ts">
+        <metrics statements="14" coveredstatements="14" conditionals="19" coveredconditionals="17" methods="3" coveredmethods="3"/>
+        <line num="17" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="18" count="4" type="cond" truecount="1" falsecount="1"/>
+        <line num="19" count="5" type="stmt"/>
+        <line num="20" count="5" type="stmt"/>
+        <line num="21" count="7" type="cond" truecount="2" falsecount="0"/>
+        <line num="22" count="6" type="stmt"/>
+        <line num="23" count="6" type="cond" truecount="2" falsecount="0"/>
+        <line num="25" count="2" type="stmt"/>
+        <line num="26" count="2" type="cond" truecount="4" falsecount="0"/>
+        <line num="27" count="1" type="stmt"/>
+        <line num="32" count="2" type="cond" truecount="1" falsecount="1"/>
+        <line num="33" count="2" type="stmt"/>
+        <line num="37" count="4" type="cond" truecount="4" falsecount="0"/>
+        <line num="38" count="3" type="stmt"/>
+      </file>
+      <file name="clickThrough.ts" path="C:\Users\30816\Desktop\anyuer678-improve\04-patches\repos\desktoppet\src\renderer\src\pet\clickThrough.ts">
+        <metrics statements="18" coveredstatements="18" conditionals="24" coveredconditionals="22" methods="4" coveredmethods="4"/>
+        <line num="20" count="4" type="cond" truecount="6" falsecount="0"/>
+        <line num="21" count="2" type="stmt"/>
+        <line num="23" count="2" type="stmt"/>
+        <line num="24" count="2" type="stmt"/>
+        <line num="25" count="2" type="stmt"/>
+        <line num="26" count="2" type="stmt"/>
+        <line num="30" count="6" type="cond" truecount="4" falsecount="0"/>
+        <line num="31" count="5" type="stmt"/>
+        <line num="32" count="5" type="stmt"/>
+        <line num="33" count="5" type="cond" truecount="1" falsecount="1"/>
+        <line num="37" count="8" type="cond" truecount="4" falsecount="0"/>
+        <line num="50" count="5" type="stmt"/>
+        <line num="51" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="53" count="4" type="cond" truecount="4" falsecount="0"/>
+        <line num="54" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="55" count="2" type="stmt"/>
+        <line num="56" count="2" type="stmt"/>
+        <line num="57" count="2" type="stmt"/>
+      </file>
+      <file name="overlay.ts" path="C:\Users\30816\Desktop\anyuer678-improve\04-patches\repos\desktoppet\src\renderer\src\pet\overlay.ts">
+        <metrics statements="21" coveredstatements="21" conditionals="27" coveredconditionals="25" methods="4" coveredmethods="4"/>
+        <line num="10" count="1" type="stmt"/>
+        <line num="19" count="13" type="cond" truecount="5" falsecount="0"/>
+        <line num="20" count="11" type="stmt"/>
+        <line num="21" count="11" type="cond" truecount="2" falsecount="0"/>
+        <line num="22" count="10" type="cond" truecount="4" falsecount="0"/>
+        <line num="23" count="6" type="cond" truecount="2" falsecount="0"/>
+        <line num="31" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="32" count="3" type="stmt"/>
+        <line num="33" count="3" type="stmt"/>
+        <line num="34" count="3" type="stmt"/>
+        <line num="35" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="36" count="2" type="stmt"/>
+        <line num="42" count="3" type="stmt"/>
+        <line num="43" count="3" type="stmt"/>
+        <line num="44" count="3" type="stmt"/>
+        <line num="45" count="3" type="cond" truecount="1" falsecount="1"/>
+        <line num="46" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="47" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="48" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="49" count="2" type="cond" truecount="1" falsecount="1"/>
+        <line num="52" count="3" type="stmt"/>
+      </file>
+    </package>
+    <package name="shared">
+      <metrics statements="54" coveredstatements="54" conditionals="69" coveredconditionals="65" methods="15" coveredmethods="15"/>
+      <file name="eventState.ts" path="C:\Users\30816\Desktop\anyuer678-improve\04-patches\repos\desktoppet\src\shared\eventState.ts">
+        <metrics statements="15" coveredstatements="15" conditionals="18" coveredconditionals="18" methods="5" coveredmethods="5"/>
+        <line num="3" count="4" type="stmt"/>
+        <line num="6" count="4" type="stmt"/>
+        <line num="14" count="7" type="stmt"/>
+        <line num="15" count="29" type="cond" truecount="2" falsecount="0"/>
+        <line num="16" count="22" type="cond" truecount="2" falsecount="0"/>
+        <line num="18" count="2" type="stmt"/>
+        <line num="21" count="4" type="stmt"/>
+        <line num="33" count="11" type="stmt"/>
+        <line num="34" count="11" type="cond" truecount="2" falsecount="0"/>
+        <line num="38" count="6" type="stmt"/>
+        <line num="48" count="4" type="stmt"/>
+        <line num="49" count="8" type="cond" truecount="4" falsecount="0"/>
+        <line num="50" count="7" type="cond" truecount="4" falsecount="0"/>
+        <line num="51" count="6" type="cond" truecount="4" falsecount="0"/>
+        <line num="52" count="5" type="stmt"/>
+      </file>
+      <file name="ipc.ts" path="C:\Users\30816\Desktop\anyuer678-improve\04-patches\repos\desktoppet\src\shared\ipc.ts">
+        <metrics statements="1" coveredstatements="1" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="58" count="7" type="stmt"/>
+      </file>
+      <file name="speech.ts" path="C:\Users\30816\Desktop\anyuer678-improve\04-patches\repos\desktoppet\src\shared\speech.ts">
+        <metrics statements="38" coveredstatements="38" conditionals="51" coveredconditionals="47" methods="10" coveredmethods="10"/>
+        <line num="31" count="2" type="stmt"/>
+        <line num="57" count="14" type="cond" truecount="4" falsecount="0"/>
+        <line num="58" count="10" type="cond" truecount="4" falsecount="0"/>
+        <line num="59" count="8" type="cond" truecount="4" falsecount="0"/>
+        <line num="60" count="6" type="cond" truecount="4" falsecount="0"/>
+        <line num="61" count="4" type="stmt"/>
+        <line num="65" count="2" type="stmt"/>
+        <line num="84" count="114" type="cond" truecount="2" falsecount="0"/>
+        <line num="85" count="537" type="stmt"/>
+        <line num="86" count="112" type="cond" truecount="2" falsecount="0"/>
+        <line num="87" count="114" type="stmt"/>
+        <line num="88" count="114" type="cond" truecount="2" falsecount="0"/>
+        <line num="93" count="3" type="stmt"/>
+        <line num="94" count="3" type="stmt"/>
+        <line num="99" count="1" type="stmt"/>
+        <line num="104" count="5" type="stmt"/>
+        <line num="105" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="106" count="3" type="stmt"/>
+        <line num="111" count="2" type="stmt"/>
+        <line num="112" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="113" count="1" type="stmt"/>
+        <line num="116" count="2" type="stmt"/>
+        <line num="120" count="9" type="stmt"/>
+        <line num="121" count="8" type="cond" truecount="2" falsecount="0"/>
+        <line num="122" count="8" type="cond" truecount="2" falsecount="0"/>
+        <line num="123" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="124" count="8" type="stmt"/>
+        <line num="126" count="9" type="stmt"/>
+        <line num="127" count="9" type="stmt"/>
+        <line num="136" count="4" type="cond" truecount="1" falsecount="3"/>
+        <line num="137" count="4" type="stmt"/>
+        <line num="138" count="4" type="cond" truecount="4" falsecount="0"/>
+        <line num="139" count="3" type="stmt"/>
+        <line num="140" count="3" type="cond" truecount="1" falsecount="1"/>
+        <line num="141" count="3" type="stmt"/>
+        <line num="145" count="4" type="stmt"/>
+        <line num="146" count="4" type="cond" truecount="4" falsecount="0"/>
+        <line num="147" count="3" type="stmt"/>
+      </file>
+    </package>
+  </project>
+</coverage>
