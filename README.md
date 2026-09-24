@@ -1,10 +1,14 @@
 # DesktopPet 可扩展桌面宠物平台
 
+![CI](https://github.com/anyuer678/desktoppet/actions/workflows/test.yml/badge.svg) ![Release](https://img.shields.io/github/v/release/anyuer678/desktoppet) ![License](https://img.shields.io/github/license/anyuer678/desktoppet) ![Tests](https://img.shields.io/badge/tests-450%2B-green) ![Top language](https://img.shields.io/github/languages/top/anyuer678/desktoppet)
+
+<p align="center"><img src="characters/rabbit/preview.jpg" alt="Rabbit 角色预览" width="420"></p>
+
 > **状态**：`portfolio` · Electron 桌宠平台 · GPL-3.0 · **非**通用生产组件库  
 > 单测约 **450+** 例（含 headless smoke / IPC schema / 敏感剪贴板零泄漏 / 角色包失败路径 / Push 回环绑定）；CI 跑 typecheck + unit tests + build + 产物校验。  
 > 支持与隐私：敏感剪贴板内容设计上不进 IPC（有自动化断言）；推送 API 仅绑定 `127.0.0.1` + Bearer token。
 
-当前版本：**v1.0**（正式版）· 协议：**GPL-3.0**
+当前版本：**v1.1.0**（正式版）· 协议：**GPL-3.0**
 
 一个可扩展的桌面宠物平台：**角色 = 资源包**，核心引擎与角色完全解耦。桌宠根据系统状态与事件产生不同表现，会说话、有心情；用户可导入自制角色，也可通过本地 API 与被动数据源接入自己的自动化。
 
