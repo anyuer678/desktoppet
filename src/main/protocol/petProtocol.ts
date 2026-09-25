@@ -16,7 +16,10 @@ export const PET_SCHEME = 'pet'
  */
 export const PET_SCHEME_PRIVILEGES = {
   scheme: PET_SCHEME,
-  privileges: { standard: true, secure: true, supportFetchAPI: true }
+  // corsEnabled 必须为 true：渲染层 <img crossOrigin="anonymous"> 对 pet:// 发起的是 CORS 模式请求，
+  // 缺少该声明时 Electron 在 scheme 层面直接拒绝跨域请求，响应头带 ACAO 也没用
+  // （实机复现：精灵图 naturalWidth=0，宠物破图）。修复见 PR #11/#12。
+  privileges: { standard: true, secure: true, supportFetchAPI: true, corsEnabled: true }
 }
 
 /**
