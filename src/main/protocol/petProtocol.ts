@@ -42,7 +42,11 @@ export function registerPetProtocol(deps: { log: LogFn }): void {
     try {
       const resp = await net.fetch(pathToFileURL(filePath).toString())
       const headers = new Headers(resp.headers)
-      headers.set('Access-Control-Allow-Origin', 'http://localhost:8765')
+      // 渲染层 <img crossOrigin="anonymous">（PetApp 命中图需要无污染 canvas）发起 CORS 模式请求，
+      // 而宠物窗口经 file:// 加载（Origin: null），控制中心等其他来源也可能引用 pet:// 资源。
+      // 硬编码单来源会与所有实际 origin 不匹配 → 打包版宠物精灵图全部加载失败（naturalWidth=0）。
+      // 角色素材是本地公开静态文件、不含凭据，通配 ACAO 是正确语义。
+      headers.set('Access-Control-Allow-Origin', '*')
       return new Response(resp.body, { status: resp.status, headers })
     } catch (err) {
       log('warn', '[pet] fetch error:', filePath, err)
