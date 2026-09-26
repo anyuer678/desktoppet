@@ -1,11 +1,17 @@
+<div align="center">
+
 # DesktopPet 可扩展桌面宠物平台
 
-![CI](https://github.com/anyuer678/desktoppet/actions/workflows/test.yml/badge.svg) ![Release](https://img.shields.io/github/v/release/anyuer678/desktoppet) ![License](https://img.shields.io/github/license/anyuer678/desktoppet) ![Tests](https://img.shields.io/badge/tests-450%2B-green) ![Top language](https://img.shields.io/github/languages/top/anyuer678/desktoppet)
+**角色 = 资源包**——核心引擎与角色完全解耦的可扩展桌宠平台
+
+![CI](https://github.com/anyuer678/desktoppet/actions/workflows/test.yml/badge.svg) ![Release](https://img.shields.io/github/v/release/anyuer678/desktoppet) ![License](https://img.shields.io/github/license/anyuer678/desktoppet) ![Tests](https://img.shields.io/badge/tests-470%2B-green) ![Top language](https://img.shields.io/github/languages/top/anyuer678/desktoppet)
 
 <p align="center"><img src="characters/rabbit/preview.jpg" alt="Rabbit 角色预览" width="420"></p>
 
+</div>
+
 > **状态**：`portfolio` · Electron 桌宠平台 · GPL-3.0 · **非**通用生产组件库  
-> 单测约 **450+** 例（含 headless smoke / IPC schema / 敏感剪贴板零泄漏 / 角色包失败路径 / Push 回环绑定）；CI 跑 typecheck + unit tests + build + 产物校验。  
+> 单测约 **470+** 例（含 headless smoke / IPC schema / 敏感剪贴板零泄漏 / 角色包失败路径 / Push 回环绑定）；CI 跑 typecheck + unit tests + build + 产物校验。  
 > 支持与隐私：敏感剪贴板内容设计上不进 IPC（有自动化断言）；推送 API 仅绑定 `127.0.0.1` + Bearer token。
 
 当前版本：**v1.2.0**（正式版，附 Windows 安装包下载）· 协议：**GPL-3.0**
