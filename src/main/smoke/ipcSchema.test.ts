@@ -26,9 +26,9 @@ describe('IPC channel naming contract (headless smoke)', () => {
     }
   })
 
-  it('broadcast channels stay in character/pet/push/schedule/autoReport', () => {
+  it('broadcast channels stay in character/pet/push/schedule/autoReport/updater', () => {
     const { on, send } = extractIpcChannels()
-    const allowedPrefixes = ['character:', 'pet:', 'push:', 'schedule:', 'autoReport:']
+    const allowedPrefixes = ['character:', 'pet:', 'push:', 'schedule:', 'autoReport:', 'updater:']
     for (const ch of [...on, ...send]) {
       const ok = allowedPrefixes.some((p) => ch.startsWith(p) || ch === 'perf:fps')
       expect(ok, `unexpected broadcast channel: ${ch}`).toBe(true)

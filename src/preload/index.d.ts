@@ -134,6 +134,8 @@ declare global {
         clearHistory(): Promise<{ ok: boolean }>
         onHistoryChanged(cb: (payload: HistoryChanged) => void): () => void
         onSettingsChanged(cb: (patch: { size: number; opacity: number }) => void): () => void
+        onUpdateAvailable(cb: (info: { version: string; releaseDate?: string }) => void): () => void
+        onUpdateDownloaded(cb: (info: { version: string }) => void): () => void
       }
     }
   }

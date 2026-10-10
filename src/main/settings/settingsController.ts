@@ -7,6 +7,17 @@ import { validatePackId } from '../character/importer'
 export const MIN_PET_SIZE = 96
 export const MAX_PET_SIZE = 512
 
+/** settings:set 允许的键白名单：白名单外的 patch 键一律丢弃（渲染进程不可写入任意字段） */
+const SETTABLE_KEYS = new Set([
+  'position',
+  'size',
+  'opacity',
+  'autoLaunch',
+  'activeCharacterId',
+  'speech',
+  'shortcutsEnabled',
+])
+
 export interface SettingsControllerDeps {
   /** shortcutsEnabled 变化后增删全局快捷键 */
   applyShortcutsEnabled(enabled: boolean): void
@@ -53,7 +64,11 @@ export function createSettingsController(deps: SettingsControllerDeps): Settings
       settings = loadSettings(settingsPath())
     },
     set: (patch) => {
-      const next: Partial<Settings> = { ...patch }
+      // 白名单过滤：__proto__/constructor 或任意未知键直接丢弃
+      const filtered = Object.fromEntries(
+        Object.entries(patch ?? {}).filter(([k]) => SETTABLE_KEYS.has(k))
+      ) as Partial<Settings>
+      const next: Partial<Settings> = { ...filtered }
       if (typeof next.size === 'number') {
         next.size = Math.round(Math.min(MAX_PET_SIZE, Math.max(MIN_PET_SIZE, next.size)))
       }
