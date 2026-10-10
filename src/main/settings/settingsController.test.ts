@@ -50,7 +50,7 @@ describe('settingsController.set 白名单', () => {
     const c = makeController()
     c.load()
     const next = c.set({ rogueKey: 'x' } as never)
-    expect((next as Record<string, unknown>).rogueKey).toBeUndefined()
+    expect((next as unknown as Record<string, unknown>)['rogueKey']).toBeUndefined()
     expect(JSON.parse(readFileSync(file, 'utf8')).rogueKey).toBeUndefined()
   })
 
@@ -58,7 +58,7 @@ describe('settingsController.set 白名单', () => {
     const c = makeController()
     c.load()
     c.set({ __proto__: { polluted: true }, constructor: 'x' } as never)
-    const raw = JSON.parse(readFileSync(file, 'utf8')) as Record<string, unknown>
+    const raw = JSON.parse(readFileSync(file, 'utf8')) as unknown as Record<string, unknown>
     expect(raw.polluted).toBeUndefined()
     expect(({} as Record<string, unknown>).polluted).toBeUndefined()
   })
