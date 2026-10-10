@@ -46,6 +46,7 @@ import { SettingsTab } from './tabs/SettingsTab'
 export function CenterApp(): React.JSX.Element {
   const [tab, setTab] = useState<Tab>('home')
   const [appVersion, setAppVersion] = useState('')
+  const [updateInfo, setUpdateInfo] = useState('')
   const [characters, setCharacters] = useState<CharacterSummary[]>([])
   const [settings, setSettings] = useState<Settings | null>(null)
   const [activeId, setActiveId] = useState('')
@@ -168,11 +169,19 @@ export function CenterApp(): React.JSX.Element {
       setActiveId(id)
       void window.desktopPet.character.list().then(setCharacters)
     })
+    const offUpdateAvailable = window.desktopPet.events.onUpdateAvailable((info) => {
+      setUpdateInfo(`发现新版本 v${info.version}，下载完成后将提示安装`)
+    })
+    const offUpdateDownloaded = window.desktopPet.events.onUpdateDownloaded((info) => {
+      setUpdateInfo(`新版本 v${info.version} 已下载就绪，重启应用后安装`)
+    })
     return () => {
       offState()
       offHistory()
       offScheduleFired()
       offChanged()
+      offUpdateAvailable()
+      offUpdateDownloaded()
     }
   }, [])
 
@@ -877,7 +886,14 @@ export function CenterApp(): React.JSX.Element {
             {t.label}
           </button>
         ))}
-        <div className="mt-auto px-2 text-xs text-muted-foreground">DesktopPet v{appVersion}</div>
+        <div className="mt-auto px-2 text-xs text-muted-foreground">
+          DesktopPet v{appVersion}
+          {updateInfo && (
+            <div className="mt-1 rounded-md bg-primary/10 px-2 py-1 text-[11px] text-primary">
+              {updateInfo}
+            </div>
+          )}
+        </div>
       </aside>
 
       <main className="flex-1 overflow-y-auto p-6">
