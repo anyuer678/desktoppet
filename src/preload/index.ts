@@ -185,6 +185,17 @@ const api = {
         cb(patch)
       ipcRenderer.on('pet:settings-changed', handler)
       return () => ipcRenderer.removeListener('pet:settings-changed', handler)
+    },
+    onUpdateAvailable: (cb: (info: { version: string; releaseDate?: string }) => void): (() => void) => {
+      const handler = (_e: Electron.IpcRendererEvent, info: { version: string; releaseDate?: string }): void =>
+        cb(info)
+      ipcRenderer.on('updater:update-available', handler)
+      return () => ipcRenderer.removeListener('updater:update-available', handler)
+    },
+    onUpdateDownloaded: (cb: (info: { version: string }) => void): (() => void) => {
+      const handler = (_e: Electron.IpcRendererEvent, info: { version: string }): void => cb(info)
+      ipcRenderer.on('updater:update-downloaded', handler)
+      return () => ipcRenderer.removeListener('updater:update-downloaded', handler)
     }
   }
 }
