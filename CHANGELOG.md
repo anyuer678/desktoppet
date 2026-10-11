@@ -5,6 +5,30 @@
 版本格式：`大版本号.日期.构建编号`
 日期字段=月（前两位）日（后两位），当天构建号递增、跨日重置。
 
+## v1.2.1 (2026-09-25)
+
+桌宠图片加载修复。完整说明见 [Release v1.2.1](https://github.com/anyuer678/desktoppet/releases/tag/v1.2.1)。
+
+- 修复宠物精灵图在所有打包版中无法显示的问题（自 v1.0.0 起存在于全部安装包）
+- 双根因：`pet://` 协议特权声明缺 `corsEnabled`（#12）；`Access-Control-Allow-Origin` 硬编码 `http://localhost:8765` 与打包版 `null` Origin 永不匹配（#11，改 `*`）
+- 本机安装 NSIS 包实机复证：精灵图正常渲染（naturalWidth 1830×1538）
+
+## v1.2.0 (2026-09-25)
+
+Windows NSIS 安装包版（自 v1.1.0 累计 24 提交）。完整说明见 [Release v1.2.0](https://github.com/anyuer678/desktoppet/releases/tag/v1.2.0)。
+
+- 新功能：electron-updater 自动更新（GitHub Releases Provider）；pushApiConfig 端口保存（供 lumen petpush 发现）；CI 无头冒烟 + IPC/隐私契约测试
+- 安全加固：`webPreferences` 显式声明 `contextIsolation`/`nodeIntegration`；剪贴板监听默认关闭；electron 37.10.3 → 39.8.10
+- 已知残余风险（extract-zip ≤2.0.1，上游未修复）台账见 docs/SECURITY-NOTES.md
+
+## v1.1.0 (2026-08-29)
+
+架构重构版（无安装包资产）。完整说明见 [Release v1.1.0](https://github.com/anyuer678/desktoppet/releases/tag/v1.1.0)。
+
+- 主进程 index.ts 1275 行拆分至 210 行组装根，新增 app/window/protocol/event/stats/push/schedule/perf/runtime 与 ipc/（12 个 IPC 域文件），工厂 + 依赖注入，域间零横向 import
+- 收敛三处重复状态广播为 eventRuntime.syncStateAndNotify() 唯一实现；450 个测试零改动全绿
+- 安全：推送 API 默认关闭（双层防护）；`pet://` CORS 从 `*` 收紧至 `http://localhost:8765`
+
 ## v1.0 (正式版，由 1.0.0807.01~05 开发构建合并)
 
 Date: 2026-08-07
