@@ -96,7 +96,7 @@ dist/ release/  electron-builder 打包产物（gitignore，可再生）
 
 - `README.md` — 本文件
 - `docs/` — 使用说明、架构设计、API/IPC 设计、角色包规范、部署说明等
-- `CHANGELOG.md` — 版本记录（v0.1 → v1.0）
+- `CHANGELOG.md` — 版本记录（v0.1 → v1.2.1）
 - `CONTRIBUTING.md` / `SECURITY.md` — 贡献与安全策略
 - `LICENSE` — GPL-3.0
 
