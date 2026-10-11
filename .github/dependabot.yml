@@ -4,6 +4,16 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    ignore:
+      # plugin-react 6 强制 peer vite@^8，须与 vite lockstep（CI 实证 ERESOLVE）。
+      - dependency-name: "@vitejs/plugin-react"
+        update-types:
+          - "version-update:semver-major"
+    ignore:
+      # TS7 移除 baseUrl/非相对路径（CI 实证 TS5102/TS5090），需 tsconfig 迁移；沿用 kb-ui 惯例。
+      - dependency-name: "typescript"
+        update-types:
+          - "version-update:semver-major"
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
