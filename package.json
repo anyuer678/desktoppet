@@ -19,7 +19,7 @@
     "adm-zip": "^0.6.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "electron-updater": "^6.6.2",
+    "electron-updater": "^6.8.11",
     "exceljs": "^4.4.0",
     "lucide-react": "^1.58.0",
     "react": "^19.1.0",
