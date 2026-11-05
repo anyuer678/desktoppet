@@ -21,11 +21,12 @@ import type {
 } from '../../../shared/ipc'
 import { DEFAULT_SPEECH, type SpeechPoolKey, type SpeechPools } from '../../../shared/speech'
 import type { InteractionAction } from '../../../shared/ipc'
+import type { CenterTab } from '../../../shared/ipc'
 import { Input } from '@/components/ui/input'
 
 // 从 CenterApp.tsx 机械外移的模块级类型/常量/工具/图表组件（零逻辑改动）
 
-export type Tab = 'home' | 'characters' | 'market' | 'speech' | 'schedule' | 'stats' | 'push' | 'events' | 'dev' | 'settings'
+export type Tab = CenterTab
 
 export const TABS: { key: Tab; label: string }[] = [
   { key: 'home', label: '首页' },

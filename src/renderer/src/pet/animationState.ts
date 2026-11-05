@@ -33,6 +33,11 @@ export function sequenceFrameName(key: string, config: AnimationStateConfig, ind
   return `${base}/${String(index).padStart(3, '0')}.png`
 }
 
+/** 角色静态主图地址（序列帧缺失/无动画时的最终回退） */
+export function characterAvatarSrc(charId: string, avatarMain?: string): string {
+  return `pet://${charId}/${avatarMain ?? 'avatar.png'}`
+}
+
 export function clampFps(fps: number | undefined, fallback = 8): number {
   if (fps === undefined || !Number.isFinite(fps)) return fallback
   return Math.min(60, Math.max(1, Math.round(fps)))

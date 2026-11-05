@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import type { AnimationStateConfig, CharacterDetail } from '../../../shared/ipc'
-import { clampFps, resolveAnimationState, sequenceFrameName } from './animationState'
+import { characterAvatarSrc, clampFps, resolveAnimationState, sequenceFrameName } from './animationState'
 import { DEFAULT_OVERLAY_FACTORS, type OverlayFactors } from './overlay'
 
 function TemplateLayer({
@@ -47,7 +47,8 @@ function SequenceLayer({
   config,
   paused,
   overlay,
-  spriteRef
+  spriteRef,
+  fallbackSrc
 }: {
   charId: string
   stateKey: string
@@ -55,6 +56,7 @@ function SequenceLayer({
   paused: boolean
   overlay: OverlayFactors
   spriteRef?: React.Ref<HTMLImageElement>
+  fallbackSrc: string
 }): React.JSX.Element {
   const [index, setIndex] = useState(0)
   const [total, setTotal] = useState<number | null>(null)
@@ -88,11 +90,13 @@ function SequenceLayer({
   }
 
   if (failed) {
+    // 首帧就加载失败说明整组序列帧不可用：回退角色静态主图，
+    // 而不是继续渲染同一个 404 帧（否则桌宠破图且点击命中区为空）
     return (
       <img
         ref={spriteRef}
         crossOrigin="anonymous"
-        src={`pet://${charId}/${config.path ?? `animations/${stateKey}`}/000.png`}
+        src={fallbackSrc}
         alt="pet"
         draggable={false}
         className="h-full w-full object-contain"
@@ -134,7 +138,7 @@ export function PetAnimator({
       <img
         ref={spriteRef}
         crossOrigin="anonymous"
-        src={`pet://${charId}/${detail?.avatarMain ?? 'avatar.png'}`}
+        src={characterAvatarSrc(charId, detail?.avatarMain)}
         alt="pet"
         draggable={false}
         className="h-full w-full object-contain"
@@ -150,6 +154,7 @@ export function PetAnimator({
         paused={paused}
         overlay={overlay}
         spriteRef={spriteRef}
+        fallbackSrc={characterAvatarSrc(charId, detail?.avatarMain)}
       />
     )
   }
@@ -158,7 +163,7 @@ export function PetAnimator({
       <img
         ref={spriteRef}
         crossOrigin="anonymous"
-        src={`pet://${charId}/${detail?.avatarMain ?? 'avatar.png'}`}
+        src={characterAvatarSrc(charId, detail?.avatarMain)}
         alt="pet"
         draggable={false}
         className="h-full w-full object-contain"

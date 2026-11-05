@@ -1,7 +1,25 @@
 import { mkdirSync, readFileSync, writeFileSync } from 'fs'
 import { dirname } from 'path'
 import type { Settings } from '../../shared/ipc'
-import { DEFAULT_SPEECH } from '../../shared/speech'
+import { DEFAULT_SPEECH, type SpeechPoolKey, type SpeechPools } from '../../shared/speech'
+
+/**
+ * 台词池规范化：每个池必须是字符串数组。
+ * - 缺失/非数组 → 回退该池默认值（兼容旧版本自定义文件）
+ * - 数组项过滤非字符串并 trim；允许空数组（表示该场景不说话）
+ * 渲染层 pickText 直接对池调用数组方法，坏数据会崩掉桌宠窗口，因此读写两侧都必须过此函数。
+ */
+export function normalizeSpeechPools(raw: unknown): SpeechPools {
+  const source = raw && typeof raw === 'object' ? (raw as Record<string, unknown>) : {}
+  const out = {} as SpeechPools
+  for (const key of Object.keys(DEFAULT_SPEECH) as SpeechPoolKey[]) {
+    const value = source[key]
+    out[key] = Array.isArray(value)
+      ? value.filter((t): t is string => typeof t === 'string').map((t) => t.trim()).filter((t) => t !== '')
+      : [...DEFAULT_SPEECH[key]]
+  }
+  return out
+}
 
 export const DEFAULT_SETTINGS: Settings = {
   position: { x: 400, y: 300 },
@@ -32,7 +50,7 @@ export function loadSettings(filePath: string, defaults: Settings = DEFAULT_SETT
         x: typeof raw.position?.x === 'number' && Number.isFinite(raw.position.x) ? raw.position.x : defaults.position.x,
         y: typeof raw.position?.y === 'number' && Number.isFinite(raw.position.y) ? raw.position.y : defaults.position.y
       },
-      speech: { ...defaults.speech, ...(raw.speech ?? {}) },
+      speech: normalizeSpeechPools(raw.speech ?? defaults.speech),
       activeCharacterId:
         typeof raw.activeCharacterId === 'string' && /^[a-z0-9_-]*$/.test(raw.activeCharacterId)
           ? raw.activeCharacterId

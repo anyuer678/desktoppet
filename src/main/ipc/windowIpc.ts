@@ -11,6 +11,9 @@ export interface WindowIpcDeps {
 
 /** window:hide/quit/dragBy/setSize/setOpacity/setIgnoreMouseEvents + center:open + app:version */
 export function registerWindowIpc(deps: WindowIpcDeps): void {
+  // 穿透状态诊断日志只在翻转时写一行：桌宠窗口的 mousemove 会高频触发该 IPC，
+  // 每次调用都同步落盘会放大磁盘 IO
+  let lastIgnore: boolean | null = null
   ipcMain.handle('window:hide', () => deps.windows.hidePet())
   ipcMain.handle('window:quit', () => app.quit())
   ipcMain.handle('window:dragBy', (_e, dx: number, dy: number) => {
@@ -23,8 +26,12 @@ export function registerWindowIpc(deps: WindowIpcDeps): void {
   ipcMain.handle('window:setSize', (_e, size: number) => deps.settings.setSize(size))
   ipcMain.handle('window:setOpacity', (_e, opacity: number) => deps.settings.setOpacity(opacity))
   ipcMain.handle('window:setIgnoreMouseEvents', (_e, ignore: boolean) => {
+    if (typeof ignore !== 'boolean') return
     deps.windows.pet()?.setIgnoreMouseEvents(ignore, { forward: true })
-    deps.log('info', '[pet-hit] ignore =', ignore)
+    if (ignore !== lastIgnore) {
+      lastIgnore = ignore
+      deps.log('info', '[pet-hit] ignore =', ignore)
+    }
   })
   ipcMain.handle('center:open', (_e, tab?: string) => deps.windows.openCenter(tab))
   ipcMain.handle('app:version', () => app.getVersion())

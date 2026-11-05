@@ -10,6 +10,7 @@ vi.mock('electron', () => ({
 import { app } from 'electron'
 import { createSettingsController, MAX_PET_SIZE, MIN_PET_SIZE } from './settingsController'
 import { DEFAULT_SETTINGS } from '../storage/settingsStore'
+import { DEFAULT_SPEECH } from '../../shared/speech'
 
 const root = mkdtempSync(join(tmpdir(), 'dp-controller-'))
 const file = join(root, 'settings.json')
@@ -92,5 +93,18 @@ describe('settingsController.set 白名单', () => {
     c.load()
     const next = c.set({})
     expect(next).toEqual(DEFAULT_SETTINGS)
+  })
+
+  it('speech 损坏结构在写入前被规范化（防止崩桌宠）', () => {
+    const c = makeController()
+    c.load()
+    const next = c.set({
+      speech: { welcome: 'oops', morning: [1, ' ok '], interact: [] } as never
+    })
+    expect(next.speech.welcome).toEqual(DEFAULT_SPEECH.welcome)
+    expect(next.speech.morning).toEqual(['ok'])
+    expect(next.speech.interact).toEqual([])
+    const raw = JSON.parse(readFileSync(file, 'utf8')) as { speech: Record<string, unknown> }
+    expect(Object.values(raw.speech).every((p) => Array.isArray(p))).toBe(true)
   })
 })

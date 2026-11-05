@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { CharacterDetail } from '../../../shared/ipc'
-import { clampFps, resolveAnimationState, sequenceFrameName } from './animationState'
+import { characterAvatarSrc, clampFps, resolveAnimationState, sequenceFrameName } from './animationState'
 
 const rabbit: CharacterDetail = {
   id: 'rabbit',
@@ -61,5 +61,11 @@ describe('sequenceFrameName / clampFps', () => {
     expect(clampFps(120)).toBe(60)
     expect(clampFps(0)).toBe(1)
     expect(clampFps(12.6)).toBe(13)
+  })
+
+  it('角色静态主图地址：缺省回退 avatar.png', () => {
+    expect(characterAvatarSrc('rabbit', 'avatar.png')).toBe('pet://rabbit/avatar.png')
+    expect(characterAvatarSrc('rabbit', 'img/main.png')).toBe('pet://rabbit/img/main.png')
+    expect(characterAvatarSrc('rabbit')).toBe('pet://rabbit/avatar.png')
   })
 })

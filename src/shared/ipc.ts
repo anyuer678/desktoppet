@@ -1,5 +1,25 @@
 import type { SpeechPools } from './speech'
 
+/** 控制中心页签白名单：主进程导航与渲染层路由共用同一份定义 */
+export const CENTER_TABS = [
+  'home',
+  'characters',
+  'market',
+  'speech',
+  'schedule',
+  'stats',
+  'push',
+  'events',
+  'dev',
+  'settings'
+] as const
+
+export type CenterTab = (typeof CENTER_TABS)[number]
+
+export function isCenterTab(value: unknown): value is CenterTab {
+  return typeof value === 'string' && (CENTER_TABS as readonly string[]).includes(value)
+}
+
 export interface Settings {
   position: { x: number; y: number }
   size: number

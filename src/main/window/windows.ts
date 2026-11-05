@@ -1,6 +1,7 @@
 import { BrowserWindow, screen } from 'electron'
 import { join } from 'path'
 import { ensurePositionVisible } from './placement'
+import { isCenterTab } from '../../shared/ipc'
 import type { Settings } from '../../shared/ipc'
 
 export interface WindowHubDeps {
@@ -77,6 +78,7 @@ export function createWindowHub(deps: WindowHubDeps): WindowHub {
   }
 
   function createCenter(tab?: string): void {
+    const safeTab = isCenterTab(tab) ? tab : undefined
     centerWindow = new BrowserWindow({
       width: 960,
       height: 640,
@@ -93,14 +95,18 @@ export function createWindowHub(deps: WindowHubDeps): WindowHub {
     centerWindow.on('closed', () => {
       centerWindow = null
     })
-    loadRenderer(centerWindow, `#/center${tab ? '/' + tab : ''}`)
+    loadRenderer(centerWindow, safeTab ? `#/center/${safeTab}` : '#/center')
   }
 
   function openCenter(tab?: string): void {
+    // 页签白名单 + JSON.stringify：绝不把调用方字符串直接拼进执行代码
+    const safeTab = isCenterTab(tab) ? tab : undefined
     if (!centerWindow) {
-      createCenter(tab)
-    } else if (tab) {
-      void centerWindow.webContents.executeJavaScript(`window.location.hash = '#/center/${tab}'`)
+      createCenter(safeTab)
+    } else if (safeTab) {
+      void centerWindow.webContents.executeJavaScript(
+        `window.location.hash = ${JSON.stringify(`#/center/${safeTab}`)}`
+      )
     }
     centerWindow?.show()
     centerWindow?.focus()
