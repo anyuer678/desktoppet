@@ -70,9 +70,9 @@ export function CenterApp(): React.JSX.Element {
   const [histSource, setHistSource] = useState('')
   const [histState, setHistState] = useState('')
   const [histHighOnly, setHistHighOnly] = useState(false)
-  const [expandedIndex, setExpandedIndex] = useState<number | null>(null)
+  const [expandedEventKey, setExpandedEventKey] = useState<string | null>(null)
   const [marketEntries, setMarketEntries] = useState<MarketEntryWithStatus[]>([])
-  const [marketBusy, setMarketBusy] = useState(false)
+  const [marketInstallingId, setMarketInstallingId] = useState<string | null>(null)
   const [marketError, setMarketError] = useState('')
   const [marketOk, setMarketOk] = useState('')
   const [plugins, setPlugins] = useState<PluginInfo[]>([])
@@ -130,6 +130,8 @@ export function CenterApp(): React.JSX.Element {
   const [saveBusy, setSaveBusy] = useState(false)
   const pendingPatchRef = useRef<Partial<Settings>>({})
   const settingsTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  // 同步防重入：state 更新前连续点击不会重复创建/安装
+  const busyRef = useRef({ import: false, market: false, schedule: false })
 
   // 统计图表请求竞态守卫：每个图表独立 seq，过期响应直接丢弃
   const statsSeqRef = useRef(0)
@@ -534,6 +536,7 @@ export function CenterApp(): React.JSX.Element {
     if (historyEvents.length === 0) return
     if (!window.confirm('清空全部事件记录？')) return
     void window.desktopPet.events.clearHistory()
+    setExpandedEventKey(null)
     setHistSource('')
     setHistState('')
     setHistHighOnly(false)
@@ -697,8 +700,13 @@ export function CenterApp(): React.JSX.Element {
   }
 
   const importCharacter = async (): Promise<void> => {
+    if (busyRef.current.import) return
+    busyRef.current.import = true
     const zipPath = await window.desktopPet.character.pick()
-    if (!zipPath) return
+    if (!zipPath) {
+      busyRef.current.import = false
+      return
+    }
     setImportBusy(true)
     setImportError('')
     setImportOk('')
@@ -717,6 +725,7 @@ export function CenterApp(): React.JSX.Element {
         setImportError(result.error)
       }
     } finally {
+      busyRef.current.import = false
       setImportBusy(false)
     }
   }
@@ -754,8 +763,9 @@ export function CenterApp(): React.JSX.Element {
   }
 
   const installMarket = async (e: MarketEntryWithStatus): Promise<void> => {
-    if (marketBusy) return
-    setMarketBusy(true)
+    if (busyRef.current.market) return
+    busyRef.current.market = true
+    setMarketInstallingId(e.id)
     setMarketError('')
     setMarketOk('')
     try {
@@ -769,7 +779,8 @@ export function CenterApp(): React.JSX.Element {
         setMarketError(result.error ?? '安装失败')
       }
     } finally {
-      setMarketBusy(false)
+      busyRef.current.market = false
+      setMarketInstallingId(null)
     }
   }
 
@@ -893,6 +904,8 @@ export function CenterApp(): React.JSX.Element {
   }
 
   const saveSchedule = async (): Promise<void> => {
+    if (busyRef.current.schedule) return
+    busyRef.current.schedule = true
     setScheduleBusy(true)
     setScheduleError('')
     setScheduleOk('')
@@ -908,6 +921,7 @@ export function CenterApp(): React.JSX.Element {
         setScheduleError(result.error ?? '保存失败')
       }
     } finally {
+      busyRef.current.schedule = false
       setScheduleBusy(false)
     }
   }
@@ -1019,7 +1033,7 @@ export function CenterApp(): React.JSX.Element {
 
         {tab === 'characters' && <CharactersTab activeId={activeId} characters={characters} deleteCharacter={deleteCharacter} editDetail={editDetail} editForm={editForm} editingId={editingId} exportCharacter={exportCharacter} importBusy={importBusy} importCharacter={importCharacter} importError={importError} importOk={importOk} openEditor={openEditor} saveBusy={saveBusy} saveEdit={saveEdit} selectCharacter={selectCharacter} setEditForm={setEditForm} setEditingId={setEditingId} switchEditState={switchEditState} />}
 
-        {tab === 'market' && <MarketTab installMarket={installMarket} marketBusy={marketBusy} marketEntries={marketEntries} marketError={marketError} marketOk={marketOk} />}
+        {tab === 'market' && <MarketTab installMarket={installMarket} installingId={marketInstallingId} marketEntries={marketEntries} marketError={marketError} marketOk={marketOk} />}
 
         {tab === 'speech' && settings && <SpeechTab speechDraft={speechDraft} updateSpeechPool={updateSpeechPool} />}
 
@@ -1031,7 +1045,7 @@ export function CenterApp(): React.JSX.Element {
 
         {tab === 'push' && <PushTab handleCopyPushToken={handleCopyPushToken} handlePushApiToggle={handlePushApiToggle} handlePushTest={handlePushTest} handleResetPushToken={handleResetPushToken} pushApiInfo={pushApiInfo} pushApiMsg={pushApiMsg} />}
 
-        {tab === 'events' && <EventsTab expandedIndex={expandedIndex} handleClearHistory={handleClearHistory} histHighOnly={histHighOnly} histSource={histSource} histState={histState} historyEvents={historyEvents} setExpandedIndex={setExpandedIndex} setHistHighOnly={setHistHighOnly} setHistSource={setHistSource} setHistState={setHistState} visible={visible} />}
+        {tab === 'events' && <EventsTab expandedEventKey={expandedEventKey} handleClearHistory={handleClearHistory} histHighOnly={histHighOnly} histSource={histSource} histState={histState} historyEvents={historyEvents} setExpandedEventKey={setExpandedEventKey} setHistHighOnly={setHistHighOnly} setHistSource={setHistSource} setHistState={setHistState} visible={visible} />}
 
         {tab === 'dev' && <DevTab handlePassiveSave={handlePassiveSave} handlePassiveTest={handlePassiveTest} mappingDraft={passiveMappingDraft} passiveCfg={passiveCfg} passiveMsg={passiveMsg} setMappingDraft={setPassiveMappingDraft} updatePassive={updatePassive} />}
 

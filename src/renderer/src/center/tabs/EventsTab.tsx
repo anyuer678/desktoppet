@@ -25,20 +25,22 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
 interface EventsTabProps {
-  expandedIndex: number | null
+  expandedEventKey: string | null
   handleClearHistory: () => void
   histHighOnly: boolean
   histSource: string
   histState: string
   historyEvents: PetEventInfo[]
-  setExpandedIndex: React.Dispatch<React.SetStateAction<number | null>>
+  setExpandedEventKey: React.Dispatch<React.SetStateAction<string | null>>
   setHistHighOnly: React.Dispatch<React.SetStateAction<boolean>>
   setHistSource: React.Dispatch<React.SetStateAction<string>>
   setHistState: React.Dispatch<React.SetStateAction<string>>
   visible: PetEventInfo[]
 }
 
-export function EventsTab({ expandedIndex, handleClearHistory, histHighOnly, histSource, histState, historyEvents, setExpandedIndex, setHistHighOnly, setHistSource, setHistState, visible }: EventsTabProps): React.JSX.Element {
+const eventKey = (e: PetEventInfo): string => `${e.occurredAt}-${e.source}-${e.type}`
+
+export function EventsTab({ expandedEventKey, handleClearHistory, histHighOnly, histSource, histState, historyEvents, setExpandedEventKey, setHistHighOnly, setHistSource, setHistState, visible }: EventsTabProps): React.JSX.Element {
   return (
           <div className="space-y-4">
             <Card>
@@ -91,10 +93,10 @@ export function EventsTab({ expandedIndex, handleClearHistory, histHighOnly, his
                 ) : (
                   <div className="divide-y divide-border overflow-hidden rounded-lg border border-border">
                     {visible.map((e, i) => (
-                      <div key={`${e.source}-${e.occurredAt}-${i}`}>
+                      <div key={`${eventKey(e)}-${i}`}>
                         <button
                           type="button"
-                          onClick={() => setExpandedIndex(expandedIndex === i ? null : i)}
+                          onClick={() => setExpandedEventKey(expandedEventKey === eventKey(e) ? null : eventKey(e))}
                           className="flex w-full items-center gap-2 px-3 py-2 text-left transition-colors hover:bg-muted/60"
                         >
                           <Badge variant={stateOf(e.type)}>{stateOf(e.type)}</Badge>
@@ -105,7 +107,7 @@ export function EventsTab({ expandedIndex, handleClearHistory, histHighOnly, his
                           <span className="text-sm text-muted-foreground">{e.type}</span>
                           <span className="ml-auto text-xs text-muted-foreground">P{e.priority}</span>
                         </button>
-                        {expandedIndex === i && (
+                        {expandedEventKey === eventKey(e) && (
                           <div className="break-all border-t border-border px-3 py-2 text-xs text-muted-foreground">
                             <div>source: {e.source}</div>
                             <div>type: {e.type}</div>

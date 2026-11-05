@@ -25,13 +25,13 @@ import { compareVersions } from '../centerShared'
 
 interface MarketTabProps {
   installMarket: (e: MarketEntryWithStatus) => Promise<void>
-  marketBusy: boolean
+  installingId: string | null
   marketEntries: MarketEntryWithStatus[]
   marketError: string
   marketOk: string
 }
 
-export function MarketTab({ installMarket, marketBusy, marketEntries, marketError, marketOk }: MarketTabProps): React.JSX.Element {
+export function MarketTab({ installMarket, installingId, marketEntries, marketError, marketOk }: MarketTabProps): React.JSX.Element {
   return (
           <div className="space-y-3">
             <div className="text-sm text-muted-foreground">
@@ -65,16 +65,16 @@ export function MarketTab({ installMarket, marketBusy, marketEntries, marketErro
                       <div className="text-xs text-muted-foreground">{e.description}</div>
                       <div className="pt-1.5">
                         {e.installed && e.installedVersion !== undefined && compareVersions(e.version, e.installedVersion) > 0 ? (
-                          <Button variant="default" size="sm" onClick={() => void installMarket(e)} disabled={marketBusy}>
-                            {marketBusy ? '升级中…' : `升级到 v${e.version}`}
+                          <Button variant="default" size="sm" onClick={() => void installMarket(e)} disabled={installingId !== null}>
+                            {installingId === e.id ? '升级中…' : `升级到 v${e.version}`}
                           </Button>
                         ) : e.installed ? (
                           <Button variant="outline" size="sm" disabled>
                             已安装{e.installedVersion ? ` v${e.installedVersion}` : ''}
                           </Button>
                         ) : (
-                          <Button variant="default" size="sm" onClick={() => void installMarket(e)} disabled={marketBusy}>
-                            {marketBusy ? '安装中…' : '安装'}
+                          <Button variant="default" size="sm" onClick={() => void installMarket(e)} disabled={installingId !== null}>
+                            {installingId === e.id ? '安装中…' : '安装'}
                           </Button>
                         )}
                       </div>

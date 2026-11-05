@@ -125,7 +125,9 @@ export function SettingsTab({ openHelp, setOpenHelp, settings, updateSettings }:
                 <Button
                   variant="ghost"
                   className="text-destructive hover:text-destructive"
-                  onClick={() => void window.desktopPet.window.quit()}
+                  onClick={() => {
+                    if (window.confirm('确定退出桌宠？')) void window.desktopPet.window.quit()
+                  }}
                 >
                   退出桌宠
                 </Button>
