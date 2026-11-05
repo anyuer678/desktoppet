@@ -713,7 +713,7 @@ export function StatsTab({ achievements, autoReportCfg, autoReportMsg, autoRepor
                             </div>
                           </>
                         ) : (
-                          <div className="text-sm text-muted-foreground">加载中…</div>
+                          <div className="text-sm text-muted-foreground">{autoReportMsg || '加载中…'}</div>
                         )}
                       </CardContent>
                     </Card>

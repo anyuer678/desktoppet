@@ -3,6 +3,26 @@
 This note documents **accepted residual risk** that cannot be fixed by version bump alone.
 Do not invent a local patch that claims to “fix” these; track upstream and apply mitigations.
 
+## minimatch (via exceljs → archiver → readdir-glob)
+
+| Advisory | Severity | Summary | Patched release |
+|----------|----------|---------|-----------------|
+| GHSA (Dependabot alert #112) | **Moderate** | Globstar amplification can cause CPU DoS while matching attacker-crafted patterns | **11.0.1** |
+
+### How this package is reached here
+
+- Runtime: `exceljs` → `archiver` → `readdir-glob` / `archiver-utils` pulls `minimatch` 3.x/5.x.
+- Build/dev: `electron-builder` → app-builder-lib pulls 3.x/5.x/9.x/10.x.
+- No code path passes user-controlled glob strings to `minimatch`; Excel export walks local stats directories with fixed patterns, and character/market imports use the app's own glob matcher. The advisory requires an attacker-chosen pattern, not an attacker-chosen filename.
+
+### Mitigations (active)
+
+1. Do not expose arbitrary glob/regex input to `minimatch` through IPC or character packs.
+2. Track `exceljs`/`archiver` upstream for a release that moves to minimatch ≥ 11; avoid a blanket npm override to 11.x until API compatibility (CJS/Node engine) is verified against electron-builder.
+3. Re-run `npm audit` against the public registry when the mirror supports the advisories endpoint.
+
+Last reviewed: 2026-11-05.
+
 ## extract-zip (via electron / electron-builder toolchain)
 
 | Advisory | Severity | Summary | Patched release |

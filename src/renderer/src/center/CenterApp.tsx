@@ -417,7 +417,13 @@ export function CenterApp(): React.JSX.Element {
 
   const loadAutoReportCfg = async (): Promise<void> => {
     const res = await window.desktopPet.autoReport.get()
-    if (res.ok && res.config) setAutoReportCfg(res.config)
+    if (res.ok && res.config) {
+      setAutoReportCfg(res.config)
+      setAutoReportMsg('')
+    } else {
+      // 失败时给出原因，避免卡片永久停在「加载中」
+      setAutoReportMsg(res.error ?? '自动报告配置加载失败')
+    }
   }
 
   const handleAutoReportSave = async (): Promise<void> => {
@@ -564,6 +570,7 @@ export function CenterApp(): React.JSX.Element {
         refreshStats(),
         loadRange(rangeStart, rangeEnd),
         loadHeatmap(heatmapMonth.year, heatmapMonth.month),
+        loadYearSummary(new Date().getFullYear()),
         loadYearHeatmap(yearHeatYear),
         loadAchievements(),
         loadTrend(trendMode)
@@ -582,6 +589,8 @@ export function CenterApp(): React.JSX.Element {
   // 统计页：日期变化 / 切页拉取 + 15s 自动刷新
   useEffect(() => {
     if (tab !== 'stats') return undefined
+    // 深链直接进统计页时首页卡片未加载，这里补一次今日/本周数据（含连续陪伴）
+    refreshStats()
     void loadRange(rangeStart, rangeEnd)
     void loadHeatmap(heatmapMonth.year, heatmapMonth.month)
     void loadYearSummary(new Date().getFullYear())
