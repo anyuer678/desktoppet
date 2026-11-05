@@ -9,9 +9,10 @@ export default defineConfig({
       include: ['src/**/*.ts'],
       exclude: ['src/**/*.test.ts', 'src/**/*.d.ts'],
       thresholds: {
-        // Floor from measured suite (2026-09): lines ~56%. Keep CI green; ratchet later.
-        lines: 55,
-        functions: 40,
+        // 2026-11 measured: statements 56.02%, lines 57.46%, functions 42.03%.
+        // Keep a small buffer below measured values to avoid CI noise.
+        lines: 57,
+        functions: 41,
         statements: 55
       }
     }
