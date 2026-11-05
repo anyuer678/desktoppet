@@ -339,8 +339,17 @@ export function CharactersTab({ activeId, characters, deleteCharacter, editDetai
             {characters.map((c) => (
               <Card
                 key={c.id}
-                className={cn('cursor-pointer transition-colors hover:bg-muted/40', c.id === activeId && 'ring-2 ring-ring')}
+                role="button"
+                tabIndex={0}
+                aria-pressed={c.id === activeId}
+                className={cn('cursor-pointer transition-colors hover:bg-muted/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring', c.id === activeId && 'ring-2 ring-ring')}
                 onClick={() => selectCharacter(c.id)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault()
+                    selectCharacter(c.id)
+                  }
+                }}
               >
                 <CardContent className="flex items-center gap-4 p-4">
                   {c.preview && <img src={c.preview} alt={c.name} className="size-12 rounded-lg object-contain" />}

@@ -113,6 +113,20 @@ describe('passiveStore', () => {
     ).toContain('folder.dir')
   })
 
+  it('validate：folder.dir 相对路径 → 拒绝', () => {
+    expect(
+      validatePassiveConfig({
+        ...DEFAULT_PASSIVE_SOURCES_CONFIG,
+        folder: { ...DEFAULT_PASSIVE_SOURCES_CONFIG.folder, dir: 'relative/data' }
+      })
+    ).toContain('绝对路径')
+  })
+
+  it('load：损坏配置中的相对目录回退为空（不监听 cwd）', () => {
+    writeFileSync(file, JSON.stringify({ folder: { dir: 'relative/data' } }))
+    expect(loadPassiveConfig(file).folder.dir).toBe('')
+  })
+
   it('round-trip：save 后 load 与保存值一致', () => {
     const cfg: typeof DEFAULT_PASSIVE_SOURCES_CONFIG = {
       clipboard: {

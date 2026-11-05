@@ -7,7 +7,7 @@
 
 ## v1.3.0 (2026-11-05)
 
-自动更新闭环、本地集成协议、数据完整性与统计口径修复。单测 534 例，typecheck/build 全绿。
+自动更新闭环、本地集成协议、数据完整性与统计口径修复。单测 536 例，typecheck/build 全绿。
 
 新增：
 - 自动更新完整链路：`updater:get/check/download/install` IPC 与控制中心侧栏操作；状态机（idle/checking/available/downloading/downloaded/error/unsupported）纯逻辑可单测；发现新版本/下载完成时即使控制中心未打开也会弹系统通知；开发模式（`app.isPackaged=false`）明确跳过检查
@@ -32,6 +32,7 @@
 - 当月热力图不再因「查询未来」被清空；「本年」趋势允许整年区间（366 天）
 - 台词池编辑即时同步到运行中的桌宠窗口；右键/中键不再触发左键单点动作；序列帧切换状态时重置帧计数与失败态
 - 修复桌宠透明度被原生窗口与 CSS 双重相乘的问题；长气泡支持换行与居中，CSP 增加 object/base/frame 限制
+- 角色卡片支持键盘 Enter/Space 切换；目录被动源拒绝相对路径并回退损坏配置，防止监听进程 cwd
 
 ## v1.2.1 (2026-09-25)
 
