@@ -7,12 +7,13 @@
 
 ## v1.3.0 (2026-11-05)
 
-自动更新闭环、本地集成协议、数据完整性与统计口径修复。单测 529 例，typecheck/build 全绿。
+自动更新闭环、本地集成协议、数据完整性与统计口径修复。单测 534 例，typecheck/build 全绿。
 
 新增：
 - 自动更新完整链路：`updater:get/check/download/install` IPC 与控制中心侧栏操作；状态机（idle/checking/available/downloading/downloaded/error/unsupported）纯逻辑可单测；发现新版本/下载完成时即使控制中心未打开也会弹系统通知；开发模式（`app.isPackaged=false`）明确跳过检查
 - 推送 API 新增鉴权状态端点 `GET /api/status`（Bearer token），返回 app/version/role/state/uptimeMs/eventsReceived，便于 [lumen](https://github.com/anyuer678/lumen) 等本地工具验证链路
 - 「推送」页展示发现文件绝对路径（lumen petpush 读取 `enabled/token/port` 的 `pushApi.json`）
+- 本地集成收件箱：`userData/inbox/*.json` 写入 `{title,message,type?}` 即可投递事件（5 秒轮询、64KB 上限、非法文件改名为 `.bad`），供 lumen/runtrace/envforge 等本地工具免 HTTP/Token 联动
 
 修复：
 - 多角色报告互串：周报/月报文件名与 Markdown 增加角色 id，自动报告「本周期已生成」判重按角色隔离

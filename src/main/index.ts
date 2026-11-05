@@ -3,7 +3,7 @@ import { join } from 'path'
 import { promisify } from 'util'
 import { execFile } from 'child_process'
 import type { PluginManifest } from '../shared/ipc'
-import { pluginsDir } from './app/paths'
+import { inboxPath, pluginsDir } from './app/paths'
 import { seedDefaultCharacters, seedDefaultPlugins } from './app/seed'
 import { acquireSingleInstanceLock, registerQuitCleanup } from './app/lifecycle'
 import { createWindowHub } from './window/windows'
@@ -18,6 +18,7 @@ import { loadPlugins } from './plugin/pluginHost'
 import { createStatsRuntime } from './stats/statsRuntime'
 import { createAutoReportRuntime } from './stats/autoReportRuntime'
 import { createPushRuntime } from './push/pushRuntime'
+import { createInboxRuntime } from './integration/inbox'
 import { createScheduleRuntime } from './schedule/scheduleRuntime'
 import { createPerfRuntime } from './perf/perfRuntime'
 import { createTickLoop } from './runtime/tick'
@@ -91,6 +92,13 @@ const push = createPushRuntime({
   getRoleId: () => stats.roleId(),
   notifyPet,
   notifyCenter,
+  log
+})
+
+// 本地集成收件箱：其他工具写 userData/inbox/*.json 即可投递事件（无需 HTTP/Token）
+const inbox = createInboxRuntime({
+  dir: inboxPath,
+  fire: (body) => push.fireEvent(body, 'inbox'),
   log
 })
 
@@ -198,6 +206,7 @@ if (!acquireSingleInstanceLock(() => windows.openCenter())) {
     screen.on('display-metrics-changed', () => windows.ensurePetPosition())
 
     passive.start()
+    inbox.start()
     tickLoop.start()
 
     // 自动更新检查（启动后 30 秒延迟）
@@ -219,6 +228,7 @@ if (!acquireSingleInstanceLock(() => windows.openCenter())) {
     () => tray?.destroy(),
     () => schedule.stop(),
     () => passive.stop(),
+    () => inbox.stop(),
     () => push.stop(),
     () => stats.dispose()
   ])

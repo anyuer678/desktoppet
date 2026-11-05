@@ -41,8 +41,8 @@ export interface PushRuntime {
   port(): number
   /** 运行状态快照（GET /api/status） */
   status(): PushServiceStatus
-  /** 推送事件处理：计入统计 + 注入事件中心 + 气泡 + 状态转换广播 */
-  fireEvent(body: PushEventBody): void
+  /** 推送事件处理：计入统计 + 注入事件中心 + 气泡 + 状态转换广播（origin 仅用于事件来源标识） */
+  fireEvent(body: PushEventBody, origin?: 'push' | 'inbox'): void
 }
 
 /** 推送 API 运行时：配置/token/服务句柄/事件计数器均为闭包私有状态 */
@@ -75,11 +75,11 @@ export function createPushRuntime(deps: PushRuntimeDeps): PushRuntime {
     }
   }
 
-  function fireEvent(body: PushEventBody): void {
+  function fireEvent(body: PushEventBody, origin: 'push' | 'inbox' = 'push'): void {
     const now = Date.now()
     pushReceived++
-    deps.stats.record((s) => countEvent(s, 'push'))
-    const sourceId = `push:${(pushEventSource++ % 100000).toString(36)}-${now.toString(36).slice(-4)}`
+    deps.stats.record((s) => countEvent(s, origin === 'inbox' ? 'inbox' : 'push'))
+    const sourceId = `${origin}:${(pushEventSource++ % 100000).toString(36)}-${now.toString(36).slice(-4)}`
     deps.events.apply({
       source: sourceId,
       type: body.type ?? 'notice',

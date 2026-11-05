@@ -40,6 +40,11 @@ export function pushApiConfigPath(): string {
   return join(app.getPath('userData'), 'pushApi.json')
 }
 
+/** 本地集成收件箱：其他工具写入 *.json 即可投递事件（userData/inbox/） */
+export function inboxPath(): string {
+  return join(app.getPath('userData'), 'inbox')
+}
+
 /** 被动数据源配置文件（userData/passiveSources.json） */
 export function passiveConfigPath(): string {
   return join(app.getPath('userData'), 'passiveSources.json')

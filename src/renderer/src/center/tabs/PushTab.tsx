@@ -66,6 +66,12 @@ export function PushTab({ handleCopyPushToken, handlePushApiToggle, handlePushTe
                         </code>
                       </div>
                       <div className="flex items-center justify-between gap-2 rounded-md border border-border px-3 py-2">
+                        <span className="shrink-0 text-muted-foreground">收件箱</span>
+                        <code className="min-w-0 flex-1 truncate font-mono text-xs" title={pushApiInfo.inboxPath}>
+                          {pushApiInfo.inboxPath}
+                        </code>
+                      </div>
+                      <div className="flex items-center justify-between gap-2 rounded-md border border-border px-3 py-2">
                         <span className="shrink-0 text-muted-foreground">Token</span>
                         <code className="min-w-0 flex-1 truncate font-mono text-xs">{pushApiInfo.token || '（未生成）'}</code>
                         <button
@@ -118,6 +124,10 @@ export function PushTab({ handleCopyPushToken, handlePushApiToggle, handlePushTe
                   <div>
                     · 集成方可读取「发现文件」获取 enabled/token/port（lumen 的 petpush 即此协议），
                     也可 GET /api/status 校验链路（同样需要 Bearer）。
+                  </div>
+                  <div>
+                    · 不想走 HTTP 的工具，把 {'{ "title": "...", "message": "...", "type": "complete" }'}
+                    写入「收件箱」目录下的 .json 文件即可（5 秒内处理并删除，非法文件改名为 .bad）。
                   </div>
                 </div>
               </CardContent>

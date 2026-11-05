@@ -207,7 +207,7 @@ interface ScheduleFired { id: string; title: string; message: string; firedAt: n
 | autoReport:get | R→M | — | AutoReportGetResult（ok + config：{ weekly:{enabled,dayOfWeek,dayOfMonth,time}, monthly:{...} }，持久化于 userData/autoReports.json） |
 | autoReport:set | R→M | config: AutoReportConfig | AutoReportSetResult（校验 dayOfWeek 0-6 / dayOfMonth 1-31 / time HH:mm，通过即落盘） |
 | autoReport:fired | M→R | AutoReportFiredEvent（{type:'week'\|'month', title, body:报告路径}） | 事件：自动报告到点生成后广播给桌宠与控制中心（气泡展示） |
-| pushApi:get | R→M | — | PushApiGetResult（ok + info：{ enabled, port, token, discoveryPath }；port=端口，服务未启动为 0；token 32 位 hex；discoveryPath=供 lumen 等本地工具读取的 pushApi.json 绝对路径） |
+| pushApi:get | R→M | — | PushApiGetResult（ok + info：{ enabled, port, token, discoveryPath, inboxPath }；port=端口，服务未启动为 0；token 32 位 hex；discoveryPath=供 lumen 等本地工具读取的 pushApi.json 绝对路径；inboxPath=本地集成收件箱目录） |
 | pushApi:setEnabled | R→M | enabled:boolean | PushApiSetEnabledResult（启→启动 HTTP 服务并落盘；停→停止服务并落盘） |
 | pushApi:resetToken | R→M | — | PushApiResetTokenResult（重新生成 32 位 hex token 并落盘，返回新 token） |
 | pushApi:test | R→M | — | PushApiTestResult（本地发送一条示例推送验证链路，不经过 HTTP） |
@@ -227,6 +227,18 @@ interface ScheduleFired { id: string; title: string; message: string; firedAt: n
 | GET /api/status | Bearer token | 运行时快照：{ ok, app, version, role, state, uptimeMs, eventsReceived }，供 lumen 等本地集成自检 |
 
 发现文件 `userData/pushApi.json` 始终写 `enabled/token/port`（port 在服务停止时移除），这是 lumen `petpush` 的发现协议；不要在手写配置时遗漏 token 的 32 位 hex 约束。
+
+### 本地集成收件箱（v1.3，免 HTTP/Token）
+
+目录：`userData/inbox/`。本地工具写入单个 `.json` 文件，内容与 `POST /api/event` 的 body 相同：
+
+```json
+{ "title": "构建完成", "message": "可以发布", "type": "complete" }
+```
+
+- 每 5 秒扫描一次，单轮最多 20 个文件；成功投递后删除文件，事件源前缀 `inbox:`，统计键 `inbox`。
+- 单文件上限 64KB；非法 JSON / 缺 title/message / 非普通文件 → 改名为 `<原名>.<时间戳>.bad` 保留排查。
+- 只处理目录第一层的普通文件，不跟随符号链接；适合 lumen / runtrace / envforge 等本地工具一次性投递。
 | passive:get | R→M | — | PassiveGetResult（ok + config：{ clipboard, folder, foreground }，持久化于 userData/passiveSources.json） |
 | passive:set | R→M | config: PassiveSourcesConfig | PassiveSetResult（validatePassiveConfig 校验 pollMs/debounceMs/maxLen 正整数、patterns 非空字符串数组、mappings state ∈ focus/ignore；通过则落盘并重建数据源 hub 即时生效） |
 | passive:test | R→M | sourceId: 'clipboard' \| 'folder' \| 'foreground' | PassiveTestResult（按当前配置模拟触发一次对应源，验证气泡链路；配置不符时返回错误原因） |

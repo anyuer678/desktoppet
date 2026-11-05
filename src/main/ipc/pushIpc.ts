@@ -1,5 +1,5 @@
 import { ipcMain } from 'electron'
-import { pushApiConfigPath } from '../app/paths'
+import { inboxPath, pushApiConfigPath } from '../app/paths'
 import type { PushRuntime } from '../push/pushRuntime'
 
 export interface PushIpcDeps {
@@ -15,7 +15,8 @@ export function registerPushIpc(deps: PushIpcDeps): void {
       enabled: deps.push.config().enabled,
       port: deps.push.port(),
       token: deps.push.config().token,
-      discoveryPath: pushApiConfigPath()
+      discoveryPath: pushApiConfigPath(),
+      inboxPath: inboxPath()
     }
   }))
   ipcMain.handle('pushApi:setEnabled', (_e, enabled: unknown) => {

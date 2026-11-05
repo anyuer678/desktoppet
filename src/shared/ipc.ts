@@ -502,6 +502,8 @@ export interface PushApiInfo {
   token: string
   /** 发现文件绝对路径（lumen 等本地工具读取 enabled/token/port） */
   discoveryPath: string
+  /** 本地集成收件箱目录（写入 {title,message,type?} JSON 即可投递事件） */
+  inboxPath: string
 }
 
 /** pushApi:get 返回 */
