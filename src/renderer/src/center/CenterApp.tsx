@@ -31,7 +31,7 @@ import { Input } from '@/components/ui/input'
 import { Slider } from '@/components/ui/slider'
 import { Switch } from '@/components/ui/switch'
 import { cn } from '@/lib/utils'
-import { EMPTY_EDIT_FORM, SPEECH_KEYS, TABS, Tab, buildEmptyScheduleForm, daysAgoStr, monthDates, scheduleToForm, todayStr } from './centerShared'
+import { EMPTY_EDIT_FORM, SPEECH_KEYS, TABS, Tab, buildEmptyScheduleForm, daysAgoStr, formatMappings, monthDates, parseMappings, scheduleToForm, todayStr } from './centerShared'
 import { HomeTab } from './tabs/HomeTab'
 import { CharactersTab } from './tabs/CharactersTab'
 import { MarketTab } from './tabs/MarketTab'
@@ -105,6 +105,8 @@ export function CenterApp(): React.JSX.Element {
   const [pushApiInfo, setPushApiInfo] = useState<PushApiInfo | null>(null)
   const [pushApiMsg, setPushApiMsg] = useState('')
   const [passiveCfg, setPassiveCfg] = useState<PassiveSourcesConfig | null>(null)
+  // 进程映射用原始文本编辑：解析只在保存时做，避免输入 `chrome:focus` 途中被过滤掉
+  const [passiveMappingDraft, setPassiveMappingDraft] = useState('')
   const [passiveMsg, setPassiveMsg] = useState('')
   const [yearSummary, setYearSummary] = useState<YearSummary | null | undefined>(undefined)
   const [trendMode, setTrendMode] = useState<'7d' | 'month' | 'year'>('7d')
@@ -252,10 +254,9 @@ export function CenterApp(): React.JSX.Element {
   }, [settings])
 
   useEffect(() => {
-    if (tab === 'market' && marketEntries.length === 0) {
-      void loadMarket()
-    }
-  }, [tab, marketEntries.length])
+    // 每次进入市场都重新读取目录与安装状态，避免过期列表把已导入角色再覆盖一次
+    if (tab === 'market') void loadMarket()
+  }, [tab])
 
   const refreshStats = (): void => {
     const seq = ++statsSeqRef.current
@@ -484,16 +485,39 @@ export function CenterApp(): React.JSX.Element {
 
   const loadPassiveCfg = async (): Promise<void> => {
     const res = await window.desktopPet.passive.get()
-    if (res.ok && res.config) setPassiveCfg(res.config)
+    if (res.ok && res.config) {
+      setPassiveCfg(res.config)
+      setPassiveMappingDraft(formatMappings(res.config.foreground.mappings))
+      setPassiveMsg('')
+    } else {
+      setPassiveMsg(res.error ?? '被动源配置加载失败')
+    }
   }
 
   const handlePassiveSave = async (): Promise<void> => {
-    if (!passiveCfg) return
+    if (!passiveCfg) {
+      setPassiveMsg('配置尚未加载完成')
+      return
+    }
     setPassiveMsg('')
-    const res = await window.desktopPet.passive.set(passiveCfg)
+    const lines = passiveMappingDraft
+      .split('\n')
+      .map((s) => s.trim())
+      .filter((s) => s !== '')
+    const mappings = parseMappings(passiveMappingDraft)
+    if (mappings.length !== lines.length) {
+      setPassiveMsg('进程映射格式应为「进程名:focus」或「进程名:ignore」')
+      return
+    }
+    const cfg: PassiveSourcesConfig = {
+      ...passiveCfg,
+      foreground: { ...passiveCfg.foreground, mappings }
+    }
+    const res = await window.desktopPet.passive.set(cfg)
     if (res.ok) {
+      setPassiveCfg(cfg)
+      setPassiveMappingDraft(formatMappings(mappings))
       setPassiveMsg('已保存并应用')
-      void loadPassiveCfg()
     } else {
       setPassiveMsg(res.error ?? '保存失败')
     }
@@ -721,6 +745,7 @@ export function CenterApp(): React.JSX.Element {
   }
 
   const loadMarket = async (): Promise<void> => {
+    setMarketError('')
     try {
       setMarketEntries(await window.desktopPet.market.catalog())
     } catch (err) {
@@ -737,6 +762,8 @@ export function CenterApp(): React.JSX.Element {
       const result = await window.desktopPet.market.install(e.id)
       if (result.ok) {
         setMarketOk(result.overwritten ? `已升级角色「${e.name}」` : `已安装角色「${e.name}」`)
+        // 安装/升级后同步角色列表，避免首页/角色页仍显示旧状态
+        setCharacters(await window.desktopPet.character.list())
         await loadMarket()
       } else {
         setMarketError(result.error ?? '安装失败')
@@ -1006,7 +1033,7 @@ export function CenterApp(): React.JSX.Element {
 
         {tab === 'events' && <EventsTab expandedIndex={expandedIndex} handleClearHistory={handleClearHistory} histHighOnly={histHighOnly} histSource={histSource} histState={histState} historyEvents={historyEvents} setExpandedIndex={setExpandedIndex} setHistHighOnly={setHistHighOnly} setHistSource={setHistSource} setHistState={setHistState} visible={visible} />}
 
-        {tab === 'dev' && <DevTab handlePassiveSave={handlePassiveSave} handlePassiveTest={handlePassiveTest} passiveCfg={passiveCfg} passiveMsg={passiveMsg} updatePassive={updatePassive} />}
+        {tab === 'dev' && <DevTab handlePassiveSave={handlePassiveSave} handlePassiveTest={handlePassiveTest} mappingDraft={passiveMappingDraft} passiveCfg={passiveCfg} passiveMsg={passiveMsg} setMappingDraft={setPassiveMappingDraft} updatePassive={updatePassive} />}
 
         {tab === 'settings' && settings && <SettingsTab openHelp={openHelp} setOpenHelp={setOpenHelp} settings={settings!} updateSettings={updateSettings} />}
         </div>

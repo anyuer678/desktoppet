@@ -1,5 +1,9 @@
 appId: com.desktoppet.app
 productName: DesktopPet
+extraMetadata:
+  # 安装态 package.json 注入 productName，使 app.getName()/userData 为 DesktopPet
+  # （与 lumen petpush 读取的 %APPDATA%/DesktopPet/pushApi.json 对齐）
+  productName: DesktopPet
 publish:
   provider: github
   owner: anyuer678

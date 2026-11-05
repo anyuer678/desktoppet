@@ -25,6 +25,7 @@ import { Input } from '@/components/ui/input'
 import { Switch } from '@/components/ui/switch'
 import { cn } from '@/lib/utils'
 import { SCHEDULE_TYPE_LABELS, WEEKDAY_LABELS } from '../centerShared'
+import { isTriggerValid, triggerForType } from '../scheduleForm'
 
 interface ScheduleEditTabProps {
   active: CharacterSummary | undefined
@@ -71,7 +72,13 @@ export function ScheduleEditTab({ active, editingScheduleId, saveSchedule, sched
                       <button
                         key={t}
                         type="button"
-                        onClick={() => setScheduleForm({ ...scheduleForm, type: t })}
+                        onClick={() =>
+                          setScheduleForm({
+                            ...scheduleForm,
+                            type: t,
+                            trigger: triggerForType(scheduleForm.trigger, t)
+                          })
+                        }
                         className={cn(
                           'flex-1 rounded-md border px-3 py-1.5 text-sm transition-colors',
                           scheduleForm.type === t
@@ -93,6 +100,9 @@ export function ScheduleEditTab({ active, editingScheduleId, saveSchedule, sched
                     onChange={(e) => setScheduleForm({ ...scheduleForm, trigger: e.target.value })}
                     placeholder={scheduleForm.type === 'once' ? '2026-08-05T09:00' : '09:00'}
                   />
+                  {!isTriggerValid(scheduleForm.trigger, scheduleForm.type) && (
+                    <div className="text-xs text-destructive">时间格式不正确</div>
+                  )}
                   {scheduleForm.type === 'once' && (
                     <div className="text-xs text-muted-foreground">单次提醒触发后自动禁用</div>
                   )}
@@ -137,7 +147,16 @@ export function ScheduleEditTab({ active, editingScheduleId, saveSchedule, sched
               </div>
             )}
             <div className="flex gap-2">
-              <Button variant="default" onClick={() => void saveSchedule()} disabled={scheduleBusy}>
+              <Button
+                variant="default"
+                onClick={() => void saveSchedule()}
+                disabled={
+                  scheduleBusy ||
+                  scheduleForm.title.trim() === '' ||
+                  !isTriggerValid(scheduleForm.trigger, scheduleForm.type) ||
+                  (scheduleForm.type === 'weekly' && scheduleForm.daysOfWeek.length === 0)
+                }
+              >
                 {scheduleBusy ? '保存中…' : '保存'}
               </Button>
               <Button variant="ghost" onClick={() => setEditingScheduleId(null)}>

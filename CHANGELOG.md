@@ -7,7 +7,7 @@
 
 ## v1.3.0 (2026-11-05)
 
-自动更新闭环、本地集成协议、数据完整性与统计口径修复。单测 536 例，typecheck/build 全绿。
+自动更新闭环、本地集成协议、数据完整性与统计口径修复。单测 543 例，typecheck/build 全绿。
 
 新增：
 - 自动更新完整链路：`updater:get/check/download/install` IPC 与控制中心侧栏操作；状态机（idle/checking/available/downloading/downloaded/error/unsupported）纯逻辑可单测；发现新版本/下载完成时即使控制中心未打开也会弹系统通知；开发模式（`app.isPackaged=false`）明确跳过检查
@@ -33,6 +33,10 @@
 - 台词池编辑即时同步到运行中的桌宠窗口；右键/中键不再触发左键单点动作；序列帧切换状态时重置帧计数与失败态
 - 修复桌宠透明度被原生窗口与 CSS 双重相乘的问题；长气泡支持换行与居中，CSP 增加 object/base/frame 限制
 - 角色卡片支持键盘 Enter/Space 切换；目录被动源拒绝相对路径并回退损坏配置，防止监听进程 cwd
+- 安装态注入 productName：userData/日志/发现文件统一为 `%APPDATA%/DesktopPet`，与 lumen petpush 的读取路径一致（打包版实机验证 seed/精灵图/状态端点/收件箱）
+- 开发者页进程映射改为原始文本编辑、保存时统一校验，输入 `chrome:focus` 不再被逐字符过滤
+- 市场页每次进入重新加载，安装/升级后同步刷新角色列表，避免过期条目覆盖已导入角色
+- 日程编辑器切换类型时自动规范化 trigger（ISO ↔ HH:mm），标题为空/周计划未选星期/时间非法时禁用保存
 
 ## v1.2.1 (2026-09-25)
 

@@ -23,17 +23,19 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Switch } from '@/components/ui/switch'
-import { formatMappings, joinList, parseList, parseMappings, textareaCls } from '../centerShared'
+import { joinList, parseList, textareaCls } from '../centerShared'
 
 interface DevTabProps {
   handlePassiveSave: () => Promise<void>
   handlePassiveTest: (sourceId: 'clipboard' | 'folder' | 'foreground') => Promise<void>
+  mappingDraft: string
   passiveCfg: PassiveSourcesConfig | null
   passiveMsg: string
+  setMappingDraft: (value: string) => void
   updatePassive: (fn: (cfg: PassiveSourcesConfig) => PassiveSourcesConfig) => void
 }
 
-export function DevTab({ handlePassiveSave, handlePassiveTest, passiveCfg, passiveMsg, updatePassive }: DevTabProps): React.JSX.Element {
+export function DevTab({ handlePassiveSave, handlePassiveTest, mappingDraft, passiveCfg, passiveMsg, setMappingDraft, updatePassive }: DevTabProps): React.JSX.Element {
   return (
           <div className="max-w-2xl space-y-4">
             <Card>
@@ -109,7 +111,7 @@ export function DevTab({ handlePassiveSave, handlePassiveTest, passiveCfg, passi
                   </label>
                   <label className="mt-2 block space-y-1 text-xs text-muted-foreground">
                     进程映射（逐行 进程名:focus 或 进程名:ignore）
-                    <textarea className={textareaCls} value={formatMappings(passiveCfg?.foreground.mappings ?? [])} onChange={(e) => updatePassive((c) => ({ ...c, foreground: { ...c.foreground, mappings: parseMappings(e.target.value) } }))} />
+                    <textarea className={textareaCls} value={mappingDraft} onChange={(e) => setMappingDraft(e.target.value)} />
                   </label>
                 </div>
                 <div className="flex flex-wrap items-center gap-2">
