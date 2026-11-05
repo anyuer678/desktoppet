@@ -1,6 +1,7 @@
-import { existsSync, mkdirSync, readFileSync, readdirSync, renameSync, unlinkSync, writeFileSync } from 'fs'
+import { existsSync, mkdirSync, readFileSync, readdirSync, renameSync, unlinkSync } from 'fs'
 import { join } from 'path'
 import type { DailyStats, InteractionKind, RangeDay, WeekSummary, YearSummary } from '../../shared/ipc'
+import { writeFileAtomic } from '../storage/atomicWrite'
 
 export function todayStr(now: Date = new Date()): string {
   const m = String(now.getMonth() + 1).padStart(2, '0')
@@ -169,8 +170,7 @@ export function loadDailyStats(dir: string, date: string): DailyStats {
 
 export function saveDailyStats(dir: string, stats: DailyStats): void {
   try {
-    mkdirSync(dir, { recursive: true })
-    writeFileSync(dailyStatsPath(dir, stats.date), JSON.stringify(stats, null, 2), 'utf-8')
+    writeFileAtomic(dailyStatsPath(dir, stats.date), JSON.stringify(stats, null, 2))
   } catch (err) {
     console.error('[stats] save failed:', err)
   }
@@ -290,7 +290,8 @@ export function clearStatsDir(dir: string): number {
 /** 校验区间入参（格式 / start≤end / ≤90 天 / 不查未来）；与 stats:range 原逻辑等价 */
 export function validateRange(
   start: string,
-  end: string
+  end: string,
+  maxDays = 90
 ): { ok: boolean; error?: string; dates?: string[] } {
   const fmt = /^\d{4}-\d{2}-\d{2}$/
   if (!fmt.test(start) || !fmt.test(end)) return { ok: false, error: '日期格式应为 YYYY-MM-DD' }
@@ -299,7 +300,9 @@ export function validateRange(
   const a = new Date(y1, m1 - 1, d1)
   const b = new Date(y2, m2 - 1, d2)
   if (a.getTime() > b.getTime()) return { ok: false, error: '起始日期不能晚于结束日期' }
-  if ((b.getTime() - a.getTime()) / 86400000 + 1 > 90) return { ok: false, error: '查询区间不能超过 90 天' }
+  if ((b.getTime() - a.getTime()) / 86400000 + 1 > maxDays) {
+    return { ok: false, error: `查询区间不能超过 ${maxDays} 天` }
+  }
   const dates = iterateDates(start, end)
   if (dates.length === 0) return { ok: false, error: '日期无效或区间为空' }
   if (dates[dates.length - 1] > todayStr()) return { ok: false, error: '不能查询未来日期' }
@@ -317,35 +320,50 @@ export function sanitizeRoleId(id: string): string {
  * 幂等：无平铺文件时返回 0。同名冲突按 updatedAt 保留较新者。
  */
 export function migrateStatsLayout(root: string, defaultRoleId: string): number {
-  if (!existsSync(root)) return 0
-  const role = sanitizeRoleId(defaultRoleId)
-  const dailyRoleDir = join(root, role)
-  let moved = 0
-  for (const name of readdirSync(root)) {
-    if (!name.endsWith('.json')) continue
-    const src = join(root, name)
-    mkdirSync(dailyRoleDir, { recursive: true })
-    const dest = join(dailyRoleDir, name)
-    if (existsSync(dest)) {
-      // 保留 updatedAt 较新者
-      try {
-        const s = JSON.parse(readFileSync(src, 'utf-8')) as { updatedAt?: number }
-        const d = JSON.parse(readFileSync(dest, 'utf-8')) as { updatedAt?: number }
-        if ((s.updatedAt ?? 0) > (d.updatedAt ?? 0)) {
-          unlinkSync(dest)
-          renameSync(src, dest)
-        } else {
-          unlinkSync(src)
-        }
-      } catch {
-        unlinkSync(src)
-      }
-    } else {
-      renameSync(src, dest)
+  // 迁移失败（AV 占用/权限/磁盘）不能阻断启动：最坏情况是旧数据暂不迁移，下次再试
+  try {
+    if (!existsSync(root)) return 0
+    const role = sanitizeRoleId(defaultRoleId)
+    const dailyRoleDir = join(root, role)
+    let names: string[]
+    try {
+      names = readdirSync(root)
+    } catch {
+      return 0
     }
-    moved++
+    let moved = 0
+    for (const name of names) {
+      if (!name.endsWith('.json')) continue
+      try {
+        const src = join(root, name)
+        mkdirSync(dailyRoleDir, { recursive: true })
+        const dest = join(dailyRoleDir, name)
+        if (existsSync(dest)) {
+          // 保留 updatedAt 较新者；解析失败时两份都保留，避免误删唯一数据
+          try {
+            const s = JSON.parse(readFileSync(src, 'utf-8')) as { updatedAt?: number }
+            const d = JSON.parse(readFileSync(dest, 'utf-8')) as { updatedAt?: number }
+            if ((s.updatedAt ?? 0) > (d.updatedAt ?? 0)) {
+              unlinkSync(dest)
+              renameSync(src, dest)
+            } else {
+              unlinkSync(src)
+            }
+          } catch {
+            continue
+          }
+        } else {
+          renameSync(src, dest)
+        }
+        moved++
+      } catch {
+        // 单个文件迁移失败不影响其他文件
+      }
+    }
+    return moved
+  } catch {
+    return 0
   }
-  return moved
 }
 
 /** 全年逐日统计（不分上限 90 天；未来日期 present=false 不报错）；闰年自动 366 天 */

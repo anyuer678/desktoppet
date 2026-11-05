@@ -196,7 +196,7 @@ interface ScheduleFired { id: string; title: string; message: string; firedAt: n
 | stats:year | R→M | year:number | StatsYearResult（年度汇总；year 须为 2000~2100 整数） |
 | stats:heatmap | R→M | year:number | StatsHeatmapResult（整年逐日 RangeDay[]，不受 90 天限制；当年未来日期 present=false 空统计不报错；year 须为 2000~2100 整数） |
 | stats:achievements | R→M | — | StatsAchievementsResult（当前角色成就：连续/最长连续天数、累计陪伴秒、等级与下一个等级阈值、9 枚徽章解锁状态） |
-| stats:trend | R→M | cStart, cEnd, pStart, pEnd（YYYY-MM-DD） | StatsTrendResult（本期 vs 上期 PeriodCompareResult；日期校验同 stats:range） |
+| stats:trend | R→M | cStart, cEnd, pStart, pEnd（YYYY-MM-DD） | StatsTrendResult（本期 vs 上期 PeriodCompareResult；日期校验同 stats:range，但允许最长 366 天以支持“本年”对比） |
 | stats:report:generate | R→M | mode: 'week' \| 'month' | StatsReportGenerateResult（生成 Markdown 周报/月报到「文档/DesktopPet/报告/」，path 为落盘路径；文件名含角色 id：`陪伴周报-<角色>-<本周一>-<当天>.md` / `陪伴月报-<角色>-<YYYY-MM>-<当天>.md`） |
 | stats:openReportDir | R→M | — | OpResult（用系统默认方式打开报告目录「文档/DesktopPet/报告/」；已实现） |
 | stats:exportExcel | R→M | year:number | StatsSpreadsheetResult（弹保存对话框导出全年 xlsx，含「每日明细」「汇总」两 Sheet；year 须为 2000~2100 整数） |

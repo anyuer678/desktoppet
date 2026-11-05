@@ -125,11 +125,14 @@ export function createPushRuntime(deps: PushRuntimeDeps): PushRuntime {
 
   async function stop(): Promise<void> {
     if (pushServer) {
-      await pushServer.close()
-      pushServer = null
+      // 先同步清掉发现文件里的 port：will-quit 不等待异步清理，
+      // 否则旧端口会残留给 lumen 等读取方
       pushStartedAt = 0
-      pushApiCfg.port = undefined
+      pushApiCfg = { ...pushApiCfg, port: undefined }
       savePushApiConfig(pushApiConfigPath(), pushApiCfg)
+      const server = pushServer
+      pushServer = null
+      await server.close()
     }
   }
 

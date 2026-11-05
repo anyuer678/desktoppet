@@ -44,6 +44,19 @@ import { EventsTab } from './tabs/EventsTab'
 import { DevTab } from './tabs/DevTab'
 import { SettingsTab } from './tabs/SettingsTab'
 
+const emptyRangeDay = (date: string): RangeDay => ({
+  date,
+  present: false,
+  stats: {
+    date,
+    secondsByState: {},
+    hours: new Array(24).fill(0),
+    events: {},
+    interactions: { click: 0, drag: 0, speak: 0 },
+    updatedAt: 0
+  }
+})
+
 export function CenterApp(): React.JSX.Element {
   const [tab, setTab] = useState<Tab>('home')
   const [appVersion, setAppVersion] = useState('')
@@ -284,31 +297,33 @@ export function CenterApp(): React.JSX.Element {
   const loadHeatmap = async (year: number, month: number): Promise<void> => {
     const seq = ++heatmapSeqRef.current
     const dates = monthDates(year, month)
-    const start = dates[0]
-    const end = dates[dates.length - 1]
-    const res = await window.desktopPet.stats.range(start, end)
-    if (seq !== heatmapSeqRef.current) return
+    const today = todayStr()
     setSelectedDay(null)
     setConfirmDeleteDay(false)
-    if (res.ok && res.days) {
-      setHeatmapDays(res.days)
+    // 未来整月：直接空月，避免用未来日期请求主进程
+    if (dates[0] > today) {
+      setHeatmapDays(dates.map(emptyRangeDay))
       setHeatmapError('')
       return
     }
-    // 未来月份 range 会拒绝（不查未来）→ 按空月渲染
-    if ((res.error ?? '').includes('未来')) {
-      setHeatmapDays(
-        dates.map((d) => ({
-          date: d,
-          present: false,
-          stats: { date: d, secondsByState: {}, hours: new Array(24).fill(0), events: {}, interactions: { click: 0, drag: 0, speak: 0 }, updatedAt: 0 }
-        }))
-      )
-      setHeatmapError('')
-      return
+    // 当月只查到今天；未来日期补 present=false，保证整月格子完整且不触发「不能查询未来」
+    const end = dates[dates.length - 1] > today ? today : dates[dates.length - 1]
+    try {
+      const res = await window.desktopPet.stats.range(dates[0], end)
+      if (seq !== heatmapSeqRef.current) return
+      if (res.ok && res.days) {
+        const byDate = new Map(res.days.map((d) => [d.date, d]))
+        setHeatmapDays(dates.map((d) => byDate.get(d) ?? emptyRangeDay(d)))
+        setHeatmapError('')
+      } else {
+        setHeatmapDays(null)
+        setHeatmapError(res.error ?? '加载失败')
+      }
+    } catch (err) {
+      if (seq !== heatmapSeqRef.current) return
+      setHeatmapDays(null)
+      setHeatmapError(`加载失败: ${err instanceof Error ? err.message : String(err)}`)
     }
-    setHeatmapDays(null)
-    setHeatmapError(res.error ?? '加载失败')
   }
 
   const loadYearHeatmap = async (year: number): Promise<void> => {
@@ -331,16 +346,26 @@ export function CenterApp(): React.JSX.Element {
 
   const loadYearSummary = async (year: number): Promise<void> => {
     const seq = ++yearSumSeqRef.current
-    const res = await window.desktopPet.stats.year(year)
-    if (seq !== yearSumSeqRef.current) return
-    setYearSummary(res.ok ? res.summary : undefined)
+    try {
+      const res = await window.desktopPet.stats.year(year)
+      if (seq !== yearSumSeqRef.current) return
+      // 失败时置 null（界面显示「暂无」），避免永久停在「加载中」
+      setYearSummary(res.ok ? res.summary : null)
+    } catch {
+      if (seq !== yearSumSeqRef.current) return
+      setYearSummary(null)
+    }
   }
 
   const loadAchievements = async (): Promise<void> => {
     const seq = ++achSeqRef.current
-    const res = await window.desktopPet.stats.achievements()
-    if (seq !== achSeqRef.current) return
-    if (res.ok && res.achievements) setAchievements(res.achievements)
+    try {
+      const res = await window.desktopPet.stats.achievements()
+      if (seq !== achSeqRef.current) return
+      if (res.ok && res.achievements) setAchievements(res.achievements)
+    } catch {
+      // 保留上一次成就数据；下一次刷新会重试
+    }
   }
 
   const getTrendRange = (mode: '7d' | 'month' | 'year') => {
@@ -364,12 +389,15 @@ export function CenterApp(): React.JSX.Element {
   const loadTrend = async (mode: '7d' | 'month' | 'year'): Promise<void> => {
     const seq = ++trendSeqRef.current
     setTrendBusy(true)
+    setTrendError('')
     try {
       const { cS, cE, pS, pE } = getTrendRange(mode)
       const res = await window.desktopPet.stats.trend(cS, cE, pS, pE)
       if (seq !== trendSeqRef.current) return
-      if (res.ok && res.compare) setTrendData(res.compare)
-      else setTrendError(res.error ?? '查询失败')
+      if (res.ok && res.compare) {
+        setTrendData(res.compare)
+        setTrendError('')
+      } else setTrendError(res.error ?? '查询失败')
     } catch (err) {
       if (seq !== trendSeqRef.current) return
       setTrendError(`查询失败: ${err instanceof Error ? err.message : String(err)}`)
@@ -519,6 +547,12 @@ export function CenterApp(): React.JSX.Element {
     }
   }
 
+  // 切换选中日期时取消「确认删除」，避免确认按钮指向新选的另一天
+  const selectDay = (day: RangeDay | null): void => {
+    setConfirmDeleteDay(false)
+    setSelectedDay(day)
+  }
+
   const handleDeleteDay = async (): Promise<void> => {
     if (!selectedDay) return
     const res = await window.desktopPet.stats.deleteDay(selectedDay.date)
@@ -594,22 +628,34 @@ export function CenterApp(): React.JSX.Element {
     setSpeechDraft(next)
     if (speechTimer.current) clearTimeout(speechTimer.current)
     speechTimer.current = setTimeout(() => {
-      const speech = {} as SpeechPools
-      for (const k of SPEECH_KEYS) {
-        speech[k.key] = speechDraftRef.current[k.key]
-          .split('\n')
-          .map((t) => t.trim())
-          .filter((t) => t !== '')
-      }
-      void window.desktopPet.settings.set({ speech })
-      setSettings((prev) => (prev ? { ...prev, speech } : prev))
+      speechTimer.current = null
+      commitSpeechDraft()
     }, 200)
+  }
+
+  const commitSpeechDraft = (): void => {
+    const speech = {} as SpeechPools
+    for (const k of SPEECH_KEYS) {
+      speech[k.key] = speechDraftRef.current[k.key]
+        .split('\n')
+        .map((t) => t.trim())
+        .filter((t) => t !== '')
+    }
+    void window.desktopPet.settings.set({ speech })
+    setSettings((prev) => (prev ? { ...prev, speech } : prev))
   }
 
   useEffect(() => {
     return () => {
-      if (speechTimer.current) clearTimeout(speechTimer.current)
+      // 关闭控制中心时把最后的台词编辑立即落盘，避免 200ms 防抖窗口内丢失
+      if (speechTimer.current) {
+        clearTimeout(speechTimer.current)
+        speechTimer.current = null
+        commitSpeechDraft()
+      }
     }
+    // commitSpeechDraft 只读 refs/稳定 setter，卸载时执行一次即可
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const selectCharacter = (id: string): void => {
@@ -945,7 +991,7 @@ export function CenterApp(): React.JSX.Element {
 
         {tab === 'schedule' && editingScheduleId !== null && <ScheduleEditTab active={active} editingScheduleId={editingScheduleId} saveSchedule={saveSchedule} scheduleBusy={scheduleBusy} scheduleError={scheduleError} scheduleForm={scheduleForm} setEditingScheduleId={setEditingScheduleId} setScheduleForm={setScheduleForm} toggleScheduleDay={toggleScheduleDay} />}
 
-        {tab === 'stats' && <StatsTab achievements={achievements} autoReportCfg={autoReportCfg} autoReportMsg={autoReportMsg} autoReportSaving={autoReportSaving} confirmClear={confirmClear} confirmDeleteDay={confirmDeleteDay} exportMsg={exportMsg} generateReport={generateReport} handleAutoReportSave={handleAutoReportSave} handleClearAll={handleClearAll} handleDeleteDay={handleDeleteDay} handleExportCsv={handleExportCsv} handleExportExcel={handleExportExcel} handleOpenReportDir={handleOpenReportDir} heatmapDays={heatmapDays} heatmapError={heatmapError} heatmapMonth={heatmapMonth} levelProgress={levelProgress} loadRange={loadRange} rangeBusy={rangeBusy} rangeDays={rangeDays} rangeEnd={rangeEnd} rangeError={rangeError} rangeStart={rangeStart} reportMsg={reportMsg} selectedDay={selectedDay} setAutoReportCfg={setAutoReportCfg} setConfirmClear={setConfirmClear} setConfirmDeleteDay={setConfirmDeleteDay} setHeatmapMonth={setHeatmapMonth} setRangeEnd={setRangeEnd} setRangeStart={setRangeStart} setSelectedDay={setSelectedDay} setTrendMode={setTrendMode} setYearHeatYear={setYearHeatYear} statsReport={statsReport} trendBusy={trendBusy} trendData={trendData} trendError={trendError} trendMode={trendMode} yearHeatDays={yearHeatDays} yearHeatError={yearHeatError} yearHeatYear={yearHeatYear} yearSummary={yearSummary} />}
+        {tab === 'stats' && <StatsTab achievements={achievements} autoReportCfg={autoReportCfg} autoReportMsg={autoReportMsg} autoReportSaving={autoReportSaving} confirmClear={confirmClear} confirmDeleteDay={confirmDeleteDay} exportMsg={exportMsg} generateReport={generateReport} handleAutoReportSave={handleAutoReportSave} handleClearAll={handleClearAll} handleDeleteDay={handleDeleteDay} handleExportCsv={handleExportCsv} handleExportExcel={handleExportExcel} handleOpenReportDir={handleOpenReportDir} heatmapDays={heatmapDays} heatmapError={heatmapError} heatmapMonth={heatmapMonth} levelProgress={levelProgress} loadRange={loadRange} rangeBusy={rangeBusy} rangeDays={rangeDays} rangeEnd={rangeEnd} rangeError={rangeError} rangeStart={rangeStart} reportMsg={reportMsg} selectedDay={selectedDay} setAutoReportCfg={setAutoReportCfg} setConfirmClear={setConfirmClear} setConfirmDeleteDay={setConfirmDeleteDay} setHeatmapMonth={setHeatmapMonth} setRangeEnd={setRangeEnd} setRangeStart={setRangeStart} setSelectedDay={selectDay} setTrendMode={setTrendMode} setYearHeatYear={setYearHeatYear} statsReport={statsReport} trendBusy={trendBusy} trendData={trendData} trendError={trendError} trendMode={trendMode} yearHeatDays={yearHeatDays} yearHeatError={yearHeatError} yearHeatYear={yearHeatYear} yearSummary={yearSummary} />}
 
         {tab === 'push' && <PushTab handleCopyPushToken={handleCopyPushToken} handlePushApiToggle={handlePushApiToggle} handlePushTest={handlePushTest} handleResetPushToken={handleResetPushToken} pushApiInfo={pushApiInfo} pushApiMsg={pushApiMsg} />}
 

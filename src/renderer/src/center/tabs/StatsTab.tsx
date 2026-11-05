@@ -58,7 +58,7 @@ interface StatsTabProps {
   setHeatmapMonth: React.Dispatch<React.SetStateAction<{ year: number; month: number }>>
   setRangeEnd: React.Dispatch<React.SetStateAction<string>>
   setRangeStart: React.Dispatch<React.SetStateAction<string>>
-  setSelectedDay: React.Dispatch<React.SetStateAction<RangeDay | null>>
+  setSelectedDay: (day: RangeDay | null) => void
   setTrendMode: React.Dispatch<React.SetStateAction<'7d' | 'month' | 'year'>>
   setYearHeatYear: React.Dispatch<React.SetStateAction<number>>
   statsReport: StatsReport | null
@@ -73,6 +73,8 @@ interface StatsTabProps {
 }
 
 export function StatsTab({ achievements, autoReportCfg, autoReportMsg, autoReportSaving, confirmClear, confirmDeleteDay, exportMsg, generateReport, handleAutoReportSave, handleClearAll, handleDeleteDay, handleExportCsv, handleExportExcel, handleOpenReportDir, heatmapDays, heatmapError, heatmapMonth, levelProgress, loadRange, rangeBusy, rangeDays, rangeEnd, rangeError, rangeStart, reportMsg, selectedDay, setAutoReportCfg, setConfirmClear, setConfirmDeleteDay, setHeatmapMonth, setRangeEnd, setRangeStart, setSelectedDay, setTrendMode, setYearHeatYear, statsReport, trendBusy, trendData, trendError, trendMode, yearHeatDays, yearHeatError, yearHeatYear, yearSummary }: StatsTabProps): React.JSX.Element {
+  // 区间查询失败时仍渲染热力图/成就/导出等其他卡片，只有依赖区间数据的图表显示空态
+  const days = rangeDays ?? []
   return (
           <div className="space-y-4">
             <Card>
@@ -99,25 +101,25 @@ export function StatsTab({ achievements, autoReportCfg, autoReportMsg, autoRepor
                     {rangeError}
                   </div>
                 )}
-                {rangeDays && rangeDays.length > 0 && (
+                {(
                   <div className="space-y-4">
                     <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
                       <div className="rounded-md border border-border p-2.5">
                         <div className="text-xs text-muted-foreground">区间陪伴</div>
                         <div className="mt-0.5 text-base font-semibold">
-                          {formatDuration(rangeDays.filter((d) => d.present).reduce((a, d) => a + dayTotalSeconds(d.stats), 0))}
+                          {formatDuration(days.filter((d) => d.present).reduce((a, d) => a + dayTotalSeconds(d.stats), 0))}
                         </div>
                       </div>
                       <div className="rounded-md border border-border p-2.5">
                         <div className="text-xs text-muted-foreground">活跃天数</div>
                         <div className="mt-0.5 text-base font-semibold">
-                          {rangeDays.filter((d) => d.present).length} / {rangeDays.length} 天
+                          {days.filter((d) => d.present).length} / {days.length} 天
                         </div>
                       </div>
                       <div className="rounded-md border border-border p-2.5">
                         <div className="text-xs text-muted-foreground">互动总数</div>
                         <div className="mt-0.5 text-base font-semibold">
-                          {rangeDays
+                          {days
                             .filter((d) => d.present)
                             .reduce(
                               (a, d) => a + d.stats.interactions.click + d.stats.interactions.drag + d.stats.interactions.speak,
@@ -128,7 +130,7 @@ export function StatsTab({ achievements, autoReportCfg, autoReportMsg, autoRepor
                       <div className="rounded-md border border-border p-2.5">
                         <div className="text-xs text-muted-foreground">事件总数</div>
                         <div className="mt-0.5 text-base font-semibold">
-                          {rangeDays
+                          {days
                             .filter((d) => d.present)
                             .reduce((a, d) => a + Object.values(d.stats.events).reduce((x, y) => x + y, 0), 0)}
                         </div>
@@ -141,7 +143,7 @@ export function StatsTab({ achievements, autoReportCfg, autoReportMsg, autoRepor
                         </CardHeader>
                         <CardContent>
                           <VBarChart
-                            bars={rangeDays.map((d) => {
+                            bars={days.map((d) => {
                               const total = dayTotalSeconds(d.stats)
                               return {
                                 label: d.date.slice(5),
@@ -161,7 +163,7 @@ export function StatsTab({ achievements, autoReportCfg, autoReportMsg, autoRepor
                         </CardHeader>
                         <CardContent className="space-y-2">
                           <VBarChart
-                            bars={rangeDays.map((d) => {
+                            bars={days.map((d) => {
                               const total = dayTotalSeconds(d.stats)
                               return {
                                 label: d.date.slice(5),
@@ -192,7 +194,7 @@ export function StatsTab({ achievements, autoReportCfg, autoReportMsg, autoRepor
                         </CardHeader>
                         <CardContent className="space-y-2">
                           <VBarChart
-                            bars={rangeDays.map((d) => {
+                            bars={days.map((d) => {
                               const total = Object.values(d.stats.events).reduce((a, b) => a + b, 0)
                               return {
                                 label: d.date.slice(5),
@@ -205,7 +207,7 @@ export function StatsTab({ achievements, autoReportCfg, autoReportMsg, autoRepor
                           />
                           {(() => {
                             const totals = new Map<string, number>()
-                            for (const d of rangeDays) {
+                            for (const d of days) {
                               for (const [k, v] of Object.entries(d.stats.events)) {
                                 totals.set(k, (totals.get(k) ?? 0) + v)
                               }
@@ -237,7 +239,7 @@ export function StatsTab({ achievements, autoReportCfg, autoReportMsg, autoRepor
                         </CardHeader>
                         <CardContent className="space-y-2">
                           <VBarChart
-                            bars={rangeDays.map((d) => {
+                            bars={days.map((d) => {
                               const total = d.stats.interactions.click + d.stats.interactions.drag + d.stats.interactions.speak
                               return {
                                 label: d.date.slice(5),
@@ -304,6 +306,7 @@ export function StatsTab({ achievements, autoReportCfg, autoReportMsg, autoRepor
                                       key={date}
                                       type="button"
                                       title={`${date} · ${sec > 0 ? formatDuration(sec) : '无记录'}`}
+                                      aria-label={`${date} ${sec > 0 ? formatDuration(sec) : '无记录'}`}
                                       onClick={() => setSelectedDay(heatmapDays.find((d) => d.date === date) ?? null)}
                                       className={cn(
                                         'aspect-square rounded text-[11px] leading-none transition-colors',
@@ -464,7 +467,7 @@ export function StatsTab({ achievements, autoReportCfg, autoReportMsg, autoRepor
                         {(() => {
                           const hours = new Array(24).fill(0)
                           let hasData = false
-                          for (const d of rangeDays ?? []) {
+                          for (const d of days) {
                             const h = d.stats.hours ?? []
                             for (let i = 0; i < 24; i++) {
                               const v = h[i] ?? 0

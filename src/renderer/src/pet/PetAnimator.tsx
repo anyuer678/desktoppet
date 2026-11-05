@@ -148,6 +148,7 @@ export function PetAnimator({
   if (resolved.config.type === 'sequence') {
     return (
       <SequenceLayer
+        key={`${charId}:${resolved.key}`}
         charId={charId}
         stateKey={resolved.key}
         config={resolved.config}

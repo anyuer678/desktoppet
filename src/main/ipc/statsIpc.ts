@@ -66,8 +66,9 @@ export function registerStatsIpc(deps: StatsIpcDeps): void {
     const four = [cStart, cEnd, pStart, pEnd]
     if (!four.every((x) => typeof x === 'string')) return { ok: false, error: '日期格式应为 YYYY-MM-DD' }
     const [cs, ce, ps, pe] = four as string[]
-    const v1 = validateRange(cs, ce)
-    const v2 = validateRange(ps, pe)
+    // 趋势对比允许整年区间（近7天/本月/本年），仍拒绝未来日期
+    const v1 = validateRange(cs, ce, 366)
+    const v2 = validateRange(ps, pe, 366)
     if (!v1.ok) return v1
     if (!v2.ok) return v2
     const compare = comparePeriods(stats.dir(), stats.roleId(), cs, ce, ps, pe)

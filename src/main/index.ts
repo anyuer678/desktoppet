@@ -1,4 +1,4 @@
-import { app, BrowserWindow, globalShortcut, protocol, screen } from 'electron'
+import { app, BrowserWindow, globalShortcut, protocol, screen, type Tray } from 'electron'
 import { join } from 'path'
 import { promisify } from 'util'
 import { execFile } from 'child_process'
@@ -33,6 +33,9 @@ let logger: Logger | null = null
 
 // 插件系统（whenReady 中加载；getter 现读，杜绝启动时快照）
 let loadedPlugins: PluginManifest[] = []
+
+// 托盘对象必须被持有：Electron 的 Tray 若被 GC，图标会从任务栏消失
+let tray: Tray | null = null
 
 function log(level: 'info' | 'warn' | 'error', message: string, ...args: unknown[]): void {
   logger?.[level](message, ...args)
@@ -185,7 +188,7 @@ if (!acquireSingleInstanceLock(() => windows.openCenter())) {
       getPlugins: () => loadedPlugins
     })
     windows.ensurePetPosition()
-    createTray({
+    tray = createTray({
       showPet: () => windows.showPet(),
       hidePet: () => windows.hidePet(),
       openCenter: (tab) => windows.openCenter(tab)
@@ -203,11 +206,17 @@ if (!acquireSingleInstanceLock(() => windows.openCenter())) {
     app.on('activate', () => {
       if (BrowserWindow.getAllWindows().length === 0) windows.createPet()
     })
+  }).catch((err) => {
+    // 初始化失败必须留痕并退出，避免「进程还在但没有任何窗口/托盘」的僵尸状态
+    log('error', 'fatal startup error:', err)
+    app.quit()
   })
 
   // 退出清理顺序红线：globalShortcut → 调度器 → 被动源（电池先停、hub 后停）→ 推送 → 统计最后落盘
   registerQuitCleanup([
+    () => settingsCtl.flush(),
     () => globalShortcut.unregisterAll(),
+    () => tray?.destroy(),
     () => schedule.stop(),
     () => passive.stop(),
     () => push.stop(),

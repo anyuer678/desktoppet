@@ -1,6 +1,6 @@
-import { mkdirSync, readFileSync, writeFileSync } from 'fs'
-import { dirname } from 'path'
+import { readFileSync } from 'fs'
 import type { AutoReportConfig, AutoReportRule } from '../../shared/ipc'
+import { writeFileAtomic } from '../storage/atomicWrite'
 import { isValidHHmm } from '../schedule/store'
 
 export const DEFAULT_AUTO_REPORT_CONFIG: AutoReportConfig = {
@@ -35,8 +35,7 @@ export function loadAutoReports(filePath: string): AutoReportConfig {
 
 export function saveAutoReports(filePath: string, cfg: AutoReportConfig): void {
   try {
-    mkdirSync(dirname(filePath), { recursive: true })
-    writeFileSync(filePath, JSON.stringify(cfg, null, 2), 'utf-8')
+    writeFileAtomic(filePath, JSON.stringify(cfg, null, 2))
   } catch (err) {
     console.error('[autoReport] save failed:', err)
   }

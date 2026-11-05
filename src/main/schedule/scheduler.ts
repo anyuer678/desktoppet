@@ -2,37 +2,40 @@ import type { ScheduleFired, ScheduleInput, ScheduleItem } from '../../shared/ip
 import { applyUpdate, buildSchedule, isValidScheduleItem, loadSchedules, saveSchedules, validateScheduleInput } from './store'
 
 /**
- * 判断日程在给定时刻是否应该触发（精确到分钟，秒级忽略）。
- * - once：trigger 解析为本地时间，与 now 日期+时分匹配
- * - daily：trigger 为 HH:mm，与 now 时分匹配
- * - weekly：trigger 为 HH:mm，与 now 时分匹配且 daysOfWeek 含 now 的星期
- * 已通过 lastFiredAt 防止同一分钟内重复触发（>= 60s 间隔）
+ * 判断日程在给定时刻是否应该触发。
+ * - once：到点即触发；若应用当时未运行，重启后补发一次（lastFiredAt 防重复）
+ * - daily/weekly：当天到点后触发一次；错过时刻（休眠/重启）可在当天剩余时间内补发
+ * - createdAt 晚于当天触发时刻的日程不补发，避免「新建 09:00 的日程，10:00 创建后立刻弹」
+ * - 同一自然日最多触发一次
  */
 export function shouldFire(item: ScheduleItem, now: Date): boolean {
-  if (!item.enabled) return false
-  const minuteMs = 60_000
-  // lastFiredAt 在同一分钟内（< 60s）则不重复触发
-  if (item.lastFiredAt !== null && now.getTime() - item.lastFiredAt < minuteMs) return false
-
+  if (!item.enabled || item.lastFiredAt !== null && now.getTime() < item.lastFiredAt) return false
   const hh = String(now.getHours()).padStart(2, '0')
   const mm = String(now.getMinutes()).padStart(2, '0')
   const ymd = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`
 
   if (item.type === 'once') {
-    // 解析 YYYY-MM-DDTHH:mm[:ss]
-    const m = item.trigger.match(/^(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2})/)
-    if (!m) return false
-    return m[1] === ymd && m[2] === `${hh}:${mm}`
+    const trigger = parseOnceTrigger(item.trigger)
+    if (!trigger) return false
+    if (item.lastFiredAt !== null) return false
+    // 创建时间晚于触发时刻 → 用户新建时已过期，不立即补发
+    if (item.createdAt > trigger.getTime()) return false
+    return now.getTime() >= trigger.getTime()
   }
-  if (item.type === 'daily') {
-    return item.trigger === `${hh}:${mm}`
+
+  if (item.trigger > `${hh}:${mm}`) return false
+  if (item.lastFiredAt !== null) {
+    const firedDay = new Date(item.lastFiredAt)
+    const firedYmd = `${firedDay.getFullYear()}-${String(firedDay.getMonth() + 1).padStart(2, '0')}-${String(firedDay.getDate()).padStart(2, '0')}`
+    if (firedYmd === ymd) return false
   }
-  // weekly
-  if (item.type === 'weekly') {
-    if (!item.daysOfWeek.includes(now.getDay())) return false
-    return item.trigger === `${hh}:${mm}`
-  }
-  return false
+  if (item.type === 'weekly' && !item.daysOfWeek.includes(now.getDay())) return false
+  if (item.type !== 'daily' && item.type !== 'weekly') return false
+
+  // 当天触发时刻；创建于其后则等下一个周期
+  const [th, tm] = item.trigger.split(':').map(Number)
+  const triggerToday = new Date(now.getFullYear(), now.getMonth(), now.getDate(), th, tm, 0, 0)
+  return item.createdAt <= triggerToday.getTime()
 }
 
 /** 解析 once 类型的 trigger 为 Date（本地时区）；非法返回 null */

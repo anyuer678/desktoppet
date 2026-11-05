@@ -7,7 +7,7 @@
 
 ## v1.3.0 (2026-11-05)
 
-自动更新闭环、本地集成协议与统计口径修复。单测 509 例，typecheck/build 全绿。
+自动更新闭环、本地集成协议、数据完整性与统计口径修复。单测 529 例，typecheck/build 全绿。
 
 新增：
 - 自动更新完整链路：`updater:get/check/download/install` IPC 与控制中心侧栏操作；状态机（idle/checking/available/downloading/downloaded/error/unsupported）纯逻辑可单测；发现新版本/下载完成时即使控制中心未打开也会弹系统通知；开发模式（`app.isPackaged=false`）明确跳过检查
@@ -21,6 +21,16 @@
 - 台词池结构在设置读写两侧强制规范化，损坏/恶意 settings 不再能让桌宠窗口崩溃
 - 控制中心页签导航改为共享白名单 + `JSON.stringify`，不再把调用方字符串拼进 `executeJavaScript`
 - 点击穿透诊断日志只在状态翻转时写入，避免 mousemove 高频同步落盘
+- 数据落盘统一改为临时文件 + rename 原子写（settings/schedules/stats/autoReports/报告），进程中途退出不再截断文件
+- `character:delete` 只允许删除 `config.json` 与目录名一致的有效角色包，防止误删 `characters/market` 等保留目录
+- 窗口增加导航白名单：拖入链接/文件不能把 preload 暴露给远程页面，同时拒绝新窗口与 webview
+- 托盘对象由组合根持有，避免被 GC 后图标消失；启动初始化异常会记录并退出，不再留下无窗口的僵尸进程
+- 设置写入补齐类型/范围校验（size/opacity/position/布尔值），退出时冲刷 300ms 防抖中的位置更新
+- 日程改为「同一自然日最多一次」，应用休眠/重启错过时刻可在当天补发；once 过期补发一次后自动禁用
+- 自动报告补发判定补上星期/日期条件，31 号规则在短月份回退到月末；ticker 启动即评估一次，休眠唤醒后也能补发
+- 当月热力图不再因「查询未来」被清空；「本年」趋势允许整年区间（366 天）
+- 台词池编辑即时同步到运行中的桌宠窗口；右键/中键不再触发左键单点动作；序列帧切换状态时重置帧计数与失败态
+- 修复桌宠透明度被原生窗口与 CSS 双重相乘的问题；长气泡支持换行与居中，CSP 增加 object/base/frame 限制
 
 ## v1.2.1 (2026-09-25)
 

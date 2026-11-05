@@ -57,9 +57,11 @@ describe('shouldFireMonthly', () => {
   it('日期不符 → false', () => {
     expect(shouldFireMonthly(cfg, now('2026-08-02T09:00'))).toBe(false)
   })
-  it('31 号在无 31 日的月份永不触发', () => {
+  it('31 号在无 31 日的月份回退到月末', () => {
     const c = { ...cfg, monthly: { ...cfg.monthly, dayOfMonth: 31 } }
-    expect(shouldFireMonthly(c, now('2026-09-30T09:00'))).toBe(false)
+    expect(shouldFireMonthly(c, now('2026-09-30T09:00'))).toBe(true)
+    expect(shouldFireMonthly(c, now('2026-02-28T09:00'))).toBe(true)
+    expect(shouldFireMonthly(c, now('2026-02-27T09:00'))).toBe(false)
   })
   it('禁用 → false', () => {
     expect(shouldFireMonthly({ ...cfg, monthly: { ...cfg.monthly, enabled: false } }, now('2026-08-01T09:00'))).toBe(
@@ -69,17 +71,21 @@ describe('shouldFireMonthly', () => {
 })
 
 describe('shouldCatchUpWeekly', () => {
-  it('已过触发点且本周未生成 → true', () => {
-    expect(shouldCatchUpWeekly(cfg, now('2026-08-06T21:05'), () => false)).toBe(true)
+  it('已过触发日且本周未生成 → true（配置周日，周日 21:05）', () => {
+    expect(shouldCatchUpWeekly(cfg, now('2026-08-09T21:05'), () => false)).toBe(true)
   })
-  it('今日未到触发点 → false', () => {
-    expect(shouldCatchUpWeekly(cfg, now('2026-08-06T20:59'), () => false)).toBe(false)
+  it('触发日当天未到点 → false', () => {
+    expect(shouldCatchUpWeekly(cfg, now('2026-08-09T20:59'), () => false)).toBe(false)
   })
   it('本周已生成 → false', () => {
-    expect(shouldCatchUpWeekly(cfg, now('2026-08-06T21:05'), () => true)).toBe(false)
+    expect(shouldCatchUpWeekly(cfg, now('2026-08-09T21:05'), () => true)).toBe(false)
   })
-  it('触发点是今天且未到点 → false', () => {
-    expect(shouldCatchUpWeekly(cfg, now('2026-08-02T20:59'), () => false)).toBe(false)
+  it('还没到本周触发日就补发 → false（周四不应生成周日周报）', () => {
+    expect(shouldCatchUpWeekly(cfg, now('2026-08-06T22:00'), () => false)).toBe(false)
+  })
+  it('触发日已过（周一查看上一周规则）→ true', () => {
+    const thursday = { ...cfg, weekly: { ...cfg.weekly, dayOfWeek: 4 } }
+    expect(shouldCatchUpWeekly(thursday, now('2026-08-06T21:05'), () => false)).toBe(true)
   })
 })
 
@@ -92,5 +98,13 @@ describe('shouldCatchUpMonthly', () => {
   })
   it('未到触发点 → false', () => {
     expect(shouldCatchUpMonthly(cfg, now('2026-08-01T08:59'), () => false)).toBe(false)
+  })
+  it('未到本月触发日 → false（1 号规则，上月末不应补发）', () => {
+    const lastDayRule = { ...cfg, monthly: { ...cfg.monthly, dayOfMonth: 31 } }
+    expect(shouldCatchUpMonthly(lastDayRule, now('2026-09-15T10:00'), () => false)).toBe(false)
+  })
+  it('短月份月末补发 31 号月报', () => {
+    const lastDayRule = { ...cfg, monthly: { ...cfg.monthly, dayOfMonth: 31 } }
+    expect(shouldCatchUpMonthly(lastDayRule, now('2026-02-28T09:05'), () => false)).toBe(true)
   })
 })

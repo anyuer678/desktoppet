@@ -18,6 +18,7 @@ import type {
   PassiveTestResult,
   PassiveSourcesConfig,
   PerfReport,
+  PetSettingsChanged,
   PluginInfo,
   PushApiFired,
   PushApiGetResult,
@@ -140,7 +141,7 @@ declare global {
         history(): Promise<EventHistoryResult>
         clearHistory(): Promise<{ ok: boolean }>
         onHistoryChanged(cb: (payload: HistoryChanged) => void): () => void
-        onSettingsChanged(cb: (patch: { size: number; opacity: number }) => void): () => void
+        onSettingsChanged(cb: (patch: PetSettingsChanged) => void): () => void
         onUpdateAvailable(cb: (info: { version: string; releaseDate?: string }) => void): () => void
         onUpdateDownloaded(cb: (info: { version: string }) => void): () => void
         onUpdaterStatus(cb: (status: UpdaterStatus) => void): () => void

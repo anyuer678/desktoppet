@@ -95,6 +95,43 @@ describe('settingsController.set 白名单', () => {
     expect(next).toEqual(DEFAULT_SETTINGS)
   })
 
+  it('非法 size/opacity/position/布尔值被丢弃，不污染内存与磁盘', () => {
+    const c = makeController()
+    c.load()
+    c.set({
+      size: '300',
+      opacity: Number.NaN,
+      position: { x: 'a', y: 1 },
+      autoLaunch: 'yes',
+      shortcutsEnabled: 1
+    } as never)
+    const next = c.get()
+    expect(next.size).toBe(DEFAULT_SETTINGS.size)
+    expect(next.opacity).toBe(DEFAULT_SETTINGS.opacity)
+    expect(next.position).toEqual(DEFAULT_SETTINGS.position)
+    expect(next.autoLaunch).toBe(DEFAULT_SETTINGS.autoLaunch)
+    expect(next.shortcutsEnabled).toBe(DEFAULT_SETTINGS.shortcutsEnabled)
+    const raw = JSON.parse(readFileSync(file, 'utf8')) as Record<string, unknown>
+    expect(raw.size).toBe(DEFAULT_SETTINGS.size)
+    expect(raw.position).toEqual(DEFAULT_SETTINGS.position)
+  })
+
+  it('position 合法值取整后保存', () => {
+    const c = makeController()
+    c.load()
+    const next = c.set({ position: { x: 10.6, y: -3.2 } })
+    expect(next.position).toEqual({ x: 11, y: -3 })
+  })
+
+  it('flush 立即写出防抖中的位置更新', () => {
+    const c = makeController()
+    c.load()
+    c.onPetMoved({ x: 777, y: 888 })
+    c.flush()
+    const raw = JSON.parse(readFileSync(file, 'utf8')) as { position: { x: number; y: number } }
+    expect(raw.position).toEqual({ x: 777, y: 888 })
+  })
+
   it('speech 损坏结构在写入前被规范化（防止崩桌宠）', () => {
     const c = makeController()
     c.load()

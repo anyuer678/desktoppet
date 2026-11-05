@@ -1,5 +1,12 @@
 import type { SpeechPools } from './speech'
 
+/** 主进程 → 桌宠窗口：尺寸/透明度变化，settings:set 携带台词池时一并下发以即时生效 */
+export interface PetSettingsChanged {
+  size: number
+  opacity: number
+  speech?: SpeechPools
+}
+
 /** 控制中心页签白名单：主进程导航与渲染层路由共用同一份定义 */
 export const CENTER_TABS = [
   'home',

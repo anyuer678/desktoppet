@@ -1,6 +1,6 @@
-import { mkdirSync, readFileSync, writeFileSync } from 'fs'
-import { dirname } from 'path'
+import { readFileSync } from 'fs'
 import type { ScheduleInput, ScheduleItem } from '../../shared/ipc'
+import { writeFileAtomic } from '../storage/atomicWrite'
 
 /** 生成稳定唯一 id（毫秒时间戳 + 随机后缀，base36） */
 export function genScheduleId(now: number = Date.now()): string {
@@ -59,8 +59,7 @@ export function loadSchedules(filePath: string): ScheduleItem[] {
 /** 持久化日程列表（同步写入，量小足够；目录不存在自动创建） */
 export function saveSchedules(filePath: string, items: ScheduleItem[]): void {
   try {
-    mkdirSync(dirname(filePath), { recursive: true })
-    writeFileSync(filePath, JSON.stringify(items, null, 2), 'utf-8')
+    writeFileAtomic(filePath, JSON.stringify(items, null, 2))
   } catch (err) {
     console.error('[schedule] save failed:', err)
   }
@@ -75,6 +74,7 @@ export function isValidScheduleItem(raw: unknown): raw is ScheduleItem {
   if (typeof s.message !== 'string') return false
   if (s.type !== 'once' && s.type !== 'daily' && s.type !== 'weekly') return false
   if (typeof s.trigger !== 'string') return false
+  if (s.type === 'once' ? !isValidLocalISO(s.trigger) : !isValidHHmm(s.trigger)) return false
   if (!Array.isArray(s.daysOfWeek) || !s.daysOfWeek.every((d) => typeof d === 'number' && d >= 0 && d <= 6)) {
     return false
   }

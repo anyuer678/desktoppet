@@ -19,6 +19,7 @@ import type {
   PassiveTestResult,
   PassiveSourcesConfig,
   PerfReport,
+  PetSettingsChanged,
   PluginInfo,
   PushApiGetResult,
   PushApiResetTokenResult,
@@ -187,9 +188,8 @@ const api = {
       ipcRenderer.on('pet:events:history', handler)
       return () => ipcRenderer.removeListener('pet:events:history', handler)
     },
-    onSettingsChanged: (cb: (patch: { size: number; opacity: number }) => void): (() => void) => {
-      const handler = (_e: Electron.IpcRendererEvent, patch: { size: number; opacity: number }): void =>
-        cb(patch)
+    onSettingsChanged: (cb: (patch: PetSettingsChanged) => void): (() => void) => {
+      const handler = (_e: Electron.IpcRendererEvent, patch: PetSettingsChanged): void => cb(patch)
       ipcRenderer.on('pet:settings-changed', handler)
       return () => ipcRenderer.removeListener('pet:settings-changed', handler)
     },

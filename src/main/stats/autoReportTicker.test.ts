@@ -60,6 +60,34 @@ describe('createAutoReportTicker', () => {
     expect(weekly).toHaveBeenCalledTimes(2)
   })
 
+  it('onTick 在非命中分钟也会回调（供休眠唤醒补发）', () => {
+    const onTick = vi.fn()
+    const t = createAutoReportTicker({
+      getConfig: () => cfg,
+      onWeeklyFire: vi.fn(),
+      onMonthlyFire: vi.fn(),
+      onTick
+    })
+    t.tick(new Date('2026-08-02T21:03:00'))
+    expect(onTick).toHaveBeenCalledWith(new Date('2026-08-02T21:03:00'))
+    // 同一分钟再次 tick 不重复回调
+    t.tick(new Date('2026-08-02T21:03:40'))
+    expect(onTick).toHaveBeenCalledTimes(1)
+  })
+
+  it('start 立即评估一次再进入分钟循环', () => {
+    const weekly = vi.fn()
+    const t = createAutoReportTicker({
+      getConfig: () => cfg,
+      now: () => new Date('2026-08-02T21:00:00'),
+      onWeeklyFire: weekly,
+      onMonthlyFire: vi.fn()
+    })
+    t.start()
+    expect(weekly).toHaveBeenCalledTimes(1)
+    t.stop()
+  })
+
   it('禁用时同分钟不触发（防唤醒后旧分钟误触）', () => {
     const weekly = vi.fn()
     const disabled = { ...cfg, weekly: { ...cfg.weekly, enabled: false } }

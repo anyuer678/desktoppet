@@ -83,7 +83,16 @@ export function createAutoReportRuntime(deps: AutoReportRuntimeDeps): AutoReport
     autoReportTicker = createAutoReportTicker({
       getConfig: () => autoReportCfg,
       onWeeklyFire: () => generateAutoReport('week', false),
-      onMonthlyFire: () => generateAutoReport('month', false)
+      onMonthlyFire: () => generateAutoReport('month', false),
+      // 休眠唤醒/错过精确分钟后仍在本周期内：补生成并提醒（启动时的静默补发已在上方处理）
+      onTick: (now) => {
+        if (shouldCatchUpWeekly(autoReportCfg, now, (k) => reportExists(k, '陪伴周报-'))) {
+          generateAutoReport('week', false)
+        }
+        if (shouldCatchUpMonthly(autoReportCfg, now, (k) => reportExists(k, '陪伴月报-'))) {
+          generateAutoReport('month', false)
+        }
+      }
     })
     autoReportTicker.start()
     deps.log('info', '[autoReport] started', JSON.stringify(autoReportCfg))

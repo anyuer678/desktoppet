@@ -261,6 +261,28 @@ describe('deletePetArchive', () => {
     rmSync(root, { recursive: true, force: true })
   })
 
+  it('拒绝删除角色仓库中的非角色目录（如 market）', () => {
+    const root = tempDir('dp-root-')
+    mkdirSync(join(root, 'market'), { recursive: true })
+    writeFileSync(join(root, 'market', 'market.json'), '[]')
+    const result = deletePetArchive(root, 'market')
+    expect(result.ok).toBe(false)
+    expect(result.error).toContain('不是有效角色包')
+    expect(existsSync(join(root, 'market', 'market.json'))).toBe(true)
+    rmSync(root, { recursive: true, force: true })
+  })
+
+  it('config.id 与目录名不一致时拒绝删除', () => {
+    const root = tempDir('dp-root-')
+    mkdirSync(join(root, 'fake'), { recursive: true })
+    writeFileSync(join(root, 'fake', 'config.json'), GOOD_CONFIG)
+    // 目录名 fake 与 config.id doggo 不一致
+    const result = deletePetArchive(root, 'fake')
+    expect(result.ok).toBe(false)
+    expect(existsSync(join(root, 'fake'))).toBe(true)
+    rmSync(root, { recursive: true, force: true })
+  })
+
   it('删除不影响其他角色', () => {
     const root = tempDir('dp-root-')
     const zip = makeZip({ 'config.json': GOOD_CONFIG })

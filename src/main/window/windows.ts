@@ -1,6 +1,8 @@
 import { BrowserWindow, screen } from 'electron'
 import { join } from 'path'
+import { pathToFileURL } from 'url'
 import { ensurePositionVisible } from './placement'
+import { isAllowedNavigation } from './navigation'
 import { isCenterTab } from '../../shared/ipc'
 import type { Settings } from '../../shared/ipc'
 
@@ -36,12 +38,29 @@ export function createWindowHub(deps: WindowHubDeps): WindowHub {
   let petWindow: BrowserWindow | null = null
   let centerWindow: BrowserWindow | null = null
 
+  function rendererUrl(): string {
+    return (
+      process.env['ELECTRON_RENDERER_URL'] ??
+      pathToFileURL(join(__dirname, '../renderer/index.html')).toString()
+    )
+  }
+
   function loadRenderer(win: BrowserWindow, hash: string): void {
     if (process.env['ELECTRON_RENDERER_URL']) {
       void win.loadURL(process.env['ELECTRON_RENDERER_URL'] + hash)
     } else {
       void win.loadFile(join(__dirname, '../renderer/index.html'), { hash })
     }
+  }
+
+  /** 禁止导航到远程/本地任意页面，并拒绝新窗口与 webview（preload 会暴露完整 IPC） */
+  function hardenNavigation(win: BrowserWindow): void {
+    const base = rendererUrl()
+    win.webContents.setWindowOpenHandler(() => ({ action: 'deny' }))
+    win.webContents.on('will-navigate', (event, url) => {
+      if (!isAllowedNavigation(url, base)) event.preventDefault()
+    })
+    win.webContents.on('will-attach-webview', (event) => event.preventDefault())
   }
 
   function createPet(): void {
@@ -66,7 +85,7 @@ export function createWindowHub(deps: WindowHubDeps): WindowHub {
       }
     })
     petWindow.setAlwaysOnTop(true, 'screen-saver')
-    petWindow.setOpacity(settings.opacity)
+    hardenNavigation(petWindow)
     petWindow.on('moved', () => {
       const [x, y] = petWindow?.getPosition() ?? [settings.position.x, settings.position.y]
       deps.onPetMoved({ x, y })
@@ -95,6 +114,7 @@ export function createWindowHub(deps: WindowHubDeps): WindowHub {
     centerWindow.on('closed', () => {
       centerWindow = null
     })
+    hardenNavigation(centerWindow)
     loadRenderer(centerWindow, safeTab ? `#/center/${safeTab}` : '#/center')
   }
 
@@ -112,12 +132,21 @@ export function createWindowHub(deps: WindowHubDeps): WindowHub {
     centerWindow?.focus()
   }
 
+  function sendSafely(win: BrowserWindow | null, channel: string, payload?: unknown): void {
+    if (!win || win.isDestroyed() || win.webContents.isDestroyed()) return
+    try {
+      win.webContents.send(channel, payload)
+    } catch {
+      // 窗口销毁竞态：丢弃本次广播，不能让 4s tick 抛错拖垮主进程
+    }
+  }
+
   function notifyPet(channel: string, payload?: unknown): void {
-    petWindow?.webContents.send(channel, payload)
+    sendSafely(petWindow, channel, payload)
   }
 
   function notifyCenter(channel: string, payload?: unknown): void {
-    centerWindow?.webContents.send(channel, payload)
+    sendSafely(centerWindow, channel, payload)
   }
 
   function ensurePetPosition(): void {

@@ -19,14 +19,25 @@ export function shouldFireWeekly(cfg: AutoReportConfig, now: Date): boolean {
   return hhmmOf(now) === w.time
 }
 
+/** 月报有效触发日：配置 31 号时，2 月等短月份回退到月末最后一天 */
+export function effectiveMonthlyDay(dayOfMonth: number, now: Date): number {
+  const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate()
+  return Math.min(dayOfMonth, lastDay)
+}
+
 export function shouldFireMonthly(cfg: AutoReportConfig, now: Date): boolean {
   const m = cfg.monthly
   if (!m.enabled) return false
-  if (now.getDate() !== m.dayOfMonth) return false
+  if (now.getDate() !== effectiveMonthlyDay(m.dayOfMonth, now)) return false
   return hhmmOf(now) === m.time
 }
 
-/** 错过补发判定（周报）：本周期未生成 && 今日已过触发时间（周期键=本周一） */
+/** 周一=0..周日=6（与 JS getDay 的周日=0 不同，用于判断本周是否已过触发日） */
+function mondayIndex(day: number): number {
+  return (day + 6) % 7
+}
+
+/** 错过补发判定（周报）：本周期未生成 && 已到/已过本周触发日与时点（周期键=本周一） */
 export function shouldCatchUpWeekly(
   cfg: AutoReportConfig,
   now: Date,
@@ -34,11 +45,14 @@ export function shouldCatchUpWeekly(
 ): boolean {
   const w = cfg.weekly
   if (!w.enabled) return false
-  if (!isPastTriggerTime(w.time, now)) return false
+  const todayIdx = mondayIndex(now.getDay())
+  const targetIdx = mondayIndex(w.dayOfWeek)
+  if (todayIdx < targetIdx) return false
+  if (todayIdx === targetIdx && !isPastTriggerTime(w.time, now)) return false
   return !reportExists(weeklyReportKey(todayStr(now)))
 }
 
-/** 错过补发判定（月报）：本周期未生成 && 今日已过触发时间（周期键=YYYY-MM） */
+/** 错过补发判定（月报）：本周期未生成 && 已到/已过本月触发日与时点（周期键=YYYY-MM） */
 export function shouldCatchUpMonthly(
   cfg: AutoReportConfig,
   now: Date,
@@ -46,6 +60,8 @@ export function shouldCatchUpMonthly(
 ): boolean {
   const m = cfg.monthly
   if (!m.enabled) return false
-  if (!isPastTriggerTime(m.time, now)) return false
+  const triggerDay = effectiveMonthlyDay(m.dayOfMonth, now)
+  if (now.getDate() < triggerDay) return false
+  if (now.getDate() === triggerDay && !isPastTriggerTime(m.time, now)) return false
   return !reportExists(monthlyReportKey(todayStr(now)))
 }

@@ -6,7 +6,7 @@ import { contentRectFrom, pointInRect, shouldIgnorePointer, type AlphaMap, type 
 import { DEFAULT_SPEECH, eventSpeech, greetingKey, greetingSpeech, pickText, reactionReply, welcomeSpeech, type Speech, type SpeechPools } from '../../../shared/speech'
 import type { InteractionAction } from '../../../shared/ipc'
 
-const CLICK_TIMEOUT = 260
+const CLICK_TIMEOUT = 300
 const DRAG_THRESHOLD = 4
 const HIT_MAP_SIZE = 64
 const ALPHA_THRESHOLD = 32
@@ -197,6 +197,7 @@ export function PetApp(): React.JSX.Element {
     return window.desktopPet.events.onSettingsChanged((patch) => {
       setSize(patch.size)
       setOpacity(patch.opacity)
+      if (patch.speech) poolsRef.current = patch.speech
     })
   }, [])
 
@@ -305,6 +306,8 @@ export function PetApp(): React.JSX.Element {
   }, [])
 
   const onPointerDown = (e: React.PointerEvent): void => {
+    // 只有左键参与点击/拖拽；右键交给 contextmenu，中键不产生动作
+    if (e.button !== 0) return
     pointerRef.current = {
       down: true,
       moved: false,
@@ -336,6 +339,7 @@ export function PetApp(): React.JSX.Element {
   }
 
   const onPointerUp = (e: React.PointerEvent): void => {
+    if (e.button !== 0) return
     const p = pointerRef.current
     if (!p.down) return
     p.down = false
@@ -356,6 +360,11 @@ export function PetApp(): React.JSX.Element {
 
   const onContextMenu = (e: React.MouseEvent): void => {
     e.preventDefault()
+    // 右键不应在 300ms 后补触发一次左键动作
+    if (clickTimer.current) {
+      clearTimeout(clickTimer.current)
+      clickTimer.current = null
+    }
     dispatchAction(actionFor('rightClick', 'menu'))
   }
 
@@ -379,8 +388,8 @@ export function PetApp(): React.JSX.Element {
       />
 
       {speech && (
-        <div className="dp-speech absolute left-1/2 top-1 z-20">
-          <div className="whitespace-nowrap rounded-xl border border-emerald-100 bg-white/95 px-3 py-1.5 text-xs text-neutral-700 shadow-md">
+        <div className="dp-speech absolute left-1/2 top-1 z-20 -translate-x-1/2">
+          <div className="max-w-[calc(100vw-16px)] whitespace-pre-line break-words rounded-xl border border-emerald-100 bg-white/95 px-3 py-1.5 text-center text-xs text-neutral-700 shadow-md">
             {speech.text}
           </div>
           <div className="mx-auto -mt-0.5 h-2 w-2 rotate-45 border-b border-r border-emerald-100 bg-white/95" />

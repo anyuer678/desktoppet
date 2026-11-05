@@ -58,22 +58,35 @@ describe('shouldFire', () => {
     const now = new Date(2026, 7, 4, 10, 30, 0)
     expect(shouldFire(makeDaily('a', '10:30'), now)).toBe(true)
   })
-  it('daily 类型时分不匹配不触发', () => {
+  it('daily 错过时刻后当天补发（应用当时未运行）', () => {
     const now = new Date(2026, 7, 4, 10, 31, 0)
+    expect(shouldFire(makeDaily('a', '10:30'), now)).toBe(true)
+  })
+  it('daily 未到时刻不触发', () => {
+    const now = new Date(2026, 7, 4, 10, 29, 0)
     expect(shouldFire(makeDaily('a', '10:30'), now)).toBe(false)
+  })
+  it('新建晚于当天触发时刻不立即补发', () => {
+    const now = new Date(2026, 7, 4, 10, 31, 0)
+    const item = {
+      ...makeDaily('a', '10:30'),
+      createdAt: new Date(2026, 7, 4, 10, 30, 30).getTime()
+    }
+    expect(shouldFire(item, now)).toBe(false)
   })
   it('禁用项不触发', () => {
     const now = new Date(2026, 7, 4, 10, 30, 0)
     expect(shouldFire(makeDaily('a', '10:30', false), now)).toBe(false)
   })
-  it('同一分钟内 lastFiredAt 防重复', () => {
-    const now = new Date(2026, 7, 4, 10, 30, 30)
-    const item = { ...makeDaily('a', '10:30'), lastFiredAt: now.getTime() - 5000 }
+  it('同一自然日只触发一次（lastFiredAt 防重复）', () => {
+    const now = new Date(2026, 7, 4, 10, 31, 5)
+    const item = { ...makeDaily('a', '10:30'), lastFiredAt: now.getTime() - 65_000 }
     expect(shouldFire(item, now)).toBe(false)
   })
-  it('超过 60s 后允许重复触发', () => {
-    const now = new Date(2026, 7, 4, 10, 31, 5)
-    const item = { ...makeDaily('a', '10:31'), lastFiredAt: now.getTime() - 65000 }
+  it('次日同一时刻可再次触发', () => {
+    const fired = new Date(2026, 7, 4, 10, 30, 0)
+    const now = new Date(2026, 7, 5, 10, 30, 0)
+    const item = { ...makeDaily('a', '10:30'), lastFiredAt: fired.getTime() }
     expect(shouldFire(item, now)).toBe(true)
   })
   it('weekly 类型星期不匹配不触发', () => {
@@ -90,9 +103,18 @@ describe('shouldFire', () => {
     const now = new Date(2026, 7, 4, 10, 0, 0)
     expect(shouldFire(makeOnce('a', '2026-08-04T10:00'), now)).toBe(true)
   })
-  it('once 类型日期不匹配不触发', () => {
+  it('once 错过时刻后补发一次（应用当时未运行）', () => {
     const now = new Date(2026, 7, 5, 10, 0, 0)
+    expect(shouldFire(makeOnce('a', '2026-08-04T10:00'), now)).toBe(true)
+  })
+  it('once 未到时刻不触发', () => {
+    const now = new Date(2026, 7, 4, 9, 59, 0)
     expect(shouldFire(makeOnce('a', '2026-08-04T10:00'), now)).toBe(false)
+  })
+  it('once 已触发后不再触发', () => {
+    const now = new Date(2026, 7, 5, 10, 0, 0)
+    const item = { ...makeOnce('a', '2026-08-04T10:00'), lastFiredAt: new Date(2026, 7, 4, 10, 0).getTime() }
+    expect(shouldFire(item, now)).toBe(false)
   })
 })
 
@@ -157,7 +179,7 @@ describe('createScheduler', () => {
 
   it('未命中不触发不持久化', () => {
     const now = new Date(2026, 7, 4, 10, 31, 0)
-    let items = [makeDaily('a', '10:30')]
+    let items = [makeDaily('a', '11:00')]
     let persisted = false
     const scheduler = createScheduler(
       () => items,

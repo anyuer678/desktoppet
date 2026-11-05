@@ -161,6 +161,12 @@ export function deletePetArchive(root: string, id: string): ImportResult {
   const targetDir = resolve(root, id)
   if (!isWithinRoot(resolve(root), targetDir)) return { ok: false, error: '非法角色目录' }
   if (!existsSync(targetDir)) return { ok: false, error: `角色「${id}」不存在` }
+  // 只删除能被 listCharacters 认可的角色包：避免 character:delete('market') 之类
+  // 用合法 id 命中角色仓库里的保留目录（market.json / rabbit.pet 等）造成误删
+  const parsed = parseCharacterConfig(join(targetDir, 'config.json'))
+  if (!parsed || parsed.id !== id) {
+    return { ok: false, error: `目录「${id}」不是有效角色包，拒绝删除` }
+  }
   rmSync(targetDir, { recursive: true, force: true })
   return { ok: true, id }
 }

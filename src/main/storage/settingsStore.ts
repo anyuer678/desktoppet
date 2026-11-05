@@ -1,6 +1,6 @@
-import { mkdirSync, readFileSync, writeFileSync } from 'fs'
-import { dirname } from 'path'
+import { readFileSync } from 'fs'
 import type { Settings } from '../../shared/ipc'
+import { writeFileAtomic } from './atomicWrite'
 import { DEFAULT_SPEECH, type SpeechPoolKey, type SpeechPools } from '../../shared/speech'
 
 /**
@@ -65,8 +65,7 @@ export function loadSettings(filePath: string, defaults: Settings = DEFAULT_SETT
 
 export function saveSettings(filePath: string, settings: Settings): void {
   try {
-    mkdirSync(dirname(filePath), { recursive: true })
-    writeFileSync(filePath, JSON.stringify(settings, null, 2), 'utf-8')
+    writeFileAtomic(filePath, JSON.stringify(settings, null, 2))
   } catch (err) {
     console.error('[storage] save failed:', err)
   }

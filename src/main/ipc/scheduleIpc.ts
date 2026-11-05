@@ -26,7 +26,10 @@ export function registerScheduleIpc(deps: ScheduleIpcDeps): void {
     if (!repo) return { ok: false, error: '调度器未初始化' }
     return repo.remove(id)
   })
-  ipcMain.handle('schedule:toggle', (_e, id: string, enabled: boolean) => {
+  ipcMain.handle('schedule:toggle', (_e, id: unknown, enabled: unknown) => {
+    if (typeof id !== 'string' || typeof enabled !== 'boolean') {
+      return { ok: false, error: '参数不合法' }
+    }
     const repo = deps.schedule.repo()
     if (!repo) return { ok: false, error: '调度器未初始化' }
     return repo.setEnabled(id, enabled)

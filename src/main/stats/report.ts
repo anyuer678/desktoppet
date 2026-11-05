@@ -1,7 +1,7 @@
-import { mkdirSync, writeFileSync } from 'fs'
-import { dirname, join } from 'path'
+import { join } from 'path'
 import { loadDailyRange, todayStr, totalSeconds } from './dailyStats'
 import type { PeriodCompareResult, PeriodMetric } from '../../shared/ipc'
+import { writeFileAtomic } from '../storage/atomicWrite'
 
 function metricOf(dir: string, start: string, end: string): PeriodMetric {
   let sec = 0
@@ -154,7 +154,6 @@ export function generateReportFile(input: {
     input.outputDir,
     `陪伴${input.mode === 'week' ? '周报' : '月报'}-${input.roleId}-${key}-${today}.md`
   )
-  mkdirSync(dirname(file), { recursive: true })
-  writeFileSync(file, md, 'utf-8')
+  writeFileAtomic(file, md)
   return { path: file }
 }
