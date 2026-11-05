@@ -1,5 +1,5 @@
 import { mkdirSync, readFileSync, renameSync, writeFileSync } from 'fs'
-import { dirname, isAbsolute } from 'path'
+import { dirname, isAbsolute, win32 } from 'path'
 import type { PassiveSourcesConfig } from '../../shared/ipc'
 
 export const DEFAULT_PASSIVE_SOURCES_CONFIG: PassiveSourcesConfig = {
@@ -22,6 +22,11 @@ export const DEFAULT_PASSIVE_SOURCES_CONFIG: PassiveSourcesConfig = {
     pollMs: 15000,
     mappings: []
   }
+}
+
+/** 应用仅运行在 Windows；Linux CI 下也要把 `C:\data` 识别为绝对路径 */
+function isAbsoluteFolderPath(value: string): boolean {
+  return isAbsolute(value) || win32.isAbsolute(value)
 }
 
 const DEFAULT_CLIPBOARD = DEFAULT_PASSIVE_SOURCES_CONFIG.clipboard
@@ -67,7 +72,7 @@ function normalizeFolder(raw: unknown): PassiveSourcesConfig['folder'] {
   return {
     enabled: typeof c.enabled === 'boolean' ? c.enabled : DEFAULT_FOLDER.enabled,
     // 非绝对路径会被 fs.watch 解析到进程 cwd；损坏/恶意配置一律回退为未配置
-    dir: dir === '' || isAbsolute(dir) ? dir : '',
+    dir: dir === '' || isAbsoluteFolderPath(dir) ? dir : '',
     patterns: normalizeTextListWithDefault(c.patterns, DEFAULT_FOLDER.patterns),
     debounceMs: clampPositiveInt(c.debounceMs, DEFAULT_FOLDER.debounceMs, 60_000)
   }
@@ -138,7 +143,7 @@ export function validatePassiveConfig(cfg: unknown): string | null {
   if (!isNonEmptyStringList(clip.onlyPatterns)) return 'clipboard.onlyPatterns 需为非空字符串数组'
   if (!isNonEmptyStringList(clip.ignorePatterns)) return 'clipboard.ignorePatterns 需为非空字符串数组'
   if (typeof folder.dir !== 'string') return 'folder.dir 必须为字符串'
-  if (folder.dir !== '' && !isAbsolute(folder.dir)) return 'folder.dir 必须为绝对路径'
+  if (folder.dir !== '' && !isAbsoluteFolderPath(folder.dir)) return 'folder.dir 必须为绝对路径'
   if (typeof folder.debounceMs !== 'number' || !Number.isInteger(folder.debounceMs) || folder.debounceMs <= 0) {
     return 'folder.debounceMs 必须为正整数'
   }

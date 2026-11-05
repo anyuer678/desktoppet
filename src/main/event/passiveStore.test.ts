@@ -113,13 +113,19 @@ describe('passiveStore', () => {
     ).toContain('folder.dir')
   })
 
-  it('validate：folder.dir 相对路径 → 拒绝', () => {
+  it('validate：folder.dir 相对路径 → 拒绝，Windows 绝对路径 → 通过', () => {
     expect(
       validatePassiveConfig({
         ...DEFAULT_PASSIVE_SOURCES_CONFIG,
         folder: { ...DEFAULT_PASSIVE_SOURCES_CONFIG.folder, dir: 'relative/data' }
       })
     ).toContain('绝对路径')
+    expect(
+      validatePassiveConfig({
+        ...DEFAULT_PASSIVE_SOURCES_CONFIG,
+        folder: { ...DEFAULT_PASSIVE_SOURCES_CONFIG.folder, dir: 'C:\\data' }
+      })
+    ).toBeNull()
   })
 
   it('load：损坏配置中的相对目录回退为空（不监听 cwd）', () => {
