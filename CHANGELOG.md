@@ -7,7 +7,7 @@
 
 ## v1.3.0 (2026-11-05)
 
-自动更新闭环、本地集成协议、数据完整性与统计口径修复。单测 543 例，typecheck/build 全绿。
+自动更新闭环、本地集成协议、数据完整性与统计口径修复。单测 551 例，typecheck/build 全绿。
 
 新增：
 - 自动更新完整链路：`updater:get/check/download/install` IPC 与控制中心侧栏操作；状态机（idle/checking/available/downloading/downloaded/error/unsupported）纯逻辑可单测；发现新版本/下载完成时即使控制中心未打开也会弹系统通知；开发模式（`app.isPackaged=false`）明确跳过检查
@@ -42,7 +42,7 @@
 - 设置滑块/开关、事件筛选补充可访问名称；首页统计失败与性能自检失败不再停在「加载中」或产生未处理拒绝
 - 修复 `.github/dependabot.yml` 重复 `ignore:` 覆盖导致 `@vitejs/plugin-react` 主版本忽略规则失效
 - 新增 `release.yml`：推送 `v*` 标签或手动触发时在 windows-latest 跑门禁、打包 NSIS 并上传产物（不自动发布）；补充 package `author` 与部署文档 v1.3 说明
-- 覆盖率门禁按实测抬升：行 55→57%、函数 40→41%（语句维持 55% 缓冲）
+- 覆盖率门禁按实测抬升：行 59%、函数 43%、语句 57%（新增 statsRuntime 8 例跨日/切角色/落盘测试后实测 58.12/59.62/43.95）
 - 通过 `overrides.minimatch: ^11.0.1` 统一到 11.0.4，清除唯一 moderate 依赖告警；typecheck/543 测试/build/NSIS 打包全通过，`npm audit` 0 漏洞
 - 市场升级本地已安装角色前增加覆盖确认；「打开报告文件夹」在目录不存在时自动创建，不再直接失败
 
