@@ -768,6 +768,13 @@ export function CenterApp(): React.JSX.Element {
 
   const installMarket = async (e: MarketEntryWithStatus): Promise<void> => {
     if (busyRef.current.market) return
+    // 升级会覆盖本地角色目录（含用户编辑），先确认；安装新角色不打扰
+    if (
+      e.installed &&
+      !window.confirm(`升级「${e.name}」会覆盖本地当前版本（含本地编辑），继续？`)
+    ) {
+      return
+    }
     busyRef.current.market = true
     setMarketInstallingId(e.id)
     setMarketError('')

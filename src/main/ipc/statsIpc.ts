@@ -1,6 +1,6 @@
 import { app, dialog, ipcMain, shell } from 'electron'
 import { join } from 'path'
-import { writeFileSync } from 'fs'
+import { mkdirSync, writeFileSync } from 'fs'
 import { reportOutputDir } from '../app/paths'
 import type { LogFn } from '../logging/logger'
 import type { StatsRuntime } from '../stats/statsRuntime'
@@ -94,6 +94,8 @@ export function registerStatsIpc(deps: StatsIpcDeps): void {
   ipcMain.handle('stats:openReportDir', async () => {
     const dir = reportOutputDir()
     try {
+      // 尚未生成过报告时目录不存在，直接 openPath 会失败
+      mkdirSync(dir, { recursive: true })
       const err = await shell.openPath(dir)
       if (err) return { ok: false, error: `打开失败：${err}` }
       return { ok: true }
