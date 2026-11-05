@@ -43,6 +43,7 @@
 - 修复 `.github/dependabot.yml` 重复 `ignore:` 覆盖导致 `@vitejs/plugin-react` 主版本忽略规则失效
 - 新增 `release.yml`：推送 `v*` 标签或手动触发时在 windows-latest 跑门禁、打包 NSIS 并上传产物（不自动发布）；补充 package `author` 与部署文档 v1.3 说明
 - 覆盖率门禁按实测抬升：行 55→57%、函数 40→41%（语句维持 55% 缓冲）
+- 通过 `overrides.minimatch: ^11.0.1` 统一到 11.0.4，清除唯一 moderate 依赖告警；typecheck/543 测试/build/NSIS 打包全通过，`npm audit` 0 漏洞
 
 ## v1.2.1 (2026-09-25)
 
