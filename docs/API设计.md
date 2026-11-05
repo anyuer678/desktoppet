@@ -1,6 +1,6 @@
 # DesktopPet API 设计
 
-版本：1.0（内容核验至 v1.0 正式版）
+版本：1.3（内容核验至 v1.3.0）
 范围：渲染进程 <-> 主进程 IPC 契约（v0.1 实现部分 + v0.2+ 预留）
 
 ---
@@ -197,7 +197,7 @@ interface ScheduleFired { id: string; title: string; message: string; firedAt: n
 | stats:heatmap | R→M | year:number | StatsHeatmapResult（整年逐日 RangeDay[]，不受 90 天限制；当年未来日期 present=false 空统计不报错；year 须为 2000~2100 整数） |
 | stats:achievements | R→M | — | StatsAchievementsResult（当前角色成就：连续/最长连续天数、累计陪伴秒、等级与下一个等级阈值、9 枚徽章解锁状态） |
 | stats:trend | R→M | cStart, cEnd, pStart, pEnd（YYYY-MM-DD） | StatsTrendResult（本期 vs 上期 PeriodCompareResult；日期校验同 stats:range） |
-| stats:report:generate | R→M | mode: 'week' \| 'month' | StatsReportGenerateResult（生成 Markdown 周报/月报到「文档/DesktopPet/报告/」，path 为落盘路径） |
+| stats:report:generate | R→M | mode: 'week' \| 'month' | StatsReportGenerateResult（生成 Markdown 周报/月报到「文档/DesktopPet/报告/」，path 为落盘路径；文件名含角色 id：`陪伴周报-<角色>-<本周一>-<当天>.md` / `陪伴月报-<角色>-<YYYY-MM>-<当天>.md`） |
 | stats:openReportDir | R→M | — | OpResult（用系统默认方式打开报告目录「文档/DesktopPet/报告/」；已实现） |
 | stats:exportExcel | R→M | year:number | StatsSpreadsheetResult（弹保存对话框导出全年 xlsx，含「每日明细」「汇总」两 Sheet；year 须为 2000~2100 整数） |
 | stats:exportCsv | R→M | start, end（YYYY-MM-DD） | StatsExportResult（弹保存对话框导出 CSV，UTF-8 带 BOM；校验同 stats:range） |
@@ -207,12 +207,26 @@ interface ScheduleFired { id: string; title: string; message: string; firedAt: n
 | autoReport:get | R→M | — | AutoReportGetResult（ok + config：{ weekly:{enabled,dayOfWeek,dayOfMonth,time}, monthly:{...} }，持久化于 userData/autoReports.json） |
 | autoReport:set | R→M | config: AutoReportConfig | AutoReportSetResult（校验 dayOfWeek 0-6 / dayOfMonth 1-31 / time HH:mm，通过即落盘） |
 | autoReport:fired | M→R | AutoReportFiredEvent（{type:'week'\|'month', title, body:报告路径}） | 事件：自动报告到点生成后广播给桌宠与控制中心（气泡展示） |
-| pushApi:get | R→M | — | PushApiGetResult（ok + info：{ enabled, port, token }；port=端口，服务未启动为 0；token 32 位 hex） |
+| pushApi:get | R→M | — | PushApiGetResult（ok + info：{ enabled, port, token, discoveryPath }；port=端口，服务未启动为 0；token 32 位 hex；discoveryPath=供 lumen 等本地工具读取的 pushApi.json 绝对路径） |
 | pushApi:setEnabled | R→M | enabled:boolean | PushApiSetEnabledResult（启→启动 HTTP 服务并落盘；停→停止服务并落盘） |
 | pushApi:resetToken | R→M | — | PushApiResetTokenResult（重新生成 32 位 hex token 并落盘，返回新 token） |
 | pushApi:test | R→M | — | PushApiTestResult（本地发送一条示例推送验证链路，不经过 HTTP） |
 | pushApi:state | M→C | { enabled:boolean, port:number } | 已实现（主进程内部推送 notifyCenter）：推送服务启动/停止时通知控制中心；preload 未订阅，desktopPet 未暴露订阅方法 |
 | push:fired | M→R | PushApiFired（{kind?, reaction?, placeholder?, title?, body?, type?}） | 事件：第三方推送/被动数据源触发后广播给桌宠（气泡展示，8 秒）；push 源载荷 { kind:'push', reaction:'pushNote', title, body, type }，被动源载荷 { kind:'passive', reaction, placeholder } |
+| updater:get | R→M | — | UpdaterStatus（phase：unsupported/idle/checking/available/downloading/downloaded/error；version/percent/message 可选） |
+| updater:check | R→M | — | OpResult（立即检查更新，状态经 updater:status 广播） |
+| updater:download | R→M | — | OpResult（下载已发现的更新） |
+| updater:install | R→M | — | OpResult（退出并安装已下载的更新） |
+| updater:status | M→C/P | UpdaterStatus | 状态变化广播（控制中心侧栏与桌宠窗口都会收到） |
+
+### 推送 HTTP 端点（仅 127.0.0.1）
+
+| 方法 / 路径 | 认证 | 说明 |
+| --- | --- | --- |
+| POST /api/event | Bearer token | 推送事件；title ≤60 / message ≤200 / 可选 type |
+| GET /api/status | Bearer token | 运行时快照：{ ok, app, version, role, state, uptimeMs, eventsReceived }，供 lumen 等本地集成自检 |
+
+发现文件 `userData/pushApi.json` 始终写 `enabled/token/port`（port 在服务停止时移除），这是 lumen `petpush` 的发现协议；不要在手写配置时遗漏 token 的 32 位 hex 约束。
 | passive:get | R→M | — | PassiveGetResult（ok + config：{ clipboard, folder, foreground }，持久化于 userData/passiveSources.json） |
 | passive:set | R→M | config: PassiveSourcesConfig | PassiveSetResult（validatePassiveConfig 校验 pollMs/debounceMs/maxLen 正整数、patterns 非空字符串数组、mappings state ∈ focus/ignore；通过则落盘并重建数据源 hub 即时生效） |
 | passive:test | R→M | sourceId: 'clipboard' \| 'folder' \| 'foreground' | PassiveTestResult（按当前配置模拟触发一次对应源，验证气泡链路；配置不符时返回错误原因） |

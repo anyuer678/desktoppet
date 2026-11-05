@@ -43,4 +43,33 @@ describe('computeAchievements', () => {
     expect(a.level.no).toBe(2)
     expect(a.level.nextHours).toBe(50)
   })
+
+  it('累计口径覆盖多年前历史（不再只扫去年+今年）', () => {
+    const dir = mk()
+    writeDay(dir, '2020-01-01', 3600)
+    writeDay(dir, '2024-06-15', 3600)
+    writeDay(dir, '2026-08-06', 3600)
+    const a = computeAchievements(dir, 'rabbit', '2026-08-06')
+    expect(a.totalSeconds).toBe(10800)
+    // 三个互不相邻的日期 → 最长连续仍为 1
+    expect(a.bestStreak).toBe(1)
+  })
+
+  it('未来日期的统计文件不计入累计', () => {
+    const dir = mk()
+    writeDay(dir, '2026-08-06', 3600)
+    writeDay(dir, '2026-08-07', 9999)
+    const a = computeAchievements(dir, 'rabbit', '2026-08-06')
+    expect(a.totalSeconds).toBe(3600)
+  })
+
+  it('跨年连续记录 bestStreak 不被年界截断', () => {
+    const dir = mk()
+    writeDay(dir, '2025-12-31', 60)
+    writeDay(dir, '2026-01-01', 60)
+    writeDay(dir, '2026-01-02', 60)
+    const a = computeAchievements(dir, 'rabbit', '2026-01-02')
+    expect(a.bestStreak).toBe(3)
+    expect(a.streak).toBe(3)
+  })
 })

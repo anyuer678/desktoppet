@@ -1,100 +1,151 @@
 /**
- * updater.ts — 自动更新检查（electron-updater + GitHub Releases）
+ * updater.ts — 自动更新（electron-updater + GitHub Releases）
  *
- * 设计约束：
- * - 遵循工厂模式：createUpdater() 返回 { start, checkNow }
- * - 启动后 30 秒延迟检查（避免阻塞启动关键路径）
- * - 有更新时通过托盘气泡通知，用户确认后下载安装
- * - 禁止自动静默安装（必须用户确认）
+ * 完整链路：检查 → 发现新版本 → 用户确认下载 → 下载完成 → 用户确认重启安装。
+ * - autoDownload=false：必须由用户显式触发下载
+ * - 控制中心未打开时通过系统通知兜底，避免更新提示静默丢失
+ * - 开发模式（app.isPackaged=false）返回 unsupported，不做无意义的网络检查
  */
 
+import { app, Notification } from 'electron'
 import { autoUpdater } from 'electron-updater'
-import { BrowserWindow } from 'electron'
-import { type LogFn } from '../logging/logger'
+import type { UpdaterStatus } from '../../shared/ipc'
+import type { LogFn } from '../logging/logger'
+import { applyUpdaterEvent, initialUpdaterStatus, type UpdaterEvent } from './updaterState'
 
 export interface UpdaterDeps {
-  getMainWindow: () => BrowserWindow | null
+  notifyPet(channel: string, payload?: unknown): void
+  notifyCenter(channel: string, payload?: unknown): void
   log: LogFn
 }
 
 export interface Updater {
   /** 启动延迟检查（30 秒后） */
-  start: () => void
-  /** 手动触发检查 */
-  checkNow: () => void
+  start(): void
+  /** 立即检查 */
+  checkNow(): void
+  /** 下载已发现的更新 */
+  download(): Promise<{ ok: boolean; error?: string }>
+  /** 退出并安装已下载的更新 */
+  install(): { ok: boolean; error?: string }
+  /** 当前状态快照 */
+  status(): UpdaterStatus
 }
 
 export function createUpdater(deps: UpdaterDeps): Updater {
-  const { getMainWindow, log } = deps
+  const { log, notifyPet, notifyCenter } = deps
+  const supported = app.isPackaged
   let checking = false
+  let status: UpdaterStatus = initialUpdaterStatus(supported)
 
-  // 配置 electron-updater
+  function broadcast(next: UpdaterStatus): void {
+    status = next
+    notifyCenter('updater:status', next)
+    notifyPet('updater:status', next)
+  }
+
+  function transition(event: UpdaterEvent): void {
+    broadcast(applyUpdaterEvent(status, event))
+  }
+
+  function notifyUser(title: string, body: string): void {
+    try {
+      if (Notification.isSupported()) new Notification({ title, body }).show()
+    } catch (err) {
+      log('warn', '[updater] notification failed:', err)
+    }
+  }
+
   autoUpdater.autoDownload = false
   autoUpdater.autoInstallOnAppQuit = false
   autoUpdater.logger = {
     info: (msg: string) => log('info', `[updater] ${msg}`),
     warn: (msg: string) => log('warn', `[updater] ${msg}`),
     error: (msg: string) => log('error', `[updater] ${msg}`),
-    debug: () => {},
+    debug: () => {}
   }
 
-  // 有可用更新 → 通知用户
   autoUpdater.on('update-available', (info) => {
     log('info', `[updater] update available: v${info.version}`)
-    const win = getMainWindow()
-    if (win && !win.isDestroyed()) {
-      win.webContents.send('updater:update-available', {
-        version: info.version,
-        releaseDate: info.releaseDate,
-      })
-    }
+    transition({ type: 'available', version: info.version })
+    // 兼容旧渲染层订阅（v1.2 既有通道）
+    notifyCenter('updater:update-available', { version: info.version, releaseDate: info.releaseDate })
+    notifyUser('DesktopPet 新版本可用', `v${info.version} 已可下载，打开控制中心完成更新`)
   })
 
-  // 已是最新
   autoUpdater.on('update-not-available', () => {
     log('info', '[updater] already up to date')
+    transition({ type: 'not-available' })
   })
 
-  // 下载进度
   autoUpdater.on('download-progress', (progress) => {
-    log('info', `[updater] download progress: ${Math.round(progress.percent)}%`)
+    transition({ type: 'progress', percent: progress.percent })
   })
 
-  // 下载完成 → 提示重启安装
   autoUpdater.on('update-downloaded', (info) => {
     log('info', `[updater] update downloaded: v${info.version}`)
-    const win = getMainWindow()
-    if (win && !win.isDestroyed()) {
-      win.webContents.send('updater:update-downloaded', {
-        version: info.version,
-      })
-    }
+    transition({ type: 'downloaded', version: info.version })
+    notifyCenter('updater:update-downloaded', { version: info.version })
+    notifyUser('DesktopPet 更新已就绪', `v${info.version} 已下载，重启后安装`)
   })
 
-  // 错误处理
   autoUpdater.on('error', (err) => {
     log('error', '[updater] error:', err.message)
+    transition({ type: 'error', message: err.message })
     checking = false
   })
 
   function doCheck(): void {
+    if (!supported) {
+      log('info', '[updater] skipped: dev build')
+      return
+    }
     if (checking) return
     checking = true
-    log('info', '[updater] checking for updates...')
-    autoUpdater.checkForUpdates().catch((err) => {
-      log('error', '[updater] check failed:', err.message)
-    }).finally(() => {
-      checking = false
-    })
+    transition({ type: 'checking' })
+    autoUpdater
+      .checkForUpdates()
+      .catch((err: Error) => {
+        log('error', '[updater] check failed:', err.message)
+        transition({ type: 'error', message: err.message })
+      })
+      .finally(() => {
+        checking = false
+      })
+  }
+
+  async function download(): Promise<{ ok: boolean; error?: string }> {
+    if (!supported) return { ok: false, error: '开发模式不支持自动更新' }
+    if (status.phase !== 'available') return { ok: false, error: '当前没有可下载的更新' }
+    try {
+      await autoUpdater.downloadUpdate()
+      return { ok: true }
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err)
+      transition({ type: 'error', message })
+      return { ok: false, error: message }
+    }
+  }
+
+  function install(): { ok: boolean; error?: string } {
+    if (!supported) return { ok: false, error: '开发模式不支持自动更新' }
+    if (status.phase !== 'downloaded') return { ok: false, error: '更新尚未下载完成' }
+    // isSilent=false（显示安装界面），isForceRunAfter=true（安装后自动启动）
+    autoUpdater.quitAndInstall(false, true)
+    return { ok: true }
   }
 
   return {
     start: () => {
-      // 启动后 30 秒延迟检查
-      setTimeout(() => {
-        doCheck()
-      }, 30_000)
+      if (!supported) {
+        log('info', '[updater] unsupported in dev build')
+        return
+      }
+      setTimeout(() => doCheck(), 30_000)
     },
     checkNow: doCheck,
+    download,
+    install,
+    status: () => ({ ...status })
   }
 }

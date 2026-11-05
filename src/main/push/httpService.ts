@@ -2,9 +2,20 @@ import { createServer, type IncomingMessage, type Server, type ServerResponse } 
 import type { PushApiConfig } from '../../shared/ipc'
 import { isAuthorized, parseEventBody, type PushEventBody } from './pushApi'
 
+/** GET /api/status 返回的运行时快照（供 lumen 等本地集成验证链路） */
+export interface PushServiceStatus {
+  app: string
+  version: string
+  role: string
+  state: string
+  uptimeMs: number
+  eventsReceived: number
+}
+
 export interface PushServerDeps {
   getConfig(): PushApiConfig
   onPushEvent(body: PushEventBody): void
+  getStatus(): PushServiceStatus
   log(level: string, ...args: unknown[]): void
 }
 
@@ -58,12 +69,18 @@ export async function handlePushRequest(
     return status
   }
 
-  if (req.method !== 'POST') {
+  const isEvent = req.url === '/api/event'
+  const isStatus = req.url === '/api/status'
+  if (!isEvent && !isStatus) {
+    return send(404, { ok: false, error: '未找到路径' })
+  }
+  if (isEvent && req.method !== 'POST') {
     res.setHeader('Allow', 'POST')
     return send(405, { ok: false, error: '仅支持 POST' })
   }
-  if (req.url !== '/api/event') {
-    return send(404, { ok: false, error: '未找到路径' })
+  if (isStatus && req.method !== 'GET') {
+    res.setHeader('Allow', 'GET')
+    return send(405, { ok: false, error: '仅支持 GET' })
   }
 
   const cfg = deps.getConfig()
@@ -72,6 +89,10 @@ export async function handlePushRequest(
   }
   if (!isAuthorized(req.headers.authorization, cfg.token)) {
     return send(401, { ok: false, error: '认证失败' })
+  }
+
+  if (isStatus) {
+    return send(200, { ok: true, ...deps.getStatus() })
   }
 
   const raw = await readRequestBody(req)

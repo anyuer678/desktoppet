@@ -60,6 +60,12 @@ export function PushTab({ handleCopyPushToken, handlePushApiToggle, handlePushTe
                         </code>
                       </div>
                       <div className="flex items-center justify-between gap-2 rounded-md border border-border px-3 py-2">
+                        <span className="shrink-0 text-muted-foreground">发现文件</span>
+                        <code className="min-w-0 flex-1 truncate font-mono text-xs" title={pushApiInfo.discoveryPath}>
+                          {pushApiInfo.discoveryPath}
+                        </code>
+                      </div>
+                      <div className="flex items-center justify-between gap-2 rounded-md border border-border px-3 py-2">
                         <span className="shrink-0 text-muted-foreground">Token</span>
                         <code className="min-w-0 flex-1 truncate font-mono text-xs">{pushApiInfo.token || '（未生成）'}</code>
                         <button
@@ -109,6 +115,10 @@ export function PushTab({ handleCopyPushToken, handlePushApiToggle, handlePushTe
                   <div>· 请求需携带 Authorization: Bearer &lt;Token&gt;，未携带或错误返回 401。</div>
                   <div>· title ≤60 字符、message ≤200 字符、可选 type（如 complete / warning）会驱动状态动画。</div>
                   <div>· 推送成功会显示气泡并计入当日统计（push 事件）。</div>
+                  <div>
+                    · 集成方可读取「发现文件」获取 enabled/token/port（lumen 的 petpush 即此协议），
+                    也可 GET /api/status 校验链路（同样需要 Bearer）。
+                  </div>
                 </div>
               </CardContent>
             </Card>

@@ -424,6 +424,24 @@ export interface StatsSpreadsheetResult {
   path?: string
 }
 
+/** 自动更新阶段：unsupported=开发模式/非安装版 */
+export type UpdaterPhase =
+  | 'unsupported'
+  | 'idle'
+  | 'checking'
+  | 'available'
+  | 'downloading'
+  | 'downloaded'
+  | 'error'
+
+/** 自动更新状态（主进程 → 渲染层；percent 仅 downloading 时有意义） */
+export interface UpdaterStatus {
+  phase: UpdaterPhase
+  version?: string
+  percent?: number
+  message?: string
+}
+
 /** 自动报告单条规则（周报用 dayOfWeek，月报用 dayOfMonth） */
 export interface AutoReportRule {
   enabled: boolean
@@ -475,6 +493,8 @@ export interface PushApiInfo {
   enabled: boolean
   port: number
   token: string
+  /** 发现文件绝对路径（lumen 等本地工具读取 enabled/token/port） */
+  discoveryPath: string
 }
 
 /** pushApi:get 返回 */

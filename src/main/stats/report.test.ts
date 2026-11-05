@@ -41,6 +41,7 @@ describe('buildReportMarkdown', () => {
     const md = buildReportMarkdown({
       title: '陪伴周报',
       generatedAt: '2026-08-06 09:00',
+      roleId: 'rabbit',
       range: '2026-08-06..2026-08-12',
       previousRange: '2026-07-30..2026-08-05',
       compare: {
@@ -51,6 +52,7 @@ describe('buildReportMarkdown', () => {
       topEvents: [['cpu_high', 3]]
     })
     expect(md).toContain('# 陪伴周报')
+    expect(md).toContain('- 角色：rabbit')
     expect(md).toContain('100%')
     expect(md).toContain('2 小时')
   })
@@ -78,8 +80,8 @@ describe('generateReportFile', () => {
     const { data, out } = mk()
     try {
       writeDay(data, '2026-08-06', 7200)
-      const r = generateReportFile({ dir: data, outputDir: out, mode: 'week', today: '2026-08-06' })
-      expect(r.path).toBe(join(out, '陪伴周报-2026-08-03-2026-08-06.md'))
+      const r = generateReportFile({ dir: data, outputDir: out, mode: 'week', roleId: 'rabbit', today: '2026-08-06' })
+      expect(r.path).toBe(join(out, '陪伴周报-rabbit-2026-08-03-2026-08-06.md'))
       const md = readFileSync(r.path, 'utf-8')
       expect(md).toContain('# 陪伴周报')
       expect(md).toContain('2026-08-03 至 2026-08-06')
@@ -93,8 +95,8 @@ describe('generateReportFile', () => {
     const { data, out } = mk()
     try {
       writeDay(data, '2026-08-06', 7200)
-      const r = generateReportFile({ dir: data, outputDir: out, mode: 'month', today: '2026-08-06' })
-      expect(r.path).toBe(join(out, '陪伴月报-2026-08-2026-08-06.md'))
+      const r = generateReportFile({ dir: data, outputDir: out, mode: 'month', roleId: 'rabbit', today: '2026-08-06' })
+      expect(r.path).toBe(join(out, '陪伴月报-rabbit-2026-08-2026-08-06.md'))
       const md = readFileSync(r.path, 'utf-8')
       expect(md).toContain('# 陪伴月报')
       expect(md).toContain('2026-08-01 至 2026-08-06')
@@ -111,7 +113,7 @@ describe('generateReportFile', () => {
       // 本期 2026-07-01..07-31；上期必须为 2026-06-01..06-30，而非 30 天前的 07-01
       writeDay(data, '2026-07-01', 3600)
       writeDay(data, '2026-07-31', 3600)
-      const r = generateReportFile({ dir: data, outputDir: out, mode: 'month', today: '2026-07-31' })
+      const r = generateReportFile({ dir: data, outputDir: out, mode: 'month', roleId: 'rabbit', today: '2026-07-31' })
       const md = readFileSync(r.path, 'utf-8')
       expect(md).toContain('本期：2026-07-01 至 2026-07-31')
       expect(md).toContain('上期：2026-06-01 至 2026-06-30')
@@ -124,9 +126,24 @@ describe('generateReportFile', () => {
   it('月报：跨年 1 月 31 日上期为上年 12 月', () => {
     const { data, out } = mk()
     try {
-      const r = generateReportFile({ dir: data, outputDir: out, mode: 'month', today: '2026-01-31' })
+      const r = generateReportFile({ dir: data, outputDir: out, mode: 'month', roleId: 'rabbit', today: '2026-01-31' })
       const md = readFileSync(r.path, 'utf-8')
       expect(md).toContain('上期：2025-12-01 至 2025-12-31')
+    } finally {
+      rmSync(data, { recursive: true, force: true })
+      rmSync(out, { recursive: true, force: true })
+    }
+  })
+
+  it('不同角色生成到不同文件，互不覆盖', () => {
+    const { data, out } = mk()
+    try {
+      writeDay(data, '2026-08-06', 7200)
+      const a = generateReportFile({ dir: data, outputDir: out, mode: 'week', roleId: 'rabbit', today: '2026-08-06' })
+      const b = generateReportFile({ dir: data, outputDir: out, mode: 'week', roleId: 'cat', today: '2026-08-06' })
+      expect(a.path).not.toBe(b.path)
+      expect(readFileSync(a.path, 'utf-8')).toContain('- 角色：rabbit')
+      expect(readFileSync(b.path, 'utf-8')).toContain('- 角色：cat')
     } finally {
       rmSync(data, { recursive: true, force: true })
       rmSync(out, { recursive: true, force: true })
@@ -136,9 +153,9 @@ describe('generateReportFile', () => {
   it('默认 today 为当天（无参数）', () => {
     const { data, out } = mk()
     try {
-      const r = generateReportFile({ dir: data, outputDir: out, mode: 'week' })
+      const r = generateReportFile({ dir: data, outputDir: out, mode: 'week', roleId: 'rabbit' })
       expect(r.path.endsWith('.md')).toBe(true)
-      expect(r.path).toContain('陪伴周报-')
+      expect(r.path).toContain('陪伴周报-rabbit-')
     } finally {
       rmSync(data, { recursive: true, force: true })
       rmSync(out, { recursive: true, force: true })

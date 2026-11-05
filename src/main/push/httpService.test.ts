@@ -13,6 +13,14 @@ function makeDeps(config: { enabled: boolean; token: string }): TestDeps {
     received,
     getConfig: () => ({ ...config }),
     onPushEvent: (body) => received.push(body),
+    getStatus: () => ({
+      app: 'desktoppet',
+      version: '1.3.0',
+      role: 'rabbit',
+      state: 'focus',
+      uptimeMs: 1234,
+      eventsReceived: received.length
+    }),
     log: () => {}
   }
   return deps
@@ -116,6 +124,33 @@ describe('httpService', () => {
   it('方法非 POST → 405', async () => {
     const port = await start()
     const res = await send(port, '/api/event', 'GET')
+    expect(res.status).toBe(405)
+  })
+
+  it('GET /api/status + 正确 Bearer → 200 返回运行时快照', async () => {
+    const port = await start()
+    const res = await send(port, '/api/status', 'GET', { token })
+    expect(res.status).toBe(200)
+    expect(JSON.parse(res.text)).toEqual({
+      ok: true,
+      app: 'desktoppet',
+      version: '1.3.0',
+      role: 'rabbit',
+      state: 'focus',
+      uptimeMs: 1234,
+      eventsReceived: 0
+    })
+  })
+
+  it('GET /api/status 缺少 token → 401', async () => {
+    const port = await start()
+    const res = await send(port, '/api/status', 'GET')
+    expect(res.status).toBe(401)
+  })
+
+  it('POST /api/status → 405', async () => {
+    const port = await start()
+    const res = await send(port, '/api/status', 'POST', { token, body: {} })
     expect(res.status).toBe(405)
   })
 

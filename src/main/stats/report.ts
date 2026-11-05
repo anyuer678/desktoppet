@@ -38,6 +38,7 @@ export function comparePeriods(
 export function buildReportMarkdown(input: {
   title: string
   generatedAt: string
+  roleId: string
   range: string
   previousRange: string
   compare: PeriodCompareResult
@@ -56,6 +57,7 @@ export function buildReportMarkdown(input: {
     `生成时间：${input.generatedAt}`,
     '',
     '## 统计范围',
+    `- 角色：${input.roleId}`,
     `- 本期：${input.range}`,
     `- 上期：${input.previousRange}`,
     '',
@@ -109,11 +111,15 @@ function prevMonthRange(today: string): { ps: string; pe: string } {
   return { ps: todayStr(prevStart), pe: todayStr(prevEnd) }
 }
 
-/** 生成周报/月报并落盘；返回文件路径（dir=统计数据目录，outputDir=报告落盘目录） */
+/**
+ * 生成周报/月报并落盘；返回文件路径。
+ * 文件名带角色 id：报告统一落在全局目录，多角色必须隔离，否则会互相覆盖/误判「本周期已生成」。
+ */
 export function generateReportFile(input: {
   dir: string
   outputDir: string
   mode: 'week' | 'month'
+  roleId: string
   today?: string
 }): { path: string } {
   const today = input.today ?? todayStr()
@@ -137,13 +143,17 @@ export function generateReportFile(input: {
   const md = buildReportMarkdown({
     title: input.mode === 'week' ? '陪伴周报' : '陪伴月报',
     generatedAt: new Date().toLocaleString('zh-CN'),
+    roleId: input.roleId,
     range: `${cS} 至 ${today}`,
     previousRange: `${ps} 至 ${pe}`,
     compare: cmp,
     topEvents
   })
   const key = input.mode === 'week' ? weeklyReportKey(today) : monthlyReportKey(today)
-  const file = join(input.outputDir, `陪伴${input.mode === 'week' ? '周报' : '月报'}-${key}-${today}.md`)
+  const file = join(
+    input.outputDir,
+    `陪伴${input.mode === 'week' ? '周报' : '月报'}-${input.roleId}-${key}-${today}.md`
+  )
   mkdirSync(dirname(file), { recursive: true })
   writeFileSync(file, md, 'utf-8')
   return { path: file }

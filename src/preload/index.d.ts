@@ -37,7 +37,8 @@ import type {
   StatsReportGenerateResult,
   StatsSpreadsheetResult,
   StatsTrendResult,
-  StatsYearResult
+  StatsYearResult,
+  UpdaterStatus
 } from '../shared/ipc'
 
 declare global {
@@ -122,6 +123,12 @@ declare global {
         report(fps: number): void
         start(): Promise<PerfReport>
       }
+      updater: {
+        get(): Promise<UpdaterStatus>
+        check(): Promise<OpResult>
+        download(): Promise<OpResult>
+        install(): Promise<OpResult>
+      }
       events: {
         onCharacterChanged(cb: (id: string) => void): () => void
         onTogglePause(cb: () => void): () => void
@@ -136,6 +143,7 @@ declare global {
         onSettingsChanged(cb: (patch: { size: number; opacity: number }) => void): () => void
         onUpdateAvailable(cb: (info: { version: string; releaseDate?: string }) => void): () => void
         onUpdateDownloaded(cb: (info: { version: string }) => void): () => void
+        onUpdaterStatus(cb: (status: UpdaterStatus) => void): () => void
       }
     }
   }

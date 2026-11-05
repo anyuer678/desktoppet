@@ -1,4 +1,4 @@
-import { computeStreak, loadDailyRange, sanitizeRoleId, todayStr, totalSeconds } from './dailyStats'
+import { computeStreak, listStatsDates, loadDailyStats, sanitizeRoleId, todayStr, totalSeconds } from './dailyStats'
 import type { Achievements } from '../../shared/ipc'
 
 const LEVEL_HOURS = [0, 10, 50, 100, 250, 500, 1000, 2000, 3500, 5000]
@@ -14,15 +14,16 @@ const BADGES: { id: string; label: string; kind: 'streak' | 'totalHours' | 'acti
   { id: 'days-100', label: '活跃 100 天', kind: 'activeDays', threshold: 100 }
 ]
 
+/** 用日历日减法而非 86400000 毫秒，避免 DST 切换日日期漂移 */
 function prevDay(d: string): string {
-  return todayStr(new Date(new Date(d + 'T00:00:00').getTime() - 86400000))
+  const dt = new Date(d + 'T00:00:00')
+  return todayStr(new Date(dt.getFullYear(), dt.getMonth(), dt.getDate() - 1))
 }
 
 export function computeAchievements(dir: string, roleId: string, today: string): Achievements {
-  const year = Number(today.slice(0, 4))
-  // 跨年扫描：从去年 1 月 1 日起，保证 bestStreak 不受年界截断
-  const days = loadDailyRange(dir, `${year - 1}-01-01`, today).filter((d) => d.present)
-  const presentDates = days.map((d) => d.date).sort()
+  // 「累计」必须覆盖全部历史：旧实现只扫去年+今年，使用两年后累计时长/徽章/等级会失真
+  const presentDates = listStatsDates(dir).filter((d) => d <= today)
+  const days = presentDates.map((date) => ({ date, stats: loadDailyStats(dir, date) }))
   const totalSecondsSum = days.reduce((a, d) => a + totalSeconds(d.stats), 0)
   const activeDays = presentDates.length
   const totalHours = totalSecondsSum / 3600

@@ -4,17 +4,17 @@
 
 **角色 = 资源包**——核心引擎与角色完全解耦的可扩展桌宠平台
 
-![CI](https://github.com/anyuer678/desktoppet/actions/workflows/test.yml/badge.svg) ![Release](https://img.shields.io/github/v/release/anyuer678/desktoppet) ![License](https://img.shields.io/github/license/anyuer678/desktoppet) ![Tests](https://img.shields.io/badge/tests-470%2B-green) ![Top language](https://img.shields.io/github/languages/top/anyuer678/desktoppet)
+![CI](https://github.com/anyuer678/desktoppet/actions/workflows/test.yml/badge.svg) ![Release](https://img.shields.io/github/v/release/anyuer678/desktoppet) ![License](https://img.shields.io/github/license/anyuer678/desktoppet) ![Tests](https://img.shields.io/badge/tests-509%2B-green) ![Top language](https://img.shields.io/github/languages/top/anyuer678/desktoppet)
 
 <p align="center"><img src="characters/rabbit/preview.jpg" alt="Rabbit 角色预览" width="420"></p>
 
 </div>
 
 > **状态**：`portfolio` · Electron 桌宠平台 · GPL-3.0 · **非**通用生产组件库  
-> 单测约 **470+** 例（含 headless smoke / IPC schema / 敏感剪贴板零泄漏 / 角色包失败路径 / Push 回环绑定）；CI 跑 typecheck + unit tests + build + 产物校验。  
+> 单测 **509** 例（含 headless smoke / IPC schema / 敏感剪贴板零泄漏 / 角色包失败路径 / Push 回环绑定 / 更新状态机）；CI 跑 typecheck + unit tests + build + 产物校验。  
 > 支持与隐私：敏感剪贴板内容设计上不进 IPC（有自动化断言）；推送 API 仅绑定 `127.0.0.1` + Bearer token。
 
-当前版本：**v1.2.1**（正式版，附 Windows 安装包下载；修复自 v1.0.0 起全部安装包桌宠图片不显示的问题）· 协议：**GPL-3.0**
+当前版本：**v1.3.0**（源码开发版；完整自动更新链路 + 本地集成状态端点）· 协议：**GPL-3.0**
 
 一个可扩展的桌面宠物平台：**角色 = 资源包**，核心引擎与角色完全解耦。桌宠根据系统状态与事件产生不同表现，会说话、有心情；用户可导入自制角色，也可通过本地 API 与被动数据源接入自己的自动化。
 
@@ -28,7 +28,8 @@
 - **事件通知页**：控制中心「事件」页签展示运行事件流（环形缓冲）
 - **伴随统计**：时长/状态分布/互动热力/趋势/成就；CSV/Markdown 周报月报/Excel 年度导出
 - **日程提醒**：单次 / 每日 / 每周触发，alarm 驱动 warning 状态
-- **事件推送 API**：本机 HTTP `POST /api/event`（仅 `127.0.0.1` + Bearer token），第三方程序把事件推给桌宠
+- **事件推送 API**：本机 HTTP `POST /api/event` + 鉴权状态端点 `GET /api/status`（仅 `127.0.0.1` + Bearer token），第三方程序把事件推给桌宠；`pushApi.json` 发现文件可被 [lumen](https://github.com/anyuer678/lumen) 等本地工具直接读取
+- **自动更新**：启动后检查 → 系统通知/控制中心提示 → 用户确认下载 → 下载完成 → 重启安装（开发模式自动跳过）
 - **控制中心**：首页 / 角色 / 市场 / 消息 / 日程 / 统计 / 推送 / 事件 / 开发者 / 设置
 - **角色包（.pet）**：config.json 驱动 + 序列帧/模板动画；缺素材自动回退；本地市场安装/升级
 - **Windows 一键脚本**：`启动.bat` / `自检.bat` / `构建验证.bat`
@@ -96,7 +97,7 @@ dist/ release/  electron-builder 打包产物（gitignore，可再生）
 
 - `README.md` — 本文件
 - `docs/` — 使用说明、架构设计、API/IPC 设计、角色包规范、部署说明等
-- `CHANGELOG.md` — 版本记录（v0.1 → v1.2.1）
+- `CHANGELOG.md` — 版本记录（v0.1 → v1.3.0）
 - `CONTRIBUTING.md` / `SECURITY.md` — 贡献与安全策略
 - `LICENSE` — GPL-3.0
 

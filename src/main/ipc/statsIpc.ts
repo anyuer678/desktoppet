@@ -80,7 +80,8 @@ export function registerStatsIpc(deps: StatsIpcDeps): void {
       const { path } = generateReportFile({
         dir: stats.dir(),
         outputDir: join(app.getPath('documents'), 'DesktopPet', '报告'),
-        mode: m
+        mode: m,
+        roleId: stats.roleId()
       })
       log('info', '[stats:report:generate] saved', path)
       return { ok: true, path }

@@ -17,6 +17,7 @@ import {
   loadDailyRange,
   loadDailyRangeFullYear,
   loadDailyStats,
+  listStatsDates,
   saveDailyStats,
   summarizeYear,
   todayStr,
@@ -29,6 +30,23 @@ import { migrateStatsLayout, sanitizeRoleId } from './dailyStats'
 function tempDir(prefix: string): string {
   return mkdtempSync(join(tmpdir(), prefix))
 }
+
+describe('listStatsDates', () => {
+  it('只列出合法日期文件，升序，忽略其他文件', () => {
+    const dir = tempDir('dp-dates-')
+    saveDailyStats(dir, emptyStats('2026-08-06'))
+    saveDailyStats(dir, emptyStats('2020-01-01'))
+    saveDailyStats(dir, emptyStats('2026-02-30')) // 非法日期（路径仍可写）
+    writeFileSync(join(dir, 'notes.txt'), 'x')
+    writeFileSync(join(dir, '2026-08-07.json.tmp'), '{}')
+    expect(listStatsDates(dir)).toEqual(['2020-01-01', '2026-08-06'])
+    rmSync(dir, { recursive: true, force: true })
+  })
+
+  it('目录不存在返回空数组', () => {
+    expect(listStatsDates(join(tmpdir(), 'dp-no-such-dir-xyz'))).toEqual([])
+  })
+})
 
 describe('emptyStats', () => {
   it('创建空统计', () => {

@@ -8,6 +8,14 @@ function makeDeps(): PushServerDeps {
   return {
     getConfig: () => ({ enabled: true, token: 'ab'.repeat(16) }),
     onPushEvent: () => {},
+    getStatus: () => ({
+      app: 'desktoppet',
+      version: 'test',
+      role: 'rabbit',
+      state: 'idle',
+      uptimeMs: 0,
+      eventsReceived: 0
+    }),
     log: () => {}
   }
 }

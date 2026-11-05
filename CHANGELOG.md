@@ -5,6 +5,23 @@
 版本格式：`大版本号.日期.构建编号`
 日期字段=月（前两位）日（后两位），当天构建号递增、跨日重置。
 
+## v1.3.0 (2026-11-05)
+
+自动更新闭环、本地集成协议与统计口径修复。单测 509 例，typecheck/build 全绿。
+
+新增：
+- 自动更新完整链路：`updater:get/check/download/install` IPC 与控制中心侧栏操作；状态机（idle/checking/available/downloading/downloaded/error/unsupported）纯逻辑可单测；发现新版本/下载完成时即使控制中心未打开也会弹系统通知；开发模式（`app.isPackaged=false`）明确跳过检查
+- 推送 API 新增鉴权状态端点 `GET /api/status`（Bearer token），返回 app/version/role/state/uptimeMs/eventsReceived，便于 [lumen](https://github.com/anyuer678/lumen) 等本地工具验证链路
+- 「推送」页展示发现文件绝对路径（lumen petpush 读取 `enabled/token/port` 的 `pushApi.json`）
+
+修复：
+- 多角色报告互串：周报/月报文件名与 Markdown 增加角色 id，自动报告「本周期已生成」判重按角色隔离
+- 成就「累计」口径：从只扫去年+今年改为扫描统计目录全部历史日期（未来日期不计入），跨年 bestStreak 不再截断
+- 序列帧首帧缺失时回退角色静态主图，不再渲染 404 帧形成破图
+- 台词池结构在设置读写两侧强制规范化，损坏/恶意 settings 不再能让桌宠窗口崩溃
+- 控制中心页签导航改为共享白名单 + `JSON.stringify`，不再把调用方字符串拼进 `executeJavaScript`
+- 点击穿透诊断日志只在状态翻转时写入，避免 mousemove 高频同步落盘
+
 ## v1.2.1 (2026-09-25)
 
 桌宠图片加载修复。完整说明见 [Release v1.2.1](https://github.com/anyuer678/desktoppet/releases/tag/v1.2.1)。

@@ -38,7 +38,8 @@ import type {
   StatsReportGenerateResult,
   StatsSpreadsheetResult,
   StatsTrendResult,
-  StatsYearResult
+  StatsYearResult,
+  UpdaterStatus
 } from '../shared/ipc'
 
 const api = {
@@ -137,6 +138,12 @@ const api = {
     report: (fps: number): void => ipcRenderer.send('perf:fps', fps),
     start: (): Promise<PerfReport> => ipcRenderer.invoke('perf:start')
   },
+  updater: {
+    get: (): Promise<UpdaterStatus> => ipcRenderer.invoke('updater:get'),
+    check: (): Promise<OpResult> => ipcRenderer.invoke('updater:check'),
+    download: (): Promise<OpResult> => ipcRenderer.invoke('updater:download'),
+    install: (): Promise<OpResult> => ipcRenderer.invoke('updater:install')
+  },
   events: {
     onCharacterChanged: (cb: (id: string) => void): (() => void) => {
       const handler = (_e: Electron.IpcRendererEvent, id: string): void => cb(id)
@@ -196,6 +203,11 @@ const api = {
       const handler = (_e: Electron.IpcRendererEvent, info: { version: string }): void => cb(info)
       ipcRenderer.on('updater:update-downloaded', handler)
       return () => ipcRenderer.removeListener('updater:update-downloaded', handler)
+    },
+    onUpdaterStatus: (cb: (status: UpdaterStatus) => void): (() => void) => {
+      const handler = (_e: Electron.IpcRendererEvent, status: UpdaterStatus): void => cb(status)
+      ipcRenderer.on('updater:status', handler)
+      return () => ipcRenderer.removeListener('updater:status', handler)
     }
   }
 }

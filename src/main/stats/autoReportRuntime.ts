@@ -12,6 +12,8 @@ import { DEFAULT_AUTO_REPORT_CONFIG, loadAutoReports, saveAutoReports } from './
 export interface AutoReportRuntimeDeps {
   /** 当前角色统计目录（getter：随角色切换变化，报告聚合目录必须现读） */
   getStatsDir(): string
+  /** 当前角色 id（getter：报告文件名与周期判重按角色隔离） */
+  getRoleId(): string
   notifyPet(channel: string, payload?: unknown): void
   notifyCenter(channel: string, payload?: unknown): void
   log: LogFn
@@ -39,7 +41,8 @@ export function createAutoReportRuntime(deps: AutoReportRuntimeDeps): AutoReport
       const { path } = generateReportFile({
         dir: deps.getStatsDir(),
         outputDir: reportOutputDir(),
-        mode
+        mode,
+        roleId: deps.getRoleId()
       })
       deps.log('info', `[autoReport:${mode}] saved`, path)
       if (silent) return
@@ -61,9 +64,11 @@ export function createAutoReportRuntime(deps: AutoReportRuntimeDeps): AutoReport
     autoReportFile = join(app.getPath('userData'), 'autoReports.json')
     autoReportCfg = loadAutoReports(autoReportFile)
     const outDir = reportOutputDir()
+    // 只把「当前角色」的报告视为本周期已生成：报告统一目录，不同角色的同名周期不能互相压制
     const reportExists = (key: string, prefix: string): boolean => {
       try {
-        return readdirSync(outDir).some((f) => f.startsWith(prefix) && f.includes(key))
+        const rolePrefix = `${prefix}${deps.getRoleId()}-`
+        return readdirSync(outDir).some((f) => f.startsWith(rolePrefix) && f.includes(key))
       } catch {
         return false
       }

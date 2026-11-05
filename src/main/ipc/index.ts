@@ -10,6 +10,7 @@ import type { AutoReportRuntime } from '../stats/autoReportRuntime'
 import type { PushRuntime } from '../push/pushRuntime'
 import type { ScheduleRuntime } from '../schedule/scheduleRuntime'
 import type { PerfRuntime } from '../perf/perfRuntime'
+import type { Updater } from '../app/updater'
 import { registerSettingsIpc } from './settingsIpc'
 import { registerCharacterIpc } from './characterIpc'
 import { registerWindowIpc } from './windowIpc'
@@ -22,6 +23,7 @@ import { registerPerfIpc } from './perfIpc'
 import { registerMarketIpc } from './marketIpc'
 import { registerScheduleIpc } from './scheduleIpc'
 import { registerMenuIpc } from './menuIpc'
+import { registerUpdaterIpc } from './updaterIpc'
 
 /** registerAllIpc 的全部依赖：各运行时对象 + 组合根回调 */
 export interface IpcDeps {
@@ -35,6 +37,7 @@ export interface IpcDeps {
   passive: PassiveRuntime
   perf: PerfRuntime
   schedule: ScheduleRuntime
+  updater: Updater
   log: LogFn
   notifyPet(channel: string, payload?: unknown): void
   notifyCenter(channel: string, payload?: unknown): void
@@ -63,4 +66,5 @@ export function registerAllIpc(deps: IpcDeps): void {
   registerMarketIpc(deps)
   registerScheduleIpc(deps)
   registerMenuIpc(deps)
+  registerUpdaterIpc(deps)
 }

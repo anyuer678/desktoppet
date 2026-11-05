@@ -35,6 +35,22 @@ export function iterateDates(start: string, end: string): string[] {
   return out
 }
 
+/**
+ * 列出统计目录中实际存在的日期（YYYY-MM-DD，升序）。
+ * 用于全量口径（成就/累计）扫描：直接读目录名，避免从某年 1 月 1 日起逐日探测。
+ */
+export function listStatsDates(dir: string): string[] {
+  if (!existsSync(dir)) return []
+  const out: string[] = []
+  for (const name of readdirSync(dir)) {
+    const m = /^(\d{4})-(\d{2})-(\d{2})\.json$/.exec(name)
+    if (!m) continue
+    if (!isValidDate(Number(m[1]), Number(m[2]), Number(m[3]))) continue
+    out.push(name.slice(0, 10))
+  }
+  return out.sort()
+}
+
 /** 读取区间内逐日统计；无记录日 present=false + 空统计（升序，包含首尾） */
 export function loadDailyRange(dir: string, start: string, end: string): RangeDay[] {
   return iterateDates(start, end).map((date) => {

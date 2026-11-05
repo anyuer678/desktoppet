@@ -18,6 +18,7 @@ import type {
   ScheduleItem,
   Settings,
   StatsReport,
+  UpdaterStatus,
   YearSummary
 } from '../../../shared/ipc'
 import { DEFAULT_SPEECH, type SpeechPoolKey, type SpeechPools } from '../../../shared/speech'
@@ -46,7 +47,8 @@ import { SettingsTab } from './tabs/SettingsTab'
 export function CenterApp(): React.JSX.Element {
   const [tab, setTab] = useState<Tab>('home')
   const [appVersion, setAppVersion] = useState('')
-  const [updateInfo, setUpdateInfo] = useState('')
+  const [updaterStatus, setUpdaterStatus] = useState<UpdaterStatus | null>(null)
+  const [updaterMsg, setUpdaterMsg] = useState('')
   const [characters, setCharacters] = useState<CharacterSummary[]>([])
   const [settings, setSettings] = useState<Settings | null>(null)
   const [activeId, setActiveId] = useState('')
@@ -169,19 +171,14 @@ export function CenterApp(): React.JSX.Element {
       setActiveId(id)
       void window.desktopPet.character.list().then(setCharacters)
     })
-    const offUpdateAvailable = window.desktopPet.events.onUpdateAvailable((info) => {
-      setUpdateInfo(`发现新版本 v${info.version}，下载完成后将提示安装`)
-    })
-    const offUpdateDownloaded = window.desktopPet.events.onUpdateDownloaded((info) => {
-      setUpdateInfo(`新版本 v${info.version} 已下载就绪，重启应用后安装`)
-    })
+    void window.desktopPet.updater.get().then(setUpdaterStatus).catch(() => {})
+    const offUpdater = window.desktopPet.events.onUpdaterStatus(setUpdaterStatus)
     return () => {
       offState()
       offHistory()
       offScheduleFired()
       offChanged()
-      offUpdateAvailable()
-      offUpdateDownloaded()
+      offUpdater()
     }
   }, [])
 
@@ -858,6 +855,12 @@ export function CenterApp(): React.JSX.Element {
     if (!result.ok) setScheduleError(result.error ?? '测试触发失败')
   }
 
+  const handleUpdaterAction = async (action: 'check' | 'download' | 'install'): Promise<void> => {
+    setUpdaterMsg('')
+    const result = await window.desktopPet.updater[action]()
+    if (!result.ok) setUpdaterMsg(result.error ?? '操作失败')
+  }
+
   // 成就等级进度（0~100）；未达最高级按「当前累计/下一级阈值」，满级或未加载时取 100
   const levelProgress =
     achievements && achievements.level.nextHours !== null
@@ -888,9 +891,41 @@ export function CenterApp(): React.JSX.Element {
         ))}
         <div className="mt-auto px-2 text-xs text-muted-foreground">
           DesktopPet v{appVersion}
-          {updateInfo && (
+          {updaterMsg && (
             <div className="mt-1 rounded-md bg-primary/10 px-2 py-1 text-[11px] text-primary">
-              {updateInfo}
+              {updaterMsg}
+            </div>
+          )}
+          {updaterStatus && updaterStatus.phase !== 'unsupported' && (
+            <div className="mt-2 space-y-1 text-[11px]">
+              {updaterStatus.phase === 'checking' && <div>正在检查更新…</div>}
+              {updaterStatus.phase === 'available' && (
+                <button
+                  onClick={() => void handleUpdaterAction('download')}
+                  className="w-full rounded-md bg-primary/10 px-2 py-1 text-left text-primary hover:bg-primary/20"
+                >
+                  下载更新 v{updaterStatus.version}
+                </button>
+              )}
+              {updaterStatus.phase === 'downloading' && (
+                <div>下载中 {updaterStatus.percent ?? 0}%</div>
+              )}
+              {updaterStatus.phase === 'downloaded' && (
+                <button
+                  onClick={() => void handleUpdaterAction('install')}
+                  className="w-full rounded-md bg-primary px-2 py-1 text-left text-primary-foreground hover:opacity-90"
+                >
+                  重启并安装 v{updaterStatus.version}
+                </button>
+              )}
+              {(updaterStatus.phase === 'idle' || updaterStatus.phase === 'error') && (
+                <button
+                  onClick={() => void handleUpdaterAction('check')}
+                  className="w-full rounded-md bg-muted px-2 py-1 text-left hover:bg-muted/70"
+                >
+                  {updaterStatus.phase === 'error' ? '更新失败，重试' : '检查更新'}
+                </button>
+              )}
             </div>
           )}
         </div>

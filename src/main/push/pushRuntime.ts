@@ -1,3 +1,4 @@
+import { app } from 'electron'
 import type { PushApiConfig, PushApiFired } from '../../shared/ipc'
 import { pushApiConfigPath } from '../app/paths'
 import type { LogFn } from '../logging/logger'
@@ -5,7 +6,7 @@ import type { EventRuntime } from '../event/eventRuntime'
 import type { StatsRuntime } from '../stats/statsRuntime'
 import { countEvent } from '../stats/dailyStats'
 import { generateToken } from './pushApi'
-import { startPushHttpService, type PushHttpServer } from './httpService'
+import { startPushHttpService, type PushHttpServer, type PushServiceStatus } from './httpService'
 import { DEFAULT_PUSH_API_CONFIG, loadPushApiConfig, savePushApiConfig } from './pushApiStore'
 
 export interface PushEventBody {
@@ -15,8 +16,10 @@ export interface PushEventBody {
 }
 
 export interface PushRuntimeDeps {
-  events: Pick<EventRuntime, 'apply' | 'syncStateAndNotify'>
+  events: Pick<EventRuntime, 'apply' | 'syncStateAndNotify' | 'currentState'>
   stats: Pick<StatsRuntime, 'record'>
+  /** 当前角色 id（状态端点展示用） */
+  getRoleId(): string
   notifyPet(channel: string, payload?: unknown): void
   notifyCenter(channel: string, payload?: unknown): void
   log: LogFn
@@ -36,6 +39,8 @@ export interface PushRuntime {
   ensureToken(force?: boolean): void
   /** 监听端口（未启动时 0） */
   port(): number
+  /** 运行状态快照（GET /api/status） */
+  status(): PushServiceStatus
   /** 推送事件处理：计入统计 + 注入事件中心 + 气泡 + 状态转换广播 */
   fireEvent(body: PushEventBody): void
 }
@@ -45,6 +50,19 @@ export function createPushRuntime(deps: PushRuntimeDeps): PushRuntime {
   let pushApiCfg: PushApiConfig = { ...DEFAULT_PUSH_API_CONFIG }
   let pushServer: PushHttpServer | null = null
   let pushEventSource = 1
+  let pushStartedAt = 0
+  let pushReceived = 0
+
+  function status(): PushServiceStatus {
+    return {
+      app: 'desktoppet',
+      version: app.getVersion(),
+      role: deps.getRoleId(),
+      state: deps.events.currentState(),
+      uptimeMs: pushStartedAt > 0 ? Date.now() - pushStartedAt : 0,
+      eventsReceived: pushReceived
+    }
+  }
 
   function loadConfig(): void {
     pushApiCfg = loadPushApiConfig(pushApiConfigPath())
@@ -59,6 +77,7 @@ export function createPushRuntime(deps: PushRuntimeDeps): PushRuntime {
 
   function fireEvent(body: PushEventBody): void {
     const now = Date.now()
+    pushReceived++
     deps.stats.record((s) => countEvent(s, 'push'))
     const sourceId = `push:${(pushEventSource++ % 100000).toString(36)}-${now.toString(36).slice(-4)}`
     deps.events.apply({
@@ -90,10 +109,12 @@ export function createPushRuntime(deps: PushRuntimeDeps): PushRuntime {
     startPushHttpService({
       getConfig: () => pushApiCfg,
       onPushEvent: fireEvent,
+      getStatus: status,
       log: deps.log
     })
       .then((srv) => {
         pushServer = srv
+        pushStartedAt = Date.now()
         pushApiCfg.port = srv.port
         savePushApiConfig(pushApiConfigPath(), pushApiCfg)
         deps.log('info', '[pushApi] listening on port', srv.port)
@@ -106,6 +127,7 @@ export function createPushRuntime(deps: PushRuntimeDeps): PushRuntime {
     if (pushServer) {
       await pushServer.close()
       pushServer = null
+      pushStartedAt = 0
       pushApiCfg.port = undefined
       savePushApiConfig(pushApiConfigPath(), pushApiCfg)
     }
@@ -124,6 +146,7 @@ export function createPushRuntime(deps: PushRuntimeDeps): PushRuntime {
     setEnabled,
     ensureToken,
     port: () => pushServer?.port ?? 0,
+    status,
     fireEvent
   }
 }

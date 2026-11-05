@@ -75,6 +75,7 @@ const stats = createStatsRuntime({
 // 自动报告运行时（statsDir 经 getter 现读，角色切换后报告写入新目录）
 const autoReports = createAutoReportRuntime({
   getStatsDir: () => stats.dir(),
+  getRoleId: () => stats.roleId(),
   notifyPet,
   notifyCenter,
   log
@@ -84,6 +85,7 @@ const autoReports = createAutoReportRuntime({
 const push = createPushRuntime({
   events: eventRuntime,
   stats,
+  getRoleId: () => stats.roleId(),
   notifyPet,
   notifyCenter,
   log
@@ -128,6 +130,9 @@ const tickLoop = createTickLoop({
   notifyPet
 })
 
+// 自动更新（IPC 需要引用，故先于 registerAllIpc 创建；start 在窗口就绪后调用）
+const updater = createUpdater({ notifyPet, notifyCenter, log })
+
 /** 切换角色：更新 settings → 落盘 → 通知渲染层 → 统计切目录 */
 function selectCharacter(id: string): void {
   settingsCtl.setActiveCharacter(id)
@@ -170,6 +175,7 @@ if (!acquireSingleInstanceLock(() => windows.openCenter())) {
       passive,
       perf,
       schedule,
+      updater,
       log,
       notifyPet,
       notifyCenter,
@@ -192,10 +198,6 @@ if (!acquireSingleInstanceLock(() => windows.openCenter())) {
     tickLoop.start()
 
     // 自动更新检查（启动后 30 秒延迟）
-    const updater = createUpdater({
-      getMainWindow: () => windows.center(),
-      log,
-    })
     updater.start()
 
     app.on('activate', () => {
