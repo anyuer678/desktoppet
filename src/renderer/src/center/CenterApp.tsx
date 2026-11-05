@@ -78,6 +78,7 @@ export function CenterApp(): React.JSX.Element {
   const [plugins, setPlugins] = useState<PluginInfo[]>([])
   const [perfBusy, setPerfBusy] = useState(false)
   const [perfReport, setPerfReport] = useState<PerfReport | null>(null)
+  const [perfError, setPerfError] = useState('')
   const [statsReport, setStatsReport] = useState<StatsReport | null>(null)
   const [statsError, setStatsError] = useState('')
   const [rangeDays, setRangeDays] = useState<RangeDay[] | null>(null)
@@ -155,8 +156,11 @@ export function CenterApp(): React.JSX.Element {
 
   const runPerf = async (): Promise<void> => {
     setPerfBusy(true)
+    setPerfError('')
     try {
       setPerfReport(await window.desktopPet.perf.start())
+    } catch (err) {
+      setPerfError(`自检失败：${err instanceof Error ? err.message : String(err)}`)
     } finally {
       setPerfBusy(false)
     }
@@ -1029,7 +1033,7 @@ export function CenterApp(): React.JSX.Element {
 
       <main className="flex-1 overflow-y-auto p-6">
         <div key={tab} className="dp-fade-in">
-        {tab === 'home' && <HomeTab active={active} perfBusy={perfBusy} perfReport={perfReport} plugins={plugins} refreshStats={refreshStats} runPerf={runPerf} state={state} statsError={statsError} statsReport={statsReport} />}
+        {tab === 'home' && <HomeTab active={active} perfBusy={perfBusy} perfError={perfError} perfReport={perfReport} plugins={plugins} refreshStats={refreshStats} runPerf={runPerf} state={state} statsError={statsError} statsReport={statsReport} />}
 
         {tab === 'characters' && <CharactersTab activeId={activeId} characters={characters} deleteCharacter={deleteCharacter} editDetail={editDetail} editForm={editForm} editingId={editingId} exportCharacter={exportCharacter} importBusy={importBusy} importCharacter={importCharacter} importError={importError} importOk={importOk} openEditor={openEditor} saveBusy={saveBusy} saveEdit={saveEdit} selectCharacter={selectCharacter} setEditForm={setEditForm} setEditingId={setEditingId} switchEditState={switchEditState} />}
 

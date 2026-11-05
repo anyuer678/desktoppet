@@ -7,6 +7,7 @@ export interface SliderProps {
   step?: number
   onChange: (value: number) => void
   className?: string
+  'aria-label'?: string
 }
 
 export function Slider({
@@ -15,7 +16,8 @@ export function Slider({
   max,
   step = 1,
   onChange,
-  className
+  className,
+  'aria-label': ariaLabel
 }: SliderProps): React.JSX.Element {
   const fill = ((value - min) / (max - min)) * 100
   return (
@@ -25,6 +27,7 @@ export function Slider({
       max={max}
       step={step}
       value={value}
+      aria-label={ariaLabel}
       onChange={(e) => onChange(Number(e.target.value))}
       className={cn('dp-range w-full', className)}
       style={{ ['--dp-fill' as string]: `${fill}%` }}

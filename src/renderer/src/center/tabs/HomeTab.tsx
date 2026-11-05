@@ -28,6 +28,7 @@ import { STATE_LABELS, formatDuration } from '../centerShared'
 interface HomeTabProps {
   active: CharacterSummary | undefined
   perfBusy: boolean
+  perfError: string
   perfReport: PerfReport | null
   plugins: PluginInfo[]
   refreshStats: () => void
@@ -37,7 +38,7 @@ interface HomeTabProps {
   statsReport: StatsReport | null
 }
 
-export function HomeTab({ active, perfBusy, perfReport, plugins, refreshStats, runPerf, state, statsError, statsReport }: HomeTabProps): React.JSX.Element {
+export function HomeTab({ active, perfBusy, perfError, perfReport, plugins, refreshStats, runPerf, state, statsError, statsReport }: HomeTabProps): React.JSX.Element {
   return (
           <div className="space-y-4">
             <Card>
@@ -146,7 +147,9 @@ export function HomeTab({ active, perfBusy, perfReport, plugins, refreshStats, r
                     <div className="text-xs text-muted-foreground">连续陪伴 {statsReport.streak} 天</div>
                   </div>
                 ) : (
-                  <div className="text-sm text-muted-foreground">加载中…</div>
+                  <div className="text-sm text-muted-foreground">
+                    {statsError ? '统计暂不可用，请稍后重试' : '加载中…'}
+                  </div>
                 )}
               </CardContent>
             </Card>
@@ -159,6 +162,7 @@ export function HomeTab({ active, perfBusy, perfReport, plugins, refreshStats, r
                   <Button variant="outline" onClick={() => void runPerf()} disabled={perfBusy}>
                     {perfBusy ? '采集中（5 秒）…' : '开始自检'}
                   </Button>
+                  {perfError && <span className="text-xs text-destructive">{perfError}</span>}
                   {perfReport && (
                     <div className="grid grid-cols-3 gap-x-4 gap-y-1 text-xs">
                       <span className="text-muted-foreground">主进程 CPU</span>

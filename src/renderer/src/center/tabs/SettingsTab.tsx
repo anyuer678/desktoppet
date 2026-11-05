@@ -51,6 +51,7 @@ export function SettingsTab({ openHelp, setOpenHelp, settings, updateSettings }:
                     max={512}
                     step={8}
                     value={settings.size}
+                    aria-label="角色大小"
                     onChange={(v) => updateSettings({ size: v })}
                   />
                 </div>
@@ -64,6 +65,7 @@ export function SettingsTab({ openHelp, setOpenHelp, settings, updateSettings }:
                     max={100}
                     step={5}
                     value={Math.round(settings.opacity * 100)}
+                    aria-label="透明度"
                     onChange={(v) => updateSettings({ opacity: v / 100 })}
                   />
                 </div>
@@ -80,6 +82,7 @@ export function SettingsTab({ openHelp, setOpenHelp, settings, updateSettings }:
                 </div>
                 <Switch
                   checked={settings.autoLaunch}
+                  aria-label="开机自动启动"
                   onCheckedChange={(v) => updateSettings({ autoLaunch: v })}
                 />
               </CardContent>
@@ -96,6 +99,7 @@ export function SettingsTab({ openHelp, setOpenHelp, settings, updateSettings }:
                   </div>
                   <Switch
                     checked={settings.shortcutsEnabled}
+                    aria-label="启用全局快捷键"
                     onCheckedChange={(v) => updateSettings({ shortcutsEnabled: v })}
                   />
                 </div>

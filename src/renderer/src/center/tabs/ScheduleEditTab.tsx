@@ -136,6 +136,7 @@ export function ScheduleEditTab({ active, editingScheduleId, saveSchedule, sched
                   <div className="text-sm">启用</div>
                   <Switch
                     checked={scheduleForm.enabled}
+                    aria-label="启用日程"
                     onCheckedChange={(v) => setScheduleForm({ ...scheduleForm, enabled: v })}
                   />
                 </div>

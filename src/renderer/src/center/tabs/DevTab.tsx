@@ -50,7 +50,7 @@ export function DevTab({ handlePassiveSave, handlePassiveTest, mappingDraft, pas
                 <div className="rounded-md border border-border p-3">
                   <div className="mb-2 flex items-center justify-between">
                     <span className="text-sm font-medium">剪贴板</span>
-                    <Switch checked={passiveCfg?.clipboard.enabled ?? false} onCheckedChange={(v) => { if (passiveCfg) updatePassive((c) => ({ ...c, clipboard: { ...c.clipboard, enabled: v } })) }} />
+                    <Switch aria-label="启用剪贴板源" checked={passiveCfg?.clipboard.enabled ?? false} onCheckedChange={(v) => { if (passiveCfg) updatePassive((c) => ({ ...c, clipboard: { ...c.clipboard, enabled: v } })) }} />
                   </div>
                   <p className="mb-2 text-xs text-muted-foreground">
                     复制内容变化时提示（默认开启，按规则过滤，低打扰）。规则为正则表达式，逐行一条。
@@ -78,7 +78,7 @@ export function DevTab({ handlePassiveSave, handlePassiveTest, mappingDraft, pas
                 <div className="rounded-md border border-border p-3">
                   <div className="mb-2 flex items-center justify-between">
                     <span className="text-sm font-medium">目录监听</span>
-                    <Switch checked={passiveCfg?.folder.enabled ?? false} onCheckedChange={(v) => updatePassive((c) => ({ ...c, folder: { ...c.folder, enabled: v } }))} />
+                    <Switch aria-label="启用目录监听" checked={passiveCfg?.folder.enabled ?? false} onCheckedChange={(v) => updatePassive((c) => ({ ...c, folder: { ...c.folder, enabled: v } }))} />
                   </div>
                   <p className="mb-2 text-xs text-muted-foreground">
                     向指定目录放入新文件时提示（默认关闭，需填写目录路径）。文件通配：* 任意、? 单字符。
@@ -100,7 +100,7 @@ export function DevTab({ handlePassiveSave, handlePassiveTest, mappingDraft, pas
                 <div className="rounded-md border border-border p-3">
                   <div className="mb-2 flex items-center justify-between">
                     <span className="text-sm font-medium">前台应用</span>
-                    <Switch checked={passiveCfg?.foreground.enabled ?? false} onCheckedChange={(v) => updatePassive((c) => ({ ...c, foreground: { ...c.foreground, enabled: v } }))} />
+                    <Switch aria-label="启用前台应用源" checked={passiveCfg?.foreground.enabled ?? false} onCheckedChange={(v) => updatePassive((c) => ({ ...c, foreground: { ...c.foreground, enabled: v } }))} />
                   </div>
                   <p className="mb-2 text-xs text-muted-foreground">
                     检测最前窗口进程（默认关闭）。映射 focus 会令兔兔进入「专注」；ignore 忽略。不读取窗口内容。

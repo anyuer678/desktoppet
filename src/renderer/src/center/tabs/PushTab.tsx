@@ -87,6 +87,7 @@ export function PushTab({ handleCopyPushToken, handlePushApiToggle, handlePushTe
                       <div className="flex items-center gap-2">
                         <Switch
                           checked={pushApiInfo.enabled}
+                          aria-label="启用事件推送 API"
                           onCheckedChange={(v) => void handlePushApiToggle(v)}
                         />
                         <span className="text-sm">{pushApiInfo.enabled ? '启用' : '已停用'}</span>
