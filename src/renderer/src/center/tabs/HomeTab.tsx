@@ -3,6 +3,7 @@ import type {
   AutoReportConfig,
   CharacterDetail,
   CharacterSummary,
+  EmotionStatus,
   EventHistoryResult,
   HistoryChanged,
   MarketEntryWithStatus,
@@ -28,6 +29,7 @@ import { STATE_LABELS, formatDuration } from '../centerShared'
 
 interface HomeTabProps {
   active: CharacterSummary | undefined
+  emotion: EmotionStatus | null
   perfBusy: boolean
   perfError: string
   perfReport: PerfReport | null
@@ -40,7 +42,7 @@ interface HomeTabProps {
   togglePlugin: (id: string, enabled: boolean) => Promise<void>
 }
 
-export function HomeTab({ active, perfBusy, perfError, perfReport, plugins, refreshStats, runPerf, state, statsError, statsReport, togglePlugin }: HomeTabProps): React.JSX.Element {
+export function HomeTab({ active, emotion, perfBusy, perfError, perfReport, plugins, refreshStats, runPerf, state, statsError, statsReport, togglePlugin }: HomeTabProps): React.JSX.Element {
   return (
           <div className="space-y-4">
             <Card>
@@ -69,6 +71,30 @@ export function HomeTab({ active, perfBusy, perfError, perfReport, plugins, refr
                 )}
               </CardContent>
             </Card>
+            {emotion?.enabled && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>心情</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-2">
+                  <div className="flex items-center justify-between text-sm">
+                    <span>当前心情</span>
+                    <span className="font-medium">{emotion.label} · {emotion.score}</span>
+                  </div>
+                  <div className="h-2 overflow-hidden rounded-full bg-muted">
+                    <div
+                      className={`h-full rounded-full transition-all ${
+                        emotion.score >= 20 ? 'bg-emerald-500' : emotion.score >= -20 ? 'bg-amber-400' : 'bg-rose-400'
+                      }`}
+                      style={{ width: `${(emotion.score + 100) / 2}%` }}
+                    />
+                  </div>
+                  <div className="text-xs text-muted-foreground">
+                    互动/开心事件会提升心情，告警会降低；闲置时随时间向平静恢复。
+                  </div>
+                </CardContent>
+              </Card>
+            )}
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0">
                 <CardTitle>陪伴统计</CardTitle>

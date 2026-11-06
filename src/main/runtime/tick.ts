@@ -2,12 +2,15 @@ import { diffEventTypes } from '../event/eventCenter'
 import type { EventRuntime } from '../event/eventRuntime'
 import type { PassiveRuntime } from '../event/passiveRuntime'
 import type { StatsRuntime } from '../stats/statsRuntime'
+import type { EmotionRuntime } from '../emotion/emotionRuntime'
 import { addStateTime, countEvent } from '../stats/dailyStats'
+import { classifyEmotionEvent } from '../../shared/emotion'
 
 export interface TickDeps {
   stats: Pick<StatsRuntime, 'ensureDate' | 'today' | 'record'>
   events: Pick<EventRuntime, 'active' | 'currentState' | 'syncStateAndNotify'>
   passive: Pick<PassiveRuntime, 'tick'>
+  emotion: Pick<EmotionRuntime, 'record'>
   notifyPet(channel: string, payload?: unknown): void
 }
 
@@ -41,6 +44,8 @@ export function createTickLoop(deps: TickDeps): TickLoop {
     for (const t of diff.added) {
       deps.notifyPet('pet:speech', t)
       deps.stats.record((s) => countEvent(s, t))
+      const kind = classifyEmotionEvent(t)
+      if (kind) deps.emotion.record(kind)
     }
     lastEventTypes = diff.current
     deps.events.syncStateAndNotify(now)

@@ -13,12 +13,14 @@ import {
 import { updateCharacterConfig } from '../character/configEditor'
 import type { SettingsController } from '../settings/settingsController'
 import type { StatsRuntime } from '../stats/statsRuntime'
+import type { EmotionRuntime } from '../emotion/emotionRuntime'
 import type { WindowHub } from '../window/windows'
 
 export interface CharacterIpcDeps {
   settings: Pick<SettingsController, 'get' | 'setActiveCharacter'>
   windows: Pick<WindowHub, 'notifyPet'>
   stats: Pick<StatsRuntime, 'switchRole'>
+  emotion: Pick<EmotionRuntime, 'switchRole'>
 }
 
 /** character:list/get/select/pick/import/delete/update/export */
@@ -28,6 +30,7 @@ export function registerCharacterIpc(deps: CharacterIpcDeps): void {
     deps.settings.setActiveCharacter(id)
     deps.windows.notifyPet('character:changed', id)
     deps.stats.switchRole()
+    deps.emotion.switchRole()
   }
 
   ipcMain.handle('character:list', () => {
@@ -75,6 +78,7 @@ export function registerCharacterIpc(deps: CharacterIpcDeps): void {
       deps.settings.setActiveCharacter(fallback)
       deps.windows.notifyPet('character:changed', fallback)
       deps.stats.switchRole()
+      deps.emotion.switchRole()
     }
     return result
   })

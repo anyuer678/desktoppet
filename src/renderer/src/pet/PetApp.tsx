@@ -4,8 +4,9 @@ import { PetAnimator } from './PetAnimator'
 import { activeOverlays, combineOverlays } from './overlay'
 import { contentRectFrom, pointInRect, shouldIgnorePointer, type AlphaMap, type Rect } from './clickThrough'
 import { DEFAULT_SPEECH, eventSpeech, greetingKey, greetingSpeech, pickText, reactionReply, welcomeSpeech, type Speech, type SpeechPools } from '../../../shared/speech'
-import type { InteractionAction, SoundClipKey } from '../../../shared/ipc'
+import type { EmotionStatus, InteractionAction, SoundClipKey } from '../../../shared/ipc'
 import { resolveSoundClip } from './sound'
+import { emotionFilter } from '../../../shared/emotion'
 
 const CLICK_TIMEOUT = 300
 const DRAG_THRESHOLD = 4
@@ -22,6 +23,7 @@ export function PetApp(): React.JSX.Element {
   const [paused, setPaused] = useState(false)
   const [state, setState] = useState('idle')
   const [soundEnabled, setSoundEnabled] = useState(false)
+  const [emotion, setEmotion] = useState<EmotionStatus | null>(null)
   const [now, setNow] = useState(() => new Date())
 
   const overlayFactors = useMemo(
@@ -137,7 +139,15 @@ export function PetApp(): React.JSX.Element {
   }, [charId])
 
   useEffect(() => {
-    return window.desktopPet.events.onCharacterChanged((id) => setCharId(id))
+    void window.desktopPet.emotion.get().then(setEmotion).catch(() => {})
+    return window.desktopPet.events.onCharacterChanged((id) => {
+      setCharId(id)
+      void window.desktopPet.emotion.get().then(setEmotion).catch(() => {})
+    })
+  }, [])
+
+  useEffect(() => {
+    return window.desktopPet.events.onEmotionChanged(setEmotion)
   }, [])
 
   useEffect(() => {
@@ -410,7 +420,13 @@ export function PetApp(): React.JSX.Element {
   return (
     <div
       className="relative"
-      style={{ width: size, height: size, cursor: 'grab', opacity: opacity * overlayFactors.opacity }}
+      style={{
+        width: size,
+        height: size,
+        cursor: 'grab',
+        opacity: opacity * overlayFactors.opacity,
+        filter: emotion?.enabled ? emotionFilter(emotion.score) : undefined
+      }}
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}

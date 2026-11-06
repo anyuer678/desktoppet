@@ -6,6 +6,7 @@ import type { ShortcutsHub } from '../window/shortcuts'
 import type { EventRuntime } from '../event/eventRuntime'
 import type { PassiveRuntime } from '../event/passiveRuntime'
 import type { StatsRuntime } from '../stats/statsRuntime'
+import type { EmotionRuntime } from '../emotion/emotionRuntime'
 import type { AutoReportRuntime } from '../stats/autoReportRuntime'
 import type { PushRuntime } from '../push/pushRuntime'
 import type { ScheduleRuntime } from '../schedule/scheduleRuntime'
@@ -25,6 +26,7 @@ import { registerScheduleIpc } from './scheduleIpc'
 import { registerMenuIpc } from './menuIpc'
 import { registerUpdaterIpc } from './updaterIpc'
 import { registerBackupIpc } from './backupIpc'
+import { registerEmotionIpc } from './emotionIpc'
 
 /** registerAllIpc 的全部依赖：各运行时对象 + 组合根回调 */
 export interface IpcDeps {
@@ -33,6 +35,7 @@ export interface IpcDeps {
   shortcuts: Pick<ShortcutsHub, 'applyEnabled'>
   events: EventRuntime
   stats: StatsRuntime
+  emotion: EmotionRuntime
   autoReports: AutoReportRuntime
   push: PushRuntime
   passive: PassiveRuntime
@@ -71,4 +74,5 @@ export function registerAllIpc(deps: IpcDeps): void {
   registerMenuIpc(deps)
   registerUpdaterIpc(deps)
   registerBackupIpc(deps)
+  registerEmotionIpc(deps)
 }

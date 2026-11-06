@@ -3,7 +3,7 @@ import { join } from 'path'
 import { promisify } from 'util'
 import { execFile } from 'child_process'
 import type { PluginManifest } from '../shared/ipc'
-import { inboxPath, pluginsDir } from './app/paths'
+import { charactersRoot, emotionDir, inboxPath, pluginsDir } from './app/paths'
 import { seedDefaultCharacters, seedDefaultPlugins } from './app/seed'
 import { acquireSingleInstanceLock, registerQuitCleanup } from './app/lifecycle'
 import { createWindowHub } from './window/windows'
@@ -16,6 +16,9 @@ import { createPassiveRuntime } from './event/passiveRuntime'
 import { createLogger, type Logger } from './logging/logger'
 import { enabledPlugins, loadPlugins } from './plugin/pluginHost'
 import { createStatsRuntime } from './stats/statsRuntime'
+import { createEmotionRuntime } from './emotion/emotionRuntime'
+import { readCharacterDetail } from './character/configReader'
+import { DEFAULT_EMOTION_CONFIG } from '../shared/emotion'
 import { createAutoReportRuntime } from './stats/autoReportRuntime'
 import { createPushRuntime } from './push/pushRuntime'
 import { createInboxRuntime } from './integration/inbox'
@@ -77,6 +80,19 @@ const eventRuntime = createEventRuntime({ notifyPet, notifyCenter })
 // 陪伴统计运行时（目录/内存/防抖落盘/跨日与切角色为其私有状态；init 于 whenReady 调用）
 const stats = createStatsRuntime({
   getActiveCharacterId: () => settingsCtl.get().activeCharacterId,
+  log
+})
+
+// 角色心情运行时（按角色持久化；角色包 emotion 配置可覆盖阈值/权重）
+const emotion = createEmotionRuntime({
+  getRoleId: () => stats.roleId(),
+  getConfig: () => {
+    const id = settingsCtl.get().activeCharacterId
+    return (id ? readCharacterDetail(charactersRoot(), id)?.emotion : undefined) ?? DEFAULT_EMOTION_CONFIG
+  },
+  dir: emotionDir,
+  notifyPet,
+  notifyCenter,
   log
 })
 
@@ -142,6 +158,7 @@ const tickLoop = createTickLoop({
   stats,
   events: eventRuntime,
   passive,
+  emotion,
   notifyPet
 })
 
@@ -153,6 +170,7 @@ function selectCharacter(id: string): void {
   settingsCtl.setActiveCharacter(id)
   notifyPet('character:changed', id)
   stats.switchRole()
+  emotion.switchRole()
 }
 
 // 红线：协议特权声明必须在 app ready 之前执行（声明晚于 ready 会静默失效）
@@ -173,6 +191,7 @@ if (!acquireSingleInstanceLock(() => windows.openCenter())) {
     settingsCtl.load()
     schedule.start()
     stats.init()
+    emotion.init()
     autoReports.start()
     push.loadConfig()
     passive.loadConfig()
@@ -185,6 +204,7 @@ if (!acquireSingleInstanceLock(() => windows.openCenter())) {
       shortcuts,
       events: eventRuntime,
       stats,
+      emotion,
       autoReports,
       push,
       passive,

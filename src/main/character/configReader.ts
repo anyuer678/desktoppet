@@ -11,6 +11,7 @@ import type {
   SoundClipKey
 } from '../../shared/ipc'
 import { INTERACTION_ACTIONS, SOUND_CLIP_KEYS } from '../../shared/ipc'
+import { normalizeEmotionConfig, type EmotionConfig } from '../../shared/emotion'
 
 export interface ParsedCharacter {
   id: string
@@ -145,6 +146,7 @@ export function readCharacterDetail(root: string, id: string): CharacterDetail |
       settings?: { defaultSize?: unknown; allowResize?: unknown }
       overlays?: unknown
       sound?: unknown
+      emotion?: unknown
     }
     if (typeof raw.id !== 'string' || raw.id !== id || typeof raw.name !== 'string') return null
 
@@ -181,6 +183,7 @@ export function readCharacterDetail(root: string, id: string): CharacterDetail |
       animation,
       overlays: overlays && Object.keys(overlays).length > 0 ? overlays : undefined,
       sound: parseCharacterSound(raw.sound) ?? undefined,
+      emotion: raw.emotion ? (normalizeEmotionConfig(raw.emotion) as EmotionConfig) : undefined,
       interaction: {
         click: normalizeInteraction(raw.interaction?.click, 'speak'),
         doubleClick: normalizeInteraction(raw.interaction?.doubleClick, 'open_center'),

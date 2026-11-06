@@ -50,6 +50,11 @@ export function passiveConfigPath(): string {
   return join(app.getPath('userData'), 'passiveSources.json')
 }
 
+/** 角色心情存储目录（userData/emotion/<角色>.json） */
+export function emotionDir(): string {
+  return join(app.getPath('userData'), 'emotion')
+}
+
 /** 自动报告配置文件（userData/autoReports.json） */
 export function autoReportsPath(): string {
   return join(app.getPath('userData'), 'autoReports.json')

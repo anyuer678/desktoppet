@@ -1,4 +1,5 @@
 import type { SpeechPools } from './speech'
+import type { EmotionConfig } from './emotion'
 
 /** 主进程 → 桌宠窗口：尺寸/透明度变化，settings:set 携带台词池/音效开关时一并下发以即时生效 */
 export interface PetSettingsChanged {
@@ -119,6 +120,7 @@ export interface CharacterDetail {
   animation: Record<string, AnimationStateConfig>
   overlays?: Record<string, OverlayConfig>
   sound?: CharacterSoundConfig
+  emotion?: EmotionConfig
   interaction: CharacterInteraction
   settings: { defaultSize: number; allowResize: boolean }
 }
@@ -447,6 +449,13 @@ export interface StatsSpreadsheetResult {
   error?: string
   canceled?: boolean
   path?: string
+}
+
+/** 当前角色心情快照（主进程 → 渲染层） */
+export interface EmotionStatus {
+  score: number
+  label: string
+  enabled: boolean
 }
 
 /** 配置备份导出结果（不含统计/角色素材/推送 Token） */

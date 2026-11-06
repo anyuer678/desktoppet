@@ -9,6 +9,7 @@ import type {
   CharacterLoaded,
   CharacterPatch,
   CharacterSummary,
+  EmotionStatus,
   EventHistoryResult,
   HistoryChanged,
   ImportResult,
@@ -130,6 +131,9 @@ declare global {
         export(): Promise<BackupExportResult>
         import(): Promise<BackupImportResult>
       }
+      emotion: {
+        get(): Promise<EmotionStatus>
+      }
       updater: {
         get(): Promise<UpdaterStatus>
         check(): Promise<OpResult>
@@ -151,6 +155,7 @@ declare global {
         onUpdateAvailable(cb: (info: { version: string; releaseDate?: string }) => void): () => void
         onUpdateDownloaded(cb: (info: { version: string }) => void): () => void
         onUpdaterStatus(cb: (status: UpdaterStatus) => void): () => void
+        onEmotionChanged(cb: (status: EmotionStatus) => void): () => void
       }
     }
   }

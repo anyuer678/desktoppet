@@ -4,6 +4,7 @@ import type {
   AutoReportConfig,
   CharacterDetail,
   CharacterSummary,
+  EmotionStatus,
   EventHistoryResult,
   HistoryChanged,
   MarketEntryWithStatus,
@@ -68,6 +69,7 @@ export function CenterApp(): React.JSX.Element {
   const [settings, setSettings] = useState<Settings | null>(null)
   const [activeId, setActiveId] = useState('')
   const [state, setState] = useState('idle')
+  const [emotion, setEmotion] = useState<EmotionStatus | null>(null)
   const [historyEvents, setHistoryEvents] = useState<PetEventInfo[]>([])
   const [histSource, setHistSource] = useState('')
   const [histState, setHistState] = useState('')
@@ -194,15 +196,19 @@ export function CenterApp(): React.JSX.Element {
     const offChanged = window.desktopPet.events.onCharacterChanged((id) => {
       setActiveId(id)
       void window.desktopPet.character.list().then(setCharacters)
+      void window.desktopPet.emotion.get().then(setEmotion).catch(() => {})
     })
     void window.desktopPet.updater.get().then(setUpdaterStatus).catch(() => {})
     const offUpdater = window.desktopPet.events.onUpdaterStatus(setUpdaterStatus)
+    void window.desktopPet.emotion.get().then(setEmotion).catch(() => {})
+    const offEmotion = window.desktopPet.events.onEmotionChanged(setEmotion)
     return () => {
       offState()
       offHistory()
       offScheduleFired()
       offChanged()
       offUpdater()
+      offEmotion()
     }
   }, [])
 
@@ -1103,7 +1109,7 @@ export function CenterApp(): React.JSX.Element {
 
       <main className="flex-1 overflow-y-auto p-6">
         <div key={tab} className="dp-fade-in">
-        {tab === 'home' && <HomeTab active={active} perfBusy={perfBusy} perfError={perfError} perfReport={perfReport} plugins={plugins} refreshStats={refreshStats} runPerf={runPerf} state={state} statsError={statsError} statsReport={statsReport} togglePlugin={togglePlugin} />}
+        {tab === 'home' && <HomeTab active={active} emotion={emotion} perfBusy={perfBusy} perfError={perfError} perfReport={perfReport} plugins={plugins} refreshStats={refreshStats} runPerf={runPerf} state={state} statsError={statsError} statsReport={statsReport} togglePlugin={togglePlugin} />}
 
         {tab === 'characters' && <CharactersTab activeId={activeId} characters={characters} deleteCharacter={deleteCharacter} editDetail={editDetail} editForm={editForm} editingId={editingId} exportCharacter={exportCharacter} importBusy={importBusy} importCharacter={importCharacter} importError={importError} importOk={importOk} openEditor={openEditor} saveBusy={saveBusy} saveEdit={saveEdit} selectCharacter={selectCharacter} setEditForm={setEditForm} setEditingId={setEditingId} switchEditState={switchEditState} />}
 

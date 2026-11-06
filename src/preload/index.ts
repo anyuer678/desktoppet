@@ -10,6 +10,7 @@ import type {
   CharacterLoaded,
   CharacterPatch,
   CharacterSummary,
+  EmotionStatus,
   EventHistoryResult,
   HistoryChanged,
   ImportResult,
@@ -145,6 +146,9 @@ const api = {
     export: (): Promise<BackupExportResult> => ipcRenderer.invoke('backup:export'),
     import: (): Promise<BackupImportResult> => ipcRenderer.invoke('backup:import')
   },
+  emotion: {
+    get: (): Promise<EmotionStatus> => ipcRenderer.invoke('emotion:get')
+  },
   updater: {
     get: (): Promise<UpdaterStatus> => ipcRenderer.invoke('updater:get'),
     check: (): Promise<OpResult> => ipcRenderer.invoke('updater:check'),
@@ -214,6 +218,11 @@ const api = {
       const handler = (_e: Electron.IpcRendererEvent, status: UpdaterStatus): void => cb(status)
       ipcRenderer.on('updater:status', handler)
       return () => ipcRenderer.removeListener('updater:status', handler)
+    },
+    onEmotionChanged: (cb: (status: EmotionStatus) => void): (() => void) => {
+      const handler = (_e: Electron.IpcRendererEvent, status: EmotionStatus): void => cb(status)
+      ipcRenderer.on('emotion:changed', handler)
+      return () => ipcRenderer.removeListener('emotion:changed', handler)
     }
   }
 }

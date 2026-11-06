@@ -4,14 +4,14 @@
 
 **角色 = 资源包**——核心引擎与角色完全解耦的可扩展桌宠平台
 
-![CI](https://github.com/anyuer678/desktoppet/actions/workflows/test.yml/badge.svg) ![Release](https://img.shields.io/github/v/release/anyuer678/desktoppet) ![License](https://img.shields.io/github/license/anyuer678/desktoppet) ![Tests](https://img.shields.io/badge/tests-572%2B-green) ![Top language](https://img.shields.io/github/languages/top/anyuer678/desktoppet)
+![CI](https://github.com/anyuer678/desktoppet/actions/workflows/test.yml/badge.svg) ![Release](https://img.shields.io/github/v/release/anyuer678/desktoppet) ![License](https://img.shields.io/github/license/anyuer678/desktoppet) ![Tests](https://img.shields.io/badge/tests-582%2B-green) ![Top language](https://img.shields.io/github/languages/top/anyuer678/desktoppet)
 
 <p align="center"><img src="characters/rabbit/preview.jpg" alt="Rabbit 角色预览" width="420"></p>
 
 </div>
 
 > **状态**：`portfolio` · Electron 桌宠平台 · GPL-3.0 · **非**通用生产组件库  
-> 单测 **572** 例（含 headless smoke / IPC schema / 敏感剪贴板零泄漏 / 角色包失败路径 / Push 回环绑定 / 更新状态机 / 原子写与导航白名单 / 收件箱协议）；CI 跑 typecheck + unit tests + build + 产物校验。  
+> 单测 **582** 例（含 headless smoke / IPC schema / 敏感剪贴板零泄漏 / 角色包失败路径 / Push 回环绑定 / 更新状态机 / 原子写与导航白名单 / 收件箱协议）；CI 跑 typecheck + unit tests + build + 产物校验。  
 > 支持与隐私：敏感剪贴板内容设计上不进 IPC（有自动化断言）；推送 API 仅绑定 `127.0.0.1` + Bearer token。
 
 当前版本：**v1.3.0**（源码开发版；完整自动更新链路 + 本地集成状态端点）· 协议：**GPL-3.0**
@@ -33,6 +33,7 @@
 - **自动更新**：启动后检查 → 系统通知/控制中心提示 → 用户确认下载 → 下载完成 → 重启安装（开发模式自动跳过）
 - **配置备份**：导出/导入设置、消息池、日程、自动报告与被动源配置（`.dpbackup`，导入前自动备份并可回滚）
 - **角色音效**：角色包 `sound` 配置点击/状态音效，全局开关默认关闭，素材走 `pet://`
+- **心情系统**：按角色持久化心情值，互动加分、告警扣分、随时间恢复；首页心情卡 + 桌宠滤镜反馈
 - **控制中心**：首页 / 角色 / 市场 / 消息 / 日程 / 统计 / 推送 / 事件 / 开发者 / 设置
 - **角色包（.pet）**：config.json 驱动 + 序列帧/模板动画；缺素材自动回退；本地市场安装/升级
 - **Windows 一键脚本**：`启动.bat` / `自检.bat` / `构建验证.bat`
