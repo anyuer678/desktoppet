@@ -122,6 +122,7 @@ export function CenterApp(): React.JSX.Element {
   const [editingScheduleId, setEditingScheduleId] = useState<string | null>(null)
   const [scheduleForm, setScheduleForm] = useState<ScheduleInput>(buildEmptyScheduleForm)
   const [scheduleBusy, setScheduleBusy] = useState(false)
+  const [scheduleTogglingId, setScheduleTogglingId] = useState<string | null>(null)
   const [scheduleError, setScheduleError] = useState('')
   const [scheduleOk, setScheduleOk] = useState('')
   const [openHelp, setOpenHelp] = useState<string | null>(null)
@@ -132,7 +133,7 @@ export function CenterApp(): React.JSX.Element {
   const pendingPatchRef = useRef<Partial<Settings>>({})
   const settingsTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   // 同步防重入：state 更新前连续点击不会重复创建/安装
-  const busyRef = useRef({ import: false, market: false, schedule: false })
+  const busyRef = useRef({ import: false, market: false, schedule: false, scheduleToggle: false })
 
   // 统计图表请求竞态守卫：每个图表独立 seq，过期响应直接丢弃
   const statsSeqRef = useRef(0)
@@ -949,11 +950,27 @@ export function CenterApp(): React.JSX.Element {
   }
 
   const toggleScheduleEnabled = async (item: ScheduleItem, enabled: boolean): Promise<void> => {
-    const result = await window.desktopPet.schedule.toggle(item.id, enabled)
-    if (result.ok) {
-      await refreshSchedules()
-    } else {
-      setScheduleError(result.error ?? '切换失败')
+    if (busyRef.current.scheduleToggle) return
+    busyRef.current.scheduleToggle = true
+    setScheduleTogglingId(item.id)
+    setScheduleError('')
+    setScheduleOk('')
+    // 乐观更新：开关立即反馈，失败再回滚
+    setSchedules((prev) => prev.map((it) => (it.id === item.id ? { ...it, enabled } : it)))
+    try {
+      const result = await window.desktopPet.schedule.toggle(item.id, enabled)
+      if (result.ok) {
+        await refreshSchedules()
+      } else {
+        setSchedules((prev) => prev.map((it) => (it.id === item.id ? { ...it, enabled: item.enabled } : it)))
+        setScheduleError(result.error ?? '切换失败')
+      }
+    } catch {
+      setSchedules((prev) => prev.map((it) => (it.id === item.id ? { ...it, enabled: item.enabled } : it)))
+      setScheduleError('切换失败')
+    } finally {
+      busyRef.current.scheduleToggle = false
+      setScheduleTogglingId(null)
     }
   }
 
@@ -1048,7 +1065,7 @@ export function CenterApp(): React.JSX.Element {
 
         {tab === 'speech' && settings && <SpeechTab speechDraft={speechDraft} updateSpeechPool={updateSpeechPool} />}
 
-        {tab === 'schedule' && editingScheduleId === null && <ScheduleListTab deleteSchedule={deleteSchedule} openScheduleEditor={openScheduleEditor} scheduleError={scheduleError} scheduleOk={scheduleOk} schedules={schedules} testSchedule={testSchedule} toggleScheduleEnabled={toggleScheduleEnabled} />}
+        {tab === 'schedule' && editingScheduleId === null && <ScheduleListTab deleteSchedule={deleteSchedule} openScheduleEditor={openScheduleEditor} scheduleError={scheduleError} scheduleOk={scheduleOk} schedules={schedules} testSchedule={testSchedule} toggleScheduleEnabled={toggleScheduleEnabled} togglingId={scheduleTogglingId} />}
 
         {tab === 'schedule' && editingScheduleId !== null && <ScheduleEditTab active={active} editingScheduleId={editingScheduleId} saveSchedule={saveSchedule} scheduleBusy={scheduleBusy} scheduleError={scheduleError} scheduleForm={scheduleForm} setEditingScheduleId={setEditingScheduleId} setScheduleForm={setScheduleForm} toggleScheduleDay={toggleScheduleDay} />}
 

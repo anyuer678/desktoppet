@@ -23,7 +23,41 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Switch } from '@/components/ui/switch'
+import { useEffect, useState } from 'react'
 import { joinList, parseList, textareaCls } from '../centerShared'
+
+/** 正整数输入：允许输入过程中清空/临时非法，只有合法正整数才提交；失焦恢复最后有效值 */
+function NumberInput({
+  value,
+  onCommit,
+  ariaLabel
+}: {
+  value: number
+  onCommit: (value: number) => void
+  ariaLabel: string
+}): React.JSX.Element {
+  const [text, setText] = useState(String(value))
+  const [focused, setFocused] = useState(false)
+  useEffect(() => {
+    if (!focused) setText(String(value))
+  }, [value, focused])
+  return (
+    <Input
+      type="number"
+      min={1}
+      value={text}
+      aria-label={ariaLabel}
+      onFocus={() => setFocused(true)}
+      onBlur={() => setFocused(false)}
+      onChange={(e) => {
+        const raw = e.target.value
+        setText(raw)
+        const n = Number(raw)
+        if (raw.trim() !== '' && Number.isInteger(n) && n > 0) onCommit(n)
+      }}
+    />
+  )
+}
 
 interface DevTabProps {
   handlePassiveSave: () => Promise<void>
@@ -58,11 +92,19 @@ export function DevTab({ handlePassiveSave, handlePassiveTest, mappingDraft, pas
                   <div className="grid gap-2 sm:grid-cols-2">
                     <label className="space-y-1 text-xs text-muted-foreground">
                       轮询间隔 (ms)
-                      <Input type="number" value={String(passiveCfg?.clipboard.pollMs ?? 3000)} onChange={(e) => updatePassive((c) => ({ ...c, clipboard: { ...c.clipboard, pollMs: Number(e.target.value) || 0 } }))} />
+                      <NumberInput
+                        value={passiveCfg?.clipboard.pollMs ?? 3000}
+                        ariaLabel="剪贴板轮询间隔（毫秒）"
+                        onCommit={(pollMs) => updatePassive((c) => ({ ...c, clipboard: { ...c.clipboard, pollMs } }))}
+                      />
                     </label>
                     <label className="space-y-1 text-xs text-muted-foreground">
                       气泡截断长度 (字符)
-                      <Input type="number" value={String(passiveCfg?.clipboard.maxLen ?? 120)} onChange={(e) => updatePassive((c) => ({ ...c, clipboard: { ...c.clipboard, maxLen: Number(e.target.value) || 0 } }))} />
+                      <NumberInput
+                        value={passiveCfg?.clipboard.maxLen ?? 120}
+                        ariaLabel="剪贴板最大长度"
+                        onCommit={(maxLen) => updatePassive((c) => ({ ...c, clipboard: { ...c.clipboard, maxLen } }))}
+                      />
                     </label>
                   </div>
                   <label className="mt-2 block space-y-1 text-xs text-muted-foreground">
@@ -93,7 +135,11 @@ export function DevTab({ handlePassiveSave, handlePassiveTest, mappingDraft, pas
                   </label>
                   <label className="mt-2 block space-y-1 text-xs text-muted-foreground">
                     防抖 (ms)
-                    <Input type="number" value={String(passiveCfg?.folder.debounceMs ?? 500)} onChange={(e) => updatePassive((c) => ({ ...c, folder: { ...c.folder, debounceMs: Number(e.target.value) || 0 } }))} />
+                    <NumberInput
+                      value={passiveCfg?.folder.debounceMs ?? 500}
+                      ariaLabel="目录监听防抖（毫秒）"
+                      onCommit={(debounceMs) => updatePassive((c) => ({ ...c, folder: { ...c.folder, debounceMs } }))}
+                    />
                   </label>
                 </div>
                 {/* 前台应用源 */}
@@ -107,7 +153,11 @@ export function DevTab({ handlePassiveSave, handlePassiveTest, mappingDraft, pas
                   </p>
                   <label className="block space-y-1 text-xs text-muted-foreground">
                     轮询间隔 (ms)
-                    <Input type="number" value={String(passiveCfg?.foreground.pollMs ?? 15000)} onChange={(e) => updatePassive((c) => ({ ...c, foreground: { ...c.foreground, pollMs: Number(e.target.value) || 0 } }))} />
+                    <NumberInput
+                      value={passiveCfg?.foreground.pollMs ?? 15000}
+                      ariaLabel="前台应用轮询间隔（毫秒）"
+                      onCommit={(pollMs) => updatePassive((c) => ({ ...c, foreground: { ...c.foreground, pollMs } }))}
+                    />
                   </label>
                   <label className="mt-2 block space-y-1 text-xs text-muted-foreground">
                     进程映射（逐行 进程名:focus 或 进程名:ignore）

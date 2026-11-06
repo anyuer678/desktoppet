@@ -33,9 +33,10 @@ interface ScheduleListTabProps {
   schedules: ScheduleItem[]
   testSchedule: (item: ScheduleItem) => Promise<void>
   toggleScheduleEnabled: (item: ScheduleItem, enabled: boolean) => Promise<void>
+  togglingId: string | null
 }
 
-export function ScheduleListTab({ deleteSchedule, openScheduleEditor, scheduleError, scheduleOk, schedules, testSchedule, toggleScheduleEnabled }: ScheduleListTabProps): React.JSX.Element {
+export function ScheduleListTab({ deleteSchedule, openScheduleEditor, scheduleError, scheduleOk, schedules, testSchedule, toggleScheduleEnabled, togglingId }: ScheduleListTabProps): React.JSX.Element {
   return (
           <div className="space-y-3">
             <div className="flex items-center justify-between">
@@ -79,6 +80,8 @@ export function ScheduleListTab({ deleteSchedule, openScheduleEditor, scheduleEr
                   <div className="flex flex-col items-end gap-2">
                     <Switch
                       checked={item.enabled}
+                      disabled={togglingId === item.id}
+                      aria-label={`启用日程「${item.title}」`}
                       onCheckedChange={(v) => void toggleScheduleEnabled(item, v)}
                     />
                     <div className="flex gap-1.5">
