@@ -2,6 +2,7 @@ import { request } from 'http'
 import { afterEach, describe, expect, it } from 'vitest'
 import type { PushEventBody } from './pushApi'
 import { startPushHttpService, type PushServerDeps } from './httpService'
+import type { RateLimiter } from './rateLimiter'
 
 interface TestDeps extends PushServerDeps {
   received: PushEventBody[]
@@ -65,8 +66,12 @@ describe('httpService', () => {
   let deps: TestDeps
   const token = 'ab'.repeat(16)
 
-  async function start(config: Partial<{ enabled: boolean; token: string }> = {}): Promise<number> {
+  async function start(
+    config: Partial<{ enabled: boolean; token: string }> = {},
+    rateLimiter?: RateLimiter
+  ): Promise<number> {
     deps = makeDeps({ enabled: true, token, ...config })
+    if (rateLimiter) deps.rateLimiter = rateLimiter
     server = await startPushHttpService(deps)
     return server.port
   }
@@ -159,6 +164,18 @@ describe('httpService', () => {
     const big = JSON.stringify({ title: 't', message: 'm'.repeat(9 * 1024) })
     const res = await send(port, '/api/event', 'POST', { token, body: big })
     expect(res.status).toBe(413)
+  })
+
+  it('事件限流命中 → 429 且不触发 onPushEvent，状态端点不受限', async () => {
+    const port = await start({}, { allow: () => false })
+    const res = await send(port, '/api/event', 'POST', {
+      token,
+      body: { title: 't', message: 'm' }
+    })
+    expect(res.status).toBe(429)
+    expect(deps.received).toEqual([])
+    const status = await send(port, '/api/status', 'GET', { token })
+    expect(status.status).toBe(200)
   })
 
   it('config enabled=false → 503', async () => {

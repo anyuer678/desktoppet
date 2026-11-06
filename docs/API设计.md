@@ -223,7 +223,7 @@ interface ScheduleFired { id: string; title: string; message: string; firedAt: n
 
 | 方法 / 路径 | 认证 | 说明 |
 | --- | --- | --- |
-| POST /api/event | Bearer token | 推送事件；title ≤60 / message ≤200 / 可选 type |
+| POST /api/event | Bearer token | 推送事件；title ≤60 / message ≤200 / 可选 type；限流 20 次/秒，超出返回 429 + `Retry-After: 1` |
 | GET /api/status | Bearer token | 运行时快照：{ ok, app, version, role, state, uptimeMs, eventsReceived }，供 lumen 等本地集成自检 |
 
 发现文件 `userData/pushApi.json` 始终写 `enabled/token/port`（port 在服务停止时移除），这是 lumen `petpush` 的发现协议；不要在手写配置时遗漏 token 的 32 位 hex 约束。

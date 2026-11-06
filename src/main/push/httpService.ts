@@ -1,6 +1,7 @@
 import { createServer, type IncomingMessage, type Server, type ServerResponse } from 'http'
 import type { PushApiConfig } from '../../shared/ipc'
 import { isAuthorized, parseEventBody, type PushEventBody } from './pushApi'
+import { createRateLimiter, type RateLimiter } from './rateLimiter'
 
 /** GET /api/status 返回的运行时快照（供 lumen 等本地集成验证链路） */
 export interface PushServiceStatus {
@@ -17,7 +18,12 @@ export interface PushServerDeps {
   onPushEvent(body: PushEventBody): void
   getStatus(): PushServiceStatus
   log(level: string, ...args: unknown[]): void
+  /** 事件投递限流（默认 20 次/秒）；状态端点不受限 */
+  rateLimiter?: RateLimiter
 }
+
+/** 默认事件限流：本机脚本正常使用远低于此值 */
+export const DEFAULT_PUSH_RATE_LIMIT = { limit: 20, windowMs: 1000 } as const
 
 const MAX_BODY_BYTES = 8 * 1024
 
@@ -95,6 +101,11 @@ export async function handlePushRequest(
     return send(200, { ok: true, ...deps.getStatus() })
   }
 
+  if (deps.rateLimiter && !deps.rateLimiter.allow()) {
+    res.setHeader('Retry-After', '1')
+    return send(429, { ok: false, error: '推送过于频繁，请稍后重试' })
+  }
+
   const raw = await readRequestBody(req)
   if (raw === 'too-large') {
     return send(413, { ok: false, error: '请求体超过 8KB 上限' })
@@ -115,8 +126,12 @@ export async function handlePushRequest(
 
 /** 启动本地 HTTP 服务（仅 127.0.0.1，随机空闲端口） */
 export function startPushHttpService(deps: PushServerDeps): Promise<PushHttpServer> {
+  const limiter =
+    deps.rateLimiter ??
+    createRateLimiter(DEFAULT_PUSH_RATE_LIMIT.limit, DEFAULT_PUSH_RATE_LIMIT.windowMs)
+  const serverDeps: PushServerDeps = { ...deps, rateLimiter: limiter }
   const server: Server = createServer((req, res) => {
-    handlePushRequest(deps, req, res).catch((err) => {
+    handlePushRequest(serverDeps, req, res).catch((err) => {
       deps.log('error', '[pushApi] request failed:', err)
       if (!res.headersSent) {
         res.writeHead(500, { 'Content-Type': 'application/json; charset=utf-8' })
