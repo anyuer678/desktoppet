@@ -2,6 +2,8 @@ import { contextBridge, ipcRenderer } from 'electron'
 import type {
   AutoReportConfig,
   AutoReportFired,
+  BackupExportResult,
+  BackupImportResult,
   AutoReportGetResult,
   AutoReportSetResult,
   CharacterDetail,
@@ -138,6 +140,10 @@ const api = {
   perf: {
     report: (fps: number): void => ipcRenderer.send('perf:fps', fps),
     start: (): Promise<PerfReport> => ipcRenderer.invoke('perf:start')
+  },
+  backup: {
+    export: (): Promise<BackupExportResult> => ipcRenderer.invoke('backup:export'),
+    import: (): Promise<BackupImportResult> => ipcRenderer.invoke('backup:import')
   },
   updater: {
     get: (): Promise<UpdaterStatus> => ipcRenderer.invoke('updater:get'),

@@ -431,6 +431,24 @@ export interface StatsSpreadsheetResult {
   path?: string
 }
 
+/** 配置备份导出结果（不含统计/角色素材/推送 Token） */
+export interface BackupExportResult {
+  ok: boolean
+  error?: string
+  canceled?: boolean
+  path?: string
+  entries?: string[]
+}
+
+/** 配置备份导入结果（导入前会自动备份当前配置） */
+export interface BackupImportResult {
+  ok: boolean
+  error?: string
+  canceled?: boolean
+  imported?: string[]
+  backupDir?: string
+}
+
 /** 自动更新阶段：unsupported=开发模式/非安装版 */
 export type UpdaterPhase =
   | 'unsupported'

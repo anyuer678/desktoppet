@@ -24,6 +24,7 @@ import { registerMarketIpc } from './marketIpc'
 import { registerScheduleIpc } from './scheduleIpc'
 import { registerMenuIpc } from './menuIpc'
 import { registerUpdaterIpc } from './updaterIpc'
+import { registerBackupIpc } from './backupIpc'
 
 /** registerAllIpc 的全部依赖：各运行时对象 + 组合根回调 */
 export interface IpcDeps {
@@ -67,4 +68,5 @@ export function registerAllIpc(deps: IpcDeps): void {
   registerScheduleIpc(deps)
   registerMenuIpc(deps)
   registerUpdaterIpc(deps)
+  registerBackupIpc(deps)
 }

@@ -27,13 +27,17 @@ import { cn } from '@/lib/utils'
 import { HELP_ITEMS } from '../centerShared'
 
 interface SettingsTabProps {
+  backupBusy: boolean
+  backupMsg: string
+  handleBackupExport: () => Promise<void>
+  handleBackupImport: () => Promise<void>
   openHelp: string | null
   setOpenHelp: React.Dispatch<React.SetStateAction<string | null>>
   settings: Settings
   updateSettings: (patch: Partial<Settings>) => void
 }
 
-export function SettingsTab({ openHelp, setOpenHelp, settings, updateSettings }: SettingsTabProps): React.JSX.Element {
+export function SettingsTab({ backupBusy, backupMsg, handleBackupExport, handleBackupImport, openHelp, setOpenHelp, settings, updateSettings }: SettingsTabProps): React.JSX.Element {
   return (
           <div className="max-w-md space-y-5">
             <Card>
@@ -135,6 +139,26 @@ export function SettingsTab({ openHelp, setOpenHelp, settings, updateSettings }:
                 >
                   退出桌宠
                 </Button>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle>配置备份</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                <div className="text-xs leading-5 text-muted-foreground">
+                  导出/导入设置、消息池、日程、自动报告与被动源配置；不包含统计、角色素材和推送 Token。
+                  导入前会自动备份当前配置，失败时回滚。
+                </div>
+                <div className="flex flex-wrap items-center gap-2">
+                  <Button variant="outline" size="sm" disabled={backupBusy} onClick={() => void handleBackupExport()}>
+                    导出配置
+                  </Button>
+                  <Button variant="outline" size="sm" disabled={backupBusy} onClick={() => void handleBackupImport()}>
+                    导入配置
+                  </Button>
+                  {backupMsg && <span className="text-xs text-muted-foreground">{backupMsg}</span>}
+                </div>
               </CardContent>
             </Card>
             <Card>

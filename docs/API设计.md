@@ -213,6 +213,8 @@ interface ScheduleFired { id: string; title: string; message: string; firedAt: n
 | pushApi:test | R→M | — | PushApiTestResult（本地发送一条示例推送验证链路，不经过 HTTP） |
 | pushApi:state | M→C | { enabled:boolean, port:number } | 已实现（主进程内部推送 notifyCenter）：推送服务启动/停止时通知控制中心；preload 未订阅，desktopPet 未暴露订阅方法 |
 | push:fired | M→R | PushApiFired（{kind?, reaction?, placeholder?, title?, body?, type?}） | 事件：第三方推送/被动数据源触发后广播给桌宠（气泡展示，8 秒）；push 源载荷 { kind:'push', reaction:'pushNote', title, body, type }，被动源载荷 { kind:'passive', reaction, placeholder } |
+| backup:export | R→M | — | BackupExportResult（保存对话框导出 `.dpbackup`：settings/schedules/autoReports/passiveSources + manifest；不含统计/角色素材/推送 Token） |
+| backup:import | R→M | — | BackupImportResult（选择 `.dpbackup` → 结构校验 → 二次确认 → 自动备份当前配置 → 原子写入 → 热重载；失败回滚；返回 imported/backupDir） |
 | updater:get | R→M | — | UpdaterStatus（phase：unsupported/idle/checking/available/downloading/downloaded/error；version/percent/message 可选） |
 | updater:check | R→M | — | OpResult（立即检查更新，状态经 updater:status 广播） |
 | updater:download | R→M | — | OpResult（下载已发现的更新） |

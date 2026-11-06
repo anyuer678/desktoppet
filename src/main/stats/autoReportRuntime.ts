@@ -1,7 +1,6 @@
-import { app, Notification } from 'electron'
+import { Notification } from 'electron'
 import { readdirSync } from 'fs'
-import { join } from 'path'
-import { reportOutputDir } from '../app/paths'
+import { autoReportsPath, reportOutputDir } from '../app/paths'
 import type { LogFn } from '../logging/logger'
 import type { AutoReportConfig, AutoReportFired } from '../../shared/ipc'
 import { generateReportFile } from './report'
@@ -61,7 +60,7 @@ export function createAutoReportRuntime(deps: AutoReportRuntimeDeps): AutoReport
   }
 
   function start(): void {
-    autoReportFile = join(app.getPath('userData'), 'autoReports.json')
+    autoReportFile = autoReportsPath()
     autoReportCfg = loadAutoReports(autoReportFile)
     const outDir = reportOutputDir()
     // 只把「当前角色」的报告视为本周期已生成：报告统一目录，不同角色的同名周期不能互相压制

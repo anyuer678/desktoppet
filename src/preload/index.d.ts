@@ -1,6 +1,8 @@
 import type {
   AutoReportConfig,
   AutoReportFired,
+  BackupExportResult,
+  BackupImportResult,
   AutoReportGetResult,
   AutoReportSetResult,
   CharacterDetail,
@@ -123,6 +125,10 @@ declare global {
       perf: {
         report(fps: number): void
         start(): Promise<PerfReport>
+      }
+      backup: {
+        export(): Promise<BackupExportResult>
+        import(): Promise<BackupImportResult>
       }
       updater: {
         get(): Promise<UpdaterStatus>

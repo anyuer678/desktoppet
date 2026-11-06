@@ -62,6 +62,8 @@ export function CenterApp(): React.JSX.Element {
   const [appVersion, setAppVersion] = useState('')
   const [updaterStatus, setUpdaterStatus] = useState<UpdaterStatus | null>(null)
   const [updaterMsg, setUpdaterMsg] = useState('')
+  const [backupBusy, setBackupBusy] = useState(false)
+  const [backupMsg, setBackupMsg] = useState('')
   const [characters, setCharacters] = useState<CharacterSummary[]>([])
   const [settings, setSettings] = useState<Settings | null>(null)
   const [activeId, setActiveId] = useState('')
@@ -979,6 +981,35 @@ export function CenterApp(): React.JSX.Element {
     if (!result.ok) setScheduleError(result.error ?? '测试触发失败')
   }
 
+  const handleBackupExport = async (): Promise<void> => {
+    setBackupBusy(true)
+    setBackupMsg('')
+    try {
+      const result = await window.desktopPet.backup.export()
+      if (result.ok) setBackupMsg(`已导出：${result.path}`)
+      else if (!result.canceled) setBackupMsg(result.error ?? '导出失败')
+    } finally {
+      setBackupBusy(false)
+    }
+  }
+
+  const handleBackupImport = async (): Promise<void> => {
+    setBackupBusy(true)
+    setBackupMsg('')
+    try {
+      const result = await window.desktopPet.backup.import()
+      if (result.ok) {
+        setBackupMsg('导入成功，正在刷新界面…')
+        // 主进程已重载运行时；刷新控制中心以同步所有表单
+        setTimeout(() => window.location.reload(), 800)
+      } else if (!result.canceled) {
+        setBackupMsg(result.error ?? '导入失败')
+      }
+    } finally {
+      setBackupBusy(false)
+    }
+  }
+
   const handleUpdaterAction = async (action: 'check' | 'download' | 'install'): Promise<void> => {
     setUpdaterMsg('')
     const result = await window.desktopPet.updater[action]()
@@ -1077,7 +1108,7 @@ export function CenterApp(): React.JSX.Element {
 
         {tab === 'dev' && <DevTab handlePassiveSave={handlePassiveSave} handlePassiveTest={handlePassiveTest} mappingDraft={passiveMappingDraft} passiveCfg={passiveCfg} passiveMsg={passiveMsg} setMappingDraft={setPassiveMappingDraft} updatePassive={updatePassive} />}
 
-        {tab === 'settings' && settings && <SettingsTab openHelp={openHelp} setOpenHelp={setOpenHelp} settings={settings!} updateSettings={updateSettings} />}
+        {tab === 'settings' && settings && <SettingsTab backupBusy={backupBusy} backupMsg={backupMsg} handleBackupExport={handleBackupExport} handleBackupImport={handleBackupImport} openHelp={openHelp} setOpenHelp={setOpenHelp} settings={settings!} updateSettings={updateSettings} />}
         </div>
       </main>
     </div>

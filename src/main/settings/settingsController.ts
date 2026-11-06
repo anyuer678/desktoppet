@@ -32,6 +32,8 @@ export interface SettingsController {
   filePath(): string
   /** whenReady 中从磁盘加载（settings.json 不存在/损坏时回退默认值） */
   load(): void
+  /** 配置导入后重新加载并即时应用尺寸/透明度/快捷键/自启/台词池 */
+  reload(): void
   /** settings:set：合并 patch（size/opacity/activeCharacterId 校验）→ 立即落盘 → 联动尺寸/自启/快捷键 */
   set(patch: Partial<Settings>): Settings
   /** window:setSize：clamp → 合并 → 立即落盘 → 应用窗口尺寸；返回生效尺寸 */
@@ -67,6 +69,17 @@ export function createSettingsController(deps: SettingsControllerDeps): Settings
     filePath: () => settingsPath(),
     load: () => {
       settings = loadSettings(settingsPath())
+    },
+    reload: () => {
+      settings = loadSettings(settingsPath())
+      deps.applyPetSize(settings.size)
+      deps.applyShortcutsEnabled(settings.shortcutsEnabled)
+      app.setLoginItemSettings({ openAtLogin: settings.autoLaunch })
+      deps.notifyPet('pet:settings-changed', {
+        size: settings.size,
+        opacity: settings.opacity,
+        speech: settings.speech
+      })
     },
     set: (patch) => {
       const safePatch: Partial<Settings> = patch ?? {}

@@ -50,6 +50,11 @@ export function passiveConfigPath(): string {
   return join(app.getPath('userData'), 'passiveSources.json')
 }
 
+/** 自动报告配置文件（userData/autoReports.json） */
+export function autoReportsPath(): string {
+  return join(app.getPath('userData'), 'autoReports.json')
+}
+
 /** 自动报告落盘目录（文档/DesktopPet/报告） */
 export function reportOutputDir(): string {
   return join(app.getPath('documents'), 'DesktopPet', '报告')
