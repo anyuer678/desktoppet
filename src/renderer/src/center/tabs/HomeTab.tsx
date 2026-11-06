@@ -23,6 +23,7 @@ import { filterHistory, groupLabel, stateOf } from '../../../../shared/eventStat
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Switch } from '@/components/ui/switch'
 import { STATE_LABELS, formatDuration } from '../centerShared'
 
 interface HomeTabProps {
@@ -36,9 +37,10 @@ interface HomeTabProps {
   state: string
   statsError: string
   statsReport: StatsReport | null
+  togglePlugin: (id: string, enabled: boolean) => Promise<void>
 }
 
-export function HomeTab({ active, perfBusy, perfError, perfReport, plugins, refreshStats, runPerf, state, statsError, statsReport }: HomeTabProps): React.JSX.Element {
+export function HomeTab({ active, perfBusy, perfError, perfReport, plugins, refreshStats, runPerf, state, statsError, statsReport, togglePlugin }: HomeTabProps): React.JSX.Element {
   return (
           <div className="space-y-4">
             <Card>
@@ -199,7 +201,13 @@ export function HomeTab({ active, perfBusy, perfError, perfReport, plugins, refr
                         <span className="font-medium">{p.name}</span>
                         <span className="text-muted-foreground">v{p.version}</span>
                         <Badge variant="muted">{p.eventCount} 事件</Badge>
+                        {!p.enabled && <Badge variant="outline">已停用</Badge>}
                         <span className="ml-auto text-muted-foreground">{p.id}</span>
+                        <Switch
+                          checked={p.enabled}
+                          aria-label={`启用插件「${p.name}」`}
+                          onCheckedChange={(v) => void togglePlugin(p.id, v)}
+                        />
                       </div>
                     ))}
                   </div>

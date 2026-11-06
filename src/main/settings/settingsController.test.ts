@@ -132,6 +132,15 @@ describe('settingsController.set 白名单', () => {
     expect(raw.position).toEqual({ x: 777, y: 888 })
   })
 
+  it('disabledPlugins 写入前过滤非法 id 并去重', () => {
+    const c = makeController()
+    c.load()
+    const next = c.set({ disabledPlugins: ['bad plugin', 'ok', 'ok', 1] } as never)
+    expect(next.disabledPlugins).toEqual(['ok'])
+    const raw = JSON.parse(readFileSync(file, 'utf8')) as { disabledPlugins: string[] }
+    expect(raw.disabledPlugins).toEqual(['ok'])
+  })
+
   it('speech 损坏结构在写入前被规范化（防止崩桌宠）', () => {
     const c = makeController()
     c.load()

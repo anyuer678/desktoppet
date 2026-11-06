@@ -83,14 +83,19 @@ export function pluginEventsToPetEvents(plugins: PluginManifest[], now: number):
   return out
 }
 
-/** 将 manifest 列表转为 IPC 返回的 PluginInfo 列表 */
-export function toPluginInfo(plugins: PluginManifest[]): PluginInfo[] {
+/** 将 manifest 列表转为 IPC 返回的 PluginInfo 列表（disabledIds 仅影响运行与展示，不删文件） */
+export function toPluginInfo(plugins: PluginManifest[], disabledIds: readonly string[] = []): PluginInfo[] {
   return plugins.map((p) => ({
     id: p.id,
     name: p.name,
     version: p.version,
     description: p.description,
     eventCount: p.events.length,
-    enabled: true
+    enabled: !disabledIds.includes(p.id)
   }))
+}
+
+/** 仅保留启用插件的 manifest，用于事件源注入 */
+export function enabledPlugins(plugins: PluginManifest[], disabledIds: readonly string[]): PluginManifest[] {
+  return plugins.filter((p) => !disabledIds.includes(p.id))
 }

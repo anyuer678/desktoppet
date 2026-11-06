@@ -3,6 +3,14 @@ import type { Settings } from '../../shared/ipc'
 import { writeFileAtomic } from './atomicWrite'
 import { DEFAULT_SPEECH, type SpeechPoolKey, type SpeechPools } from '../../shared/speech'
 
+const PLUGIN_ID_RE = /^[a-z0-9_-]+$/
+
+/** 停用插件 id 规范化：仅接受合法插件 id，去重（损坏配置不会影响启动） */
+export function normalizePluginIds(raw: unknown): string[] {
+  if (!Array.isArray(raw)) return []
+  return [...new Set(raw.filter((v): v is string => typeof v === 'string' && PLUGIN_ID_RE.test(v)))]
+}
+
 /**
  * 台词池规范化：每个池必须是字符串数组。
  * - 缺失/非数组 → 回退该池默认值（兼容旧版本自定义文件）
@@ -28,7 +36,8 @@ export const DEFAULT_SETTINGS: Settings = {
   autoLaunch: false,
   activeCharacterId: 'rabbit',
   speech: DEFAULT_SPEECH,
-  shortcutsEnabled: true
+  shortcutsEnabled: true,
+  disabledPlugins: []
 }
 
 export function loadSettings(filePath: string, defaults: Settings = DEFAULT_SETTINGS): Settings {
@@ -56,7 +65,9 @@ export function loadSettings(filePath: string, defaults: Settings = DEFAULT_SETT
           ? raw.activeCharacterId
           : defaults.activeCharacterId,
       autoLaunch: typeof raw.autoLaunch === 'boolean' ? raw.autoLaunch : defaults.autoLaunch,
-      shortcutsEnabled: typeof raw.shortcutsEnabled === 'boolean' ? raw.shortcutsEnabled : defaults.shortcutsEnabled
+      shortcutsEnabled:
+        typeof raw.shortcutsEnabled === 'boolean' ? raw.shortcutsEnabled : defaults.shortcutsEnabled,
+      disabledPlugins: normalizePluginIds(raw.disabledPlugins)
     }
   } catch {
     return { ...defaults }

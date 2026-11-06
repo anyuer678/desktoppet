@@ -48,6 +48,8 @@ export interface IpcDeps {
   getActiveCharacterId(): string
   /** 插件清单（plugin:list 现读） */
   getPlugins(): PluginManifest[]
+  /** 已停用插件 id（plugin:list 现读） */
+  getDisabledPlugins(): string[]
 }
 
 /**

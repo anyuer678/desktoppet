@@ -37,6 +37,8 @@ export interface Settings {
   speech: SpeechPools
   /** 全局快捷键开关（Ctrl+Shift+P 显示/隐藏、Ctrl+Shift+C 控制中心） */
   shortcutsEnabled: boolean
+  /** 已停用的插件 id（事件源过滤；不影响插件文件） */
+  disabledPlugins: string[]
 }
 
 export interface CharacterSummary {

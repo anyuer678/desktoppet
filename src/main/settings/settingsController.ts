@@ -1,7 +1,12 @@
 import { app } from 'electron'
 import type { Settings } from '../../shared/ipc'
 import { settingsPath } from '../app/paths'
-import { loadSettings, normalizeSpeechPools, saveSettings } from '../storage/settingsStore'
+import {
+  loadSettings,
+  normalizePluginIds,
+  normalizeSpeechPools,
+  saveSettings
+} from '../storage/settingsStore'
 import { validatePackId } from '../character/importer'
 
 export const MIN_PET_SIZE = 96
@@ -16,6 +21,7 @@ const SETTABLE_KEYS = new Set([
   'activeCharacterId',
   'speech',
   'shortcutsEnabled',
+  'disabledPlugins',
 ])
 
 export interface SettingsControllerDeps {
@@ -125,6 +131,9 @@ export function createSettingsController(deps: SettingsControllerDeps): Settings
       // 台词池来自渲染层，必须规范化后再落盘，避免坏结构在下次启动时崩掉桌宠
       if ('speech' in next) {
         next.speech = normalizeSpeechPools(next.speech)
+      }
+      if ('disabledPlugins' in next) {
+        next.disabledPlugins = normalizePluginIds(next.disabledPlugins)
       }
       settings = { ...settings, ...next }
       saveSettings(settingsPath(), settings)

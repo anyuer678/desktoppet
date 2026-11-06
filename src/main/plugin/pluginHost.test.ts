@@ -2,7 +2,7 @@ import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'fs'
 import { join } from 'path'
 import { tmpdir } from 'os'
 import { describe, expect, it } from 'vitest'
-import { loadPlugins, pluginEventsToPetEvents, toPluginInfo } from './pluginHost'
+import { enabledPlugins, loadPlugins, pluginEventsToPetEvents, toPluginInfo } from './pluginHost'
 
 function tempDir(prefix: string): string {
   return mkdtempSync(join(tmpdir(), prefix))
@@ -141,6 +141,19 @@ describe('toPluginInfo', () => {
     expect(info[0].name).toBe('天气插件')
     expect(info[0].eventCount).toBe(1)
     expect(info[0].enabled).toBe(true)
+    rmSync(dir, { recursive: true, force: true })
+  })
+
+  it('disabledIds 标记停用，enabledPlugins 过滤事件源', () => {
+    const dir = tempDir('dp-plug-')
+    writePlugin(dir, 'weather', GOOD_MANIFEST)
+    writePlugin(dir, 'timer', { ...GOOD_MANIFEST, id: 'timer', name: '计时插件' })
+    const plugins = loadPlugins(dir)
+
+    const info = toPluginInfo(plugins, ['timer'])
+    expect(info.find((p) => p.id === 'timer')?.enabled).toBe(false)
+    expect(info.find((p) => p.id === 'weather')?.enabled).toBe(true)
+    expect(enabledPlugins(plugins, ['timer']).map((p) => p.id)).toEqual(['weather'])
     rmSync(dir, { recursive: true, force: true })
   })
 })

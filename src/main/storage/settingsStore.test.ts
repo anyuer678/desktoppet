@@ -79,6 +79,17 @@ describe('settingsStore', () => {
     rmSync(root, { recursive: true, force: true })
   })
 
+  it('disabledPlugins：非法 id 过滤、去重，缺失回退空数组', () => {
+    const root = mkdtempSync(join(tmpdir(), 'dp-settings-'))
+    const file = join(root, 'settings.json')
+    writeFileSync(file, JSON.stringify({ disabledPlugins: ['ok-plugin', 'BAD!', 'ok-plugin', 3] }))
+    expect(loadSettings(file).disabledPlugins).toEqual(['ok-plugin'])
+
+    writeFileSync(file, JSON.stringify({ size: 200 }))
+    expect(loadSettings(file).disabledPlugins).toEqual([])
+    rmSync(root, { recursive: true, force: true })
+  })
+
   it('speech 损坏结构：非数组池回退默认、非法项过滤、空池保留', () => {
     const root = mkdtempSync(join(tmpdir(), 'dp-settings-'))
     const file = join(root, 'settings.json')

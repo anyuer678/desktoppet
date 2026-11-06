@@ -63,6 +63,7 @@ interface Settings {
   activeCharacterId: string;
   speech: SpeechPools;            // 气泡消息池（可自定义，空池表示该场景不说话）
   shortcutsEnabled: boolean;      // 全局快捷键开关（Ctrl+Shift+P 显示/隐藏、Ctrl+Shift+C 控制中心）
+  disabledPlugins: string[];      // 已停用插件 id（事件源过滤；不删除插件文件）
 }
 ```
 
@@ -185,7 +186,7 @@ interface ScheduleFired { id: string; title: string; message: string; firedAt: n
 
 | Channel | 方向 | 参数 | 返回 |
 | --- | --- | --- | --- |
-| plugin:list | R→M | — | PluginInfo[]（{ id, name, version, description, eventCount, enabled }） |
+| plugin:list | R→M | — | PluginInfo[]（{ id, name, version, description, eventCount, enabled }；enabled 由 settings.disabledPlugins 计算，停用插件仍会列出） |
 
 ### stats:*（陪伴统计，v0.5）
 

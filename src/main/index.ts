@@ -14,7 +14,7 @@ import { createSettingsController } from './settings/settingsController'
 import { createEventRuntime } from './event/eventRuntime'
 import { createPassiveRuntime } from './event/passiveRuntime'
 import { createLogger, type Logger } from './logging/logger'
-import { loadPlugins } from './plugin/pluginHost'
+import { enabledPlugins, loadPlugins } from './plugin/pluginHost'
 import { createStatsRuntime } from './stats/statsRuntime'
 import { createAutoReportRuntime } from './stats/autoReportRuntime'
 import { createPushRuntime } from './push/pushRuntime'
@@ -62,6 +62,10 @@ const shortcuts = createShortcutsHub({
   openCenter: (tab) => windows.openCenter(tab),
   enabled: () => settingsCtl.get().shortcutsEnabled
 })
+
+// 插件过滤：设置变更后下一轮插件源轮询即生效，无需重启
+const getDisabledPlugins = (): string[] => settingsCtl.get().disabledPlugins
+const getEnabledPlugins = (): PluginManifest[] => enabledPlugins(loadedPlugins, getDisabledPlugins())
 
 // 窗口广播快捷别名（惰性取当前窗口，不捕获快照）
 const notifyPet = (channel: string, payload?: unknown): void => windows.notifyPet(channel, payload)
@@ -125,7 +129,7 @@ const passive = createPassiveRuntime({
   events: eventRuntime,
   stats,
   notifyPet,
-  getPlugins: () => loadedPlugins,
+  getPlugins: getEnabledPlugins,
   powershellRunner,
   log
 })
@@ -193,7 +197,8 @@ if (!acquireSingleInstanceLock(() => windows.openCenter())) {
       openCenter: (tab) => windows.openCenter(tab),
       selectCharacter,
       getActiveCharacterId: () => settingsCtl.get().activeCharacterId,
-      getPlugins: () => loadedPlugins
+      getPlugins: () => loadedPlugins,
+      getDisabledPlugins
     })
     windows.ensurePetPosition()
     tray = createTray({

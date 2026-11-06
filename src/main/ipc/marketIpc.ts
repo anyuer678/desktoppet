@@ -11,6 +11,8 @@ import { toPluginInfo } from '../plugin/pluginHost'
 export interface MarketIpcDeps {
   /** 插件清单（getter：插件重载后 list 现读最新值） */
   getPlugins(): PluginManifest[]
+  /** 已停用插件 id（getter：设置变更后现读） */
+  getDisabledPlugins(): string[]
   log: LogFn
 }
 
@@ -48,5 +50,5 @@ export function registerMarketIpc(deps: MarketIpcDeps): void {
     const marketDir = join(charactersRoot(), 'market')
     return installMarketEntry(marketDir, entryId, charactersRoot())
   })
-  ipcMain.handle('plugin:list', () => toPluginInfo(deps.getPlugins()))
+  ipcMain.handle('plugin:list', () => toPluginInfo(deps.getPlugins(), deps.getDisabledPlugins()))
 }

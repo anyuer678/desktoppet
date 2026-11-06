@@ -267,6 +267,11 @@ export function CenterApp(): React.JSX.Element {
     if (tab === 'market') void loadMarket()
   }, [tab])
 
+  useEffect(() => {
+    // 首页展示插件启停状态，进入时现读，避免设置变更后显示过期
+    if (tab === 'home') void window.desktopPet.plugin.list().then(setPlugins).catch(() => {})
+  }, [tab])
+
   const refreshStats = (): void => {
     const seq = ++statsSeqRef.current
     void window.desktopPet.stats
@@ -981,6 +986,16 @@ export function CenterApp(): React.JSX.Element {
     if (!result.ok) setScheduleError(result.error ?? '测试触发失败')
   }
 
+  const togglePlugin = async (id: string, enabled: boolean): Promise<void> => {
+    if (!settings) return
+    const current = settings.disabledPlugins ?? []
+    const disabledPlugins = enabled
+      ? current.filter((x) => x !== id)
+      : [...new Set([...current, id])]
+    updateSettings({ disabledPlugins })
+    setPlugins((prev) => prev.map((p) => (p.id === id ? { ...p, enabled } : p)))
+  }
+
   const handleBackupExport = async (): Promise<void> => {
     setBackupBusy(true)
     setBackupMsg('')
@@ -1088,7 +1103,7 @@ export function CenterApp(): React.JSX.Element {
 
       <main className="flex-1 overflow-y-auto p-6">
         <div key={tab} className="dp-fade-in">
-        {tab === 'home' && <HomeTab active={active} perfBusy={perfBusy} perfError={perfError} perfReport={perfReport} plugins={plugins} refreshStats={refreshStats} runPerf={runPerf} state={state} statsError={statsError} statsReport={statsReport} />}
+        {tab === 'home' && <HomeTab active={active} perfBusy={perfBusy} perfError={perfError} perfReport={perfReport} plugins={plugins} refreshStats={refreshStats} runPerf={runPerf} state={state} statsError={statsError} statsReport={statsReport} togglePlugin={togglePlugin} />}
 
         {tab === 'characters' && <CharactersTab activeId={activeId} characters={characters} deleteCharacter={deleteCharacter} editDetail={editDetail} editForm={editForm} editingId={editingId} exportCharacter={exportCharacter} importBusy={importBusy} importCharacter={importCharacter} importError={importError} importOk={importOk} openEditor={openEditor} saveBusy={saveBusy} saveEdit={saveEdit} selectCharacter={selectCharacter} setEditForm={setEditForm} setEditingId={setEditingId} switchEditState={switchEditState} />}
 
