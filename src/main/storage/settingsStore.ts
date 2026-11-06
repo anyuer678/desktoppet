@@ -37,7 +37,8 @@ export const DEFAULT_SETTINGS: Settings = {
   activeCharacterId: 'rabbit',
   speech: DEFAULT_SPEECH,
   shortcutsEnabled: true,
-  disabledPlugins: []
+  disabledPlugins: [],
+  soundEnabled: false
 }
 
 export function loadSettings(filePath: string, defaults: Settings = DEFAULT_SETTINGS): Settings {
@@ -67,7 +68,8 @@ export function loadSettings(filePath: string, defaults: Settings = DEFAULT_SETT
       autoLaunch: typeof raw.autoLaunch === 'boolean' ? raw.autoLaunch : defaults.autoLaunch,
       shortcutsEnabled:
         typeof raw.shortcutsEnabled === 'boolean' ? raw.shortcutsEnabled : defaults.shortcutsEnabled,
-      disabledPlugins: normalizePluginIds(raw.disabledPlugins)
+      disabledPlugins: normalizePluginIds(raw.disabledPlugins),
+      soundEnabled: typeof raw.soundEnabled === 'boolean' ? raw.soundEnabled : defaults.soundEnabled
     }
   } catch {
     return { ...defaults }

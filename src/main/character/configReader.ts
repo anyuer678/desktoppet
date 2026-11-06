@@ -3,12 +3,14 @@ import { join, resolve, sep } from 'path'
 import type {
   AnimationStateConfig,
   CharacterDetail,
+  CharacterSoundConfig,
   InteractionAction,
   OverlayApplyConfig,
   OverlayConfig,
-  OverlayTimeCondition
+  OverlayTimeCondition,
+  SoundClipKey
 } from '../../shared/ipc'
-import { INTERACTION_ACTIONS } from '../../shared/ipc'
+import { INTERACTION_ACTIONS, SOUND_CLIP_KEYS } from '../../shared/ipc'
 
 export interface ParsedCharacter {
   id: string
@@ -48,6 +50,39 @@ function normalizeInteraction(value: unknown, fallback: InteractionAction): Inte
   return typeof value === 'string' && (INTERACTION_ACTIONS as readonly string[]).includes(value)
     ? (value as InteractionAction)
     : fallback
+}
+
+/** 音效素材路径：只接受角色包内相对路径（播放时还会经 pet:// 路径校验） */
+function normalizeSoundPath(value: unknown): string | null {
+  if (typeof value !== 'string' || value.trim() === '') return null
+  const normalized = value.replace(/\\/g, '/').replace(/^\/+/, '')
+  if (!normalized || /^[A-Za-z]:/.test(normalized)) return null
+  if (normalized.split('/').some((part) => part === '' || part === '.' || part === '..')) return null
+  return normalized
+}
+
+/** 解析角色包 sound 字段；无有效片段时返回 null（视为未配置音效） */
+export function parseCharacterSound(raw: unknown): CharacterSoundConfig | null {
+  if (!raw || typeof raw !== 'object') return null
+  const v = raw as { enabled?: unknown; volume?: unknown; clips?: unknown }
+  const clips: Partial<Record<SoundClipKey, string>> = {}
+  if (v.clips && typeof v.clips === 'object') {
+    for (const [key, value] of Object.entries(v.clips as Record<string, unknown>)) {
+      if (!(SOUND_CLIP_KEYS as readonly string[]).includes(key)) continue
+      const path = normalizeSoundPath(value)
+      if (path) clips[key as SoundClipKey] = path
+    }
+  }
+  if (Object.keys(clips).length === 0) return null
+  const volume =
+    typeof v.volume === 'number' && Number.isFinite(v.volume)
+      ? Math.min(1, Math.max(0, v.volume))
+      : 0.6
+  return {
+    enabled: typeof v.enabled === 'boolean' ? v.enabled : true,
+    volume,
+    clips
+  }
 }
 
 export function parseCharacterConfig(configPath: string): ParsedCharacter | null {
@@ -109,6 +144,7 @@ export function readCharacterDetail(root: string, id: string): CharacterDetail |
       interaction?: { click?: unknown; doubleClick?: unknown; rightClick?: unknown }
       settings?: { defaultSize?: unknown; allowResize?: unknown }
       overlays?: unknown
+      sound?: unknown
     }
     if (typeof raw.id !== 'string' || raw.id !== id || typeof raw.name !== 'string') return null
 
@@ -144,6 +180,7 @@ export function readCharacterDetail(root: string, id: string): CharacterDetail |
       supportedStates: stateKeys,
       animation,
       overlays: overlays && Object.keys(overlays).length > 0 ? overlays : undefined,
+      sound: parseCharacterSound(raw.sound) ?? undefined,
       interaction: {
         click: normalizeInteraction(raw.interaction?.click, 'speak'),
         doubleClick: normalizeInteraction(raw.interaction?.doubleClick, 'open_center'),

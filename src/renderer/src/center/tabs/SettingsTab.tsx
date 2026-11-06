@@ -93,6 +93,22 @@ export function SettingsTab({ backupBusy, backupMsg, handleBackupExport, handleB
             </Card>
             <Card>
               <CardHeader>
+                <CardTitle>声音</CardTitle>
+              </CardHeader>
+              <CardContent className="flex items-center justify-between">
+                <div>
+                  <div className="text-sm">启用角色音效</div>
+                  <div className="text-xs text-muted-foreground">播放角色包 sound 配置的点击/状态音效（默认关闭）</div>
+                </div>
+                <Switch
+                  checked={settings.soundEnabled}
+                  aria-label="启用角色音效"
+                  onCheckedChange={(v) => updateSettings({ soundEnabled: v })}
+                />
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader>
                 <CardTitle>全局快捷键</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">

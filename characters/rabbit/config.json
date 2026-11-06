@@ -79,6 +79,13 @@
       }
     }
   },
+  "sound": {
+    "enabled": true,
+    "volume": 0.5,
+    "clips": {
+      "click": "sounds/click.wav"
+    }
+  },
   "interaction": {
     "click": "speak",
     "doubleClick": "open_center",

@@ -64,6 +64,7 @@ interface Settings {
   speech: SpeechPools;            // 气泡消息池（可自定义，空池表示该场景不说话）
   shortcutsEnabled: boolean;      // 全局快捷键开关（Ctrl+Shift+P 显示/隐藏、Ctrl+Shift+C 控制中心）
   disabledPlugins: string[];      // 已停用插件 id（事件源过滤；不删除插件文件）
+  soundEnabled: boolean;          // 全局角色音效开关（默认 false）
 }
 ```
 
@@ -88,6 +89,8 @@ interface CharacterSummary {
 interface CharacterLoaded {
   id: string; ok: boolean; error?: string;
 }
+// CharacterDetail 额外包含可选 sound：
+// sound?: { enabled: boolean; volume: number; clips: Partial<Record<'click'|'idle'|'focus'|'sleep'|'happy'|'warning', string>> }
 interface ImportResult {
   ok: boolean; id?: string; name?: string; path?: string; error?: string;
   overwritten?: boolean;   // 覆盖导入成功时为 true（旧版已替换）

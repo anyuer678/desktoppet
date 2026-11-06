@@ -5,6 +5,7 @@ import { describe, expect, it } from 'vitest'
 import {
   listCharacters,
   parseCharacterConfig,
+  parseCharacterSound,
   readCharacterDetail,
   resolvePetPath,
   safeResolve
@@ -175,6 +176,32 @@ describe('configReader', () => {
       rightClick: 'menu'
     })
     rmSync(root, { recursive: true, force: true })
+  })
+
+  it('sound：解析片段/音量夹取/忽略非法路径与未知 key', () => {
+    const parsed = parseCharacterSound({
+      enabled: true,
+      volume: 1.5,
+      clips: {
+        click: 'sounds/click.wav',
+        happy: 'sounds\\happy.mp3',
+        warning: '../evil.wav',
+        idle: 'C:/evil.wav',
+        unknown: 'x.wav',
+        focus: ''
+      }
+    })
+    expect(parsed).toEqual({
+      enabled: true,
+      volume: 1,
+      clips: { click: 'sounds/click.wav', happy: 'sounds/happy.mp3' }
+    })
+  })
+
+  it('sound：无有效片段返回 null，enabled 缺省为 true', () => {
+    expect(parseCharacterSound({ clips: { click: '../x.wav' } })).toBeNull()
+    expect(parseCharacterSound({ clips: { click: 'a.wav' } })?.enabled).toBe(true)
+    expect(parseCharacterSound(null)).toBeNull()
   })
 
   it('readCharacterDetail 交互动作缺失时使用默认', () => {

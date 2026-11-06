@@ -4,7 +4,8 @@ import { PetAnimator } from './PetAnimator'
 import { activeOverlays, combineOverlays } from './overlay'
 import { contentRectFrom, pointInRect, shouldIgnorePointer, type AlphaMap, type Rect } from './clickThrough'
 import { DEFAULT_SPEECH, eventSpeech, greetingKey, greetingSpeech, pickText, reactionReply, welcomeSpeech, type Speech, type SpeechPools } from '../../../shared/speech'
-import type { InteractionAction } from '../../../shared/ipc'
+import type { InteractionAction, SoundClipKey } from '../../../shared/ipc'
+import { resolveSoundClip } from './sound'
 
 const CLICK_TIMEOUT = 300
 const DRAG_THRESHOLD = 4
@@ -20,6 +21,7 @@ export function PetApp(): React.JSX.Element {
   const [detail, setDetail] = useState<CharacterDetail | null>(null)
   const [paused, setPaused] = useState(false)
   const [state, setState] = useState('idle')
+  const [soundEnabled, setSoundEnabled] = useState(false)
   const [now, setNow] = useState(() => new Date())
 
   const overlayFactors = useMemo(
@@ -40,6 +42,28 @@ export function PetApp(): React.JSX.Element {
   const lastGreetingRef = useRef<ReturnType<typeof greetingKey> | null>(null)
   const welcomedRef = useRef(false)
   const poolsRef = useRef<SpeechPools>(DEFAULT_SPEECH)
+  const audioCacheRef = useRef(new Map<string, HTMLAudioElement>())
+  const lastSoundStateRef = useRef<string | null>(null)
+
+  const playSound = (key: SoundClipKey): void => {
+    const clip = resolveSoundClip(detail?.sound, charId, key, soundEnabled)
+    if (!clip) return
+    let audio = audioCacheRef.current.get(clip.src)
+    if (!audio) {
+      audio = new Audio(clip.src)
+      audio.preload = 'auto'
+      audioCacheRef.current.set(clip.src, audio)
+    }
+    audio.volume = clip.volume
+    try {
+      audio.currentTime = 0
+    } catch {
+      // 尚未加载完成时重置失败可忽略，play 会从头播放
+    }
+    void audio.play().catch(() => {
+      // 自动播放策略/素材缺失：静默降级，不打断动画
+    })
+  }
 
   const showSpeech = (s: Speech): void => {
     lastSpeechText.current = s.text
@@ -92,6 +116,7 @@ export function PetApp(): React.JSX.Element {
       setCharId(s.activeCharacterId || 'rabbit')
       setSize(s.size)
       setOpacity(s.opacity)
+      setSoundEnabled(s.soundEnabled ?? false)
       poolsRef.current = s.speech ?? DEFAULT_SPEECH
     })
   }, [])
@@ -124,6 +149,18 @@ export function PetApp(): React.JSX.Element {
       setState(s)
     })
   }, [])
+
+  useEffect(() => {
+    // 首次进入不播放，仅状态切换时播放对应片段
+    if (lastSoundStateRef.current === null) {
+      lastSoundStateRef.current = state
+      return
+    }
+    if (lastSoundStateRef.current === state) return
+    lastSoundStateRef.current = state
+    playSound(state as SoundClipKey)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state])
 
   useEffect(() => {
     // 事件通知：系统监控/插件事件出现时说话（台词来自自定义消息池）
@@ -198,6 +235,7 @@ export function PetApp(): React.JSX.Element {
       setSize(patch.size)
       setOpacity(patch.opacity)
       if (patch.speech) poolsRef.current = patch.speech
+      if (patch.soundEnabled !== undefined) setSoundEnabled(patch.soundEnabled)
     })
   }, [])
 
@@ -347,6 +385,7 @@ export function PetApp(): React.JSX.Element {
       evaluateRef.current()
       return
     }
+    playSound('click')
     if (clickTimer.current) clearTimeout(clickTimer.current)
     clickTimer.current = setTimeout(() => {
       dispatchAction(actionFor('click', 'speak'))

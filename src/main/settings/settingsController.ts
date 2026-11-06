@@ -22,6 +22,7 @@ const SETTABLE_KEYS = new Set([
   'speech',
   'shortcutsEnabled',
   'disabledPlugins',
+  'soundEnabled',
 ])
 
 export interface SettingsControllerDeps {
@@ -84,7 +85,8 @@ export function createSettingsController(deps: SettingsControllerDeps): Settings
       deps.notifyPet('pet:settings-changed', {
         size: settings.size,
         opacity: settings.opacity,
-        speech: settings.speech
+        speech: settings.speech,
+        soundEnabled: settings.soundEnabled
       })
     },
     set: (patch) => {
@@ -135,16 +137,20 @@ export function createSettingsController(deps: SettingsControllerDeps): Settings
       if ('disabledPlugins' in next) {
         next.disabledPlugins = normalizePluginIds(next.disabledPlugins)
       }
+      if ('soundEnabled' in next && typeof next.soundEnabled !== 'boolean') {
+        delete next.soundEnabled
+      }
       settings = { ...settings, ...next }
       saveSettings(settingsPath(), settings)
       // 保持原行为：无论 patch 是否含 size，都按当前尺寸应用一次窗口尺寸
       deps.applyPetSize(settings.size)
-      if (next.speech) {
-        // 台词池改动即时同步到已运行的桌宠窗口（否则要重启才生效）
+      if (next.speech || 'soundEnabled' in next) {
+        // 台词池/音效开关即时同步到已运行的桌宠窗口（否则要重启才生效）
         deps.notifyPet('pet:settings-changed', {
           size: settings.size,
           opacity: settings.opacity,
-          speech: settings.speech
+          speech: settings.speech,
+          soundEnabled: settings.soundEnabled
         })
       }
       if (typeof safePatch.autoLaunch === 'boolean') {

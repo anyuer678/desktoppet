@@ -81,7 +81,9 @@ export function createWindowHub(deps: WindowHubDeps): WindowHub {
         sandbox: true,
         // 显式声明（Electron 当前默认即如此，写死防止未来默认变化引入静默回归）
         contextIsolation: true,
-        nodeIntegration: false
+        nodeIntegration: false,
+        // 角色音效由桌宠自主播放，不依赖用户手势
+        autoplayPolicy: 'no-user-gesture-required'
       }
     })
     petWindow.setAlwaysOnTop(true, 'screen-saver')

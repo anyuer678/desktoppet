@@ -1,10 +1,11 @@
 import type { SpeechPools } from './speech'
 
-/** 主进程 → 桌宠窗口：尺寸/透明度变化，settings:set 携带台词池时一并下发以即时生效 */
+/** 主进程 → 桌宠窗口：尺寸/透明度变化，settings:set 携带台词池/音效开关时一并下发以即时生效 */
 export interface PetSettingsChanged {
   size: number
   opacity: number
   speech?: SpeechPools
+  soundEnabled?: boolean
 }
 
 /** 控制中心页签白名单：主进程导航与渲染层路由共用同一份定义 */
@@ -39,6 +40,8 @@ export interface Settings {
   shortcutsEnabled: boolean
   /** 已停用的插件 id（事件源过滤；不影响插件文件） */
   disabledPlugins: string[]
+  /** 是否启用角色包音效（默认关闭） */
+  soundEnabled: boolean
 }
 
 export interface CharacterSummary {
@@ -93,6 +96,18 @@ export interface CharacterInteraction {
   rightClick: InteractionAction
 }
 
+/** 角色音效片段 key（对应状态名 + click） */
+export const SOUND_CLIP_KEYS = ['click', 'idle', 'focus', 'sleep', 'happy', 'warning'] as const
+export type SoundClipKey = (typeof SOUND_CLIP_KEYS)[number]
+
+/** 角色包音效配置（config.json sound 字段；素材走 pet://） */
+export interface CharacterSoundConfig {
+  enabled: boolean
+  /** 0~1 音量倍率 */
+  volume: number
+  clips: Partial<Record<SoundClipKey, string>>
+}
+
 export interface CharacterDetail {
   id: string
   name: string
@@ -103,6 +118,7 @@ export interface CharacterDetail {
   supportedStates: string[]
   animation: Record<string, AnimationStateConfig>
   overlays?: Record<string, OverlayConfig>
+  sound?: CharacterSoundConfig
   interaction: CharacterInteraction
   settings: { defaultSize: number; allowResize: boolean }
 }

@@ -7,7 +7,7 @@
 
 ## v1.3.0 (2026-11-05)
 
-自动更新闭环、本地集成协议、配置备份、插件启停、数据完整性与统计口径修复。单测 567 例，typecheck/build 全绿。
+自动更新闭环、本地集成协议、配置备份、插件启停、角色音效、数据完整性与统计口径修复。单测 572 例，typecheck/build 全绿。
 
 新增：
 - 自动更新完整链路：`updater:get/check/download/install` IPC 与控制中心侧栏操作；状态机（idle/checking/available/downloading/downloaded/error/unsupported）纯逻辑可单测；发现新版本/下载完成时即使控制中心未打开也会弹系统通知；开发模式（`app.isPackaged=false`）明确跳过检查
@@ -50,6 +50,7 @@
 - 开发者页数值输入允许清空/临时非法，只有合法正整数才提交，失焦恢复最后有效值
 - 配置备份/恢复：`.dpbackup` 导出设置、消息池、日程、自动报告与被动源配置；导入前校验结构与体积、自动备份当前配置、失败回滚并热重载运行时（不含统计/角色素材/推送 Token）
 - 插件启停：设置新增 `disabledPlugins`，首页插件卡可开关；停用后插件事件源即时过滤（不删除插件文件），`plugin:list` 标记 enabled，配置随备份导出
+- 角色音效（角色包 `sound`）：支持 click/状态片段、音量与开关；设置新增 `soundEnabled`（默认关闭），桌宠窗口启用 autoplay 策略、CSP 放行 `media-src pet:`，示例兔兔附 70ms 点击音；`pet://` 响应补齐图片/音频 MIME
 
 ## v1.2.1 (2026-09-25)
 

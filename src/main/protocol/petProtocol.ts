@@ -2,9 +2,23 @@ import { net, protocol } from 'electron'
 import { existsSync } from 'fs'
 import { resolve } from 'path'
 import { pathToFileURL } from 'url'
+import { extname } from 'path'
 import { charactersRoot } from '../app/paths'
 import { resolvePetPath } from '../character/configReader'
 import type { LogFn } from '../logging/logger'
+
+/** 角色素材 MIME：file:// 响应不保证带正确类型，音频/图片需显式声明 */
+const MIME_BY_EXT: Record<string, string> = {
+  '.png': 'image/png',
+  '.jpg': 'image/jpeg',
+  '.jpeg': 'image/jpeg',
+  '.webp': 'image/webp',
+  '.gif': 'image/gif',
+  '.mp3': 'audio/mpeg',
+  '.wav': 'audio/wav',
+  '.ogg': 'audio/ogg',
+  '.m4a': 'audio/mp4'
+}
 
 /** pet:// 自定义协议名 */
 export const PET_SCHEME = 'pet'
@@ -50,6 +64,8 @@ export function registerPetProtocol(deps: { log: LogFn }): void {
       // 硬编码单来源会与所有实际 origin 不匹配 → 打包版宠物精灵图全部加载失败（naturalWidth=0）。
       // 角色素材是本地公开静态文件、不含凭据，通配 ACAO 是正确语义。
       headers.set('Access-Control-Allow-Origin', '*')
+      const mime = MIME_BY_EXT[extname(filePath).toLowerCase()]
+      if (mime) headers.set('Content-Type', mime)
       return new Response(resp.body, { status: resp.status, headers })
     } catch (err) {
       log('warn', '[pet] fetch error:', filePath, err)
