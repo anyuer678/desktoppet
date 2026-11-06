@@ -198,6 +198,24 @@ describe('configReader', () => {
     })
   })
 
+  it('physics：解析并夹取参数', () => {
+    const root = tempRoot()
+    writePack(root, 'p', {
+      id: 'p',
+      name: 'P',
+      animation: { default: 'idle', states: { idle: { type: 'template' } } },
+      physics: { enabled: true, friction: 0.99, restitution: 0.5, maxSpeed: 1 }
+    })
+    const detail = readCharacterDetail(root, 'p')
+    expect(detail?.physics).toEqual({
+      enabled: true,
+      friction: 0.99,
+      restitution: 0.5,
+      maxSpeed: 200
+    })
+    rmSync(root, { recursive: true, force: true })
+  })
+
   it('sound：无有效片段返回 null，enabled 缺省为 true', () => {
     expect(parseCharacterSound({ clips: { click: '../x.wav' } })).toBeNull()
     expect(parseCharacterSound({ clips: { click: 'a.wav' } })?.enabled).toBe(true)

@@ -21,6 +21,7 @@ import type {
   PassiveTestResult,
   PassiveSourcesConfig,
   PerfReport,
+  PhysicsConfig,
   PetSettingsChanged,
   PluginInfo,
   PushApiFired,
@@ -68,6 +69,7 @@ declare global {
         hide(): Promise<void>
         quit(): Promise<void>
         dragBy(dx: number, dy: number): Promise<void>
+        fling(vx: number, vy: number, physics?: PhysicsConfig): Promise<void>
         setSize(size: number): Promise<number>
         setOpacity(opacity: number): Promise<number>
         setIgnoreMouseEvents(ignore: boolean): Promise<void>

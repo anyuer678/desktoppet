@@ -32,6 +32,7 @@ export function PetApp(): React.JSX.Element {
   )
 
   const pointerRef = useRef({ down: false, moved: false, startX: 0, startY: 0, lastSX: 0, lastSY: 0 })
+  const dragSamplesRef = useRef<{ t: number; x: number; y: number }[]>([])
   const clickTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const spriteRef = useRef<HTMLImageElement | null>(null)
   const ignoredRef = useRef(false)
@@ -364,6 +365,7 @@ export function PetApp(): React.JSX.Element {
       lastSX: e.screenX,
       lastSY: e.screenY
     }
+    dragSamplesRef.current = [{ t: performance.now(), x: e.screenX, y: e.screenY }]
     ;(e.target as Element).setPointerCapture(e.pointerId)
   }
 
@@ -383,6 +385,9 @@ export function PetApp(): React.JSX.Element {
     const dy = e.screenY - p.lastSY
     p.lastSX = e.screenX
     p.lastSY = e.screenY
+    const samples = dragSamplesRef.current
+    samples.push({ t: performance.now(), x: e.screenX, y: e.screenY })
+    if (samples.length > 8) samples.shift()
     void window.desktopPet.window.dragBy(dx, dy)
   }
 
@@ -392,6 +397,21 @@ export function PetApp(): React.JSX.Element {
     if (!p.down) return
     p.down = false
     if (p.moved) {
+      const samples = dragSamplesRef.current
+      const physics = detail?.physics
+      if (physics?.enabled && samples.length >= 2) {
+        const first = samples[0]
+        const last = samples[samples.length - 1]
+        const dt = (last.t - first.t) / 1000
+        if (dt >= 0.01) {
+          const vx = (last.x - first.x) / dt
+          const vy = (last.y - first.y) / dt
+          if (Math.hypot(vx, vy) > 150) {
+            void window.desktopPet.window.fling(vx, vy, physics)
+          }
+        }
+      }
+      dragSamplesRef.current = []
       evaluateRef.current()
       return
     }

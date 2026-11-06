@@ -86,6 +86,12 @@
       "click": "sounds/click.wav"
     }
   },
+  "physics": {
+    "enabled": true,
+    "friction": 0.9,
+    "restitution": 0.35,
+    "maxSpeed": 2200
+  },
   "interaction": {
     "click": "speak",
     "doubleClick": "open_center",

@@ -5,6 +5,7 @@ import { ensurePositionVisible } from './placement'
 import { isAllowedNavigation } from './navigation'
 import { isCenterTab } from '../../shared/ipc'
 import type { Settings } from '../../shared/ipc'
+import { normalizePhysicsConfig, stepFling, type FlingState, type PhysicsConfig } from '../../shared/physics'
 
 export interface WindowHubDeps {
   getSettings(): Settings
@@ -28,6 +29,9 @@ export interface WindowHub {
   showPet(): void
   hidePet(): void
   applyPetSize(size: number): void
+  /** 拖动松手后的惯性滑动（参数在主进程夹取；未启用 physics 时无操作） */
+  fling(vx: number, vy: number, physics?: unknown): void
+  stopFling(): void
 }
 
 /**
@@ -37,6 +41,46 @@ export interface WindowHub {
 export function createWindowHub(deps: WindowHubDeps): WindowHub {
   let petWindow: BrowserWindow | null = null
   let centerWindow: BrowserWindow | null = null
+  let flingTimer: NodeJS.Timeout | null = null
+  let flingState: FlingState | null = null
+
+  function stopFling(): void {
+    if (flingTimer) clearInterval(flingTimer)
+    flingTimer = null
+    flingState = null
+  }
+
+  function fling(vx: number, vy: number, physics?: unknown): void {
+    const win = petWindow
+    if (!win || win.isDestroyed()) return
+    stopFling()
+    const config: PhysicsConfig = normalizePhysicsConfig(physics)
+    if (!config.enabled || !Number.isFinite(vx) || !Number.isFinite(vy)) return
+    const speed = Math.hypot(vx, vy)
+    if (speed < 100) return
+    const scale = Math.min(1, config.maxSpeed / speed)
+    const [x, y] = win.getPosition()
+    const [size] = win.getSize()
+    const area = screen.getDisplayNearestPoint({
+      x: Math.round(x + size / 2),
+      y: Math.round(y + size / 2)
+    }).workArea
+    flingState = { x, y, vx: vx * scale, vy: vy * scale }
+    let lastAt = Date.now()
+    flingTimer = setInterval(() => {
+      const current = flingState
+      if (!current || !petWindow || petWindow.isDestroyed()) {
+        stopFling()
+        return
+      }
+      const now = Date.now()
+      const step = stepFling(current, size, area, config, (now - lastAt) / 1000)
+      lastAt = now
+      flingState = step.state
+      petWindow.setPosition(Math.round(step.state.x), Math.round(step.state.y))
+      if (!step.active) stopFling()
+    }, 16)
+  }
 
   function rendererUrl(): string {
     return (
@@ -93,6 +137,7 @@ export function createWindowHub(deps: WindowHubDeps): WindowHub {
       deps.onPetMoved({ x, y })
     })
     petWindow.on('closed', () => {
+      stopFling()
       petWindow = null
     })
     loadRenderer(petWindow, '#/pet')
@@ -170,6 +215,7 @@ export function createWindowHub(deps: WindowHubDeps): WindowHub {
   }
 
   function applyPetSize(size: number): void {
+    stopFling()
     const win = petWindow
     if (!win) return
     const [x, y] = win.getPosition()
@@ -194,6 +240,8 @@ export function createWindowHub(deps: WindowHubDeps): WindowHub {
     ensurePetPosition,
     showPet,
     hidePet,
-    applyPetSize
+    applyPetSize,
+    fling,
+    stopFling
   }
 }

@@ -92,6 +92,7 @@ interface CharacterLoaded {
 // CharacterDetail 额外包含可选 sound / emotion：
 // sound?: { enabled: boolean; volume: number; clips: Partial<Record<'click'|'idle'|'focus'|'sleep'|'happy'|'warning', string>> }
 // emotion?: { enabled: boolean; decayPerHour: number; weights: { interact: number; happy: number; warning: number }; levels: { min: number; label: string }[] }
+// physics?: { enabled: boolean; friction: number; restitution: number; maxSpeed: number }
 interface ImportResult {
   ok: boolean; id?: string; name?: string; path?: string; error?: string;
   overwritten?: boolean;   // 覆盖导入成功时为 true（旧版已替换）
@@ -137,7 +138,8 @@ interface CharacterPatch {
 | Channel | 方向 | 参数 | 返回 |
 | --- | --- | --- | --- |
 | window:hide | R→M | — | — |
-| window:dragBy | R→M | dx, dy:number | —（按像素增量平移桌宠窗口位置；已实现） |
+| window:dragBy | R→M | dx, dy:number | —（按像素增量平移桌宠窗口位置；会停止进行中的惯性滑动） |
+| window:fling | R→M | vx, vy:number, physics?:PhysicsConfig | —（松手惯性：主进程按摩擦/回弹在工作区内动画，参数夹取；physics.enabled=false 时无操作） |
 | window:quit | R→M | — | — |
 | window:setSize | R→M | size | number |
 | window:setOpacity | R→M | opacity | number |

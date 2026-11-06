@@ -1,5 +1,7 @@
 import type { SpeechPools } from './speech'
 import type { EmotionConfig } from './emotion'
+import type { PhysicsConfig } from './physics'
+export type { PhysicsConfig } from './physics'
 
 /** 主进程 → 桌宠窗口：尺寸/透明度变化，settings:set 携带台词池/音效开关时一并下发以即时生效 */
 export interface PetSettingsChanged {
@@ -121,6 +123,7 @@ export interface CharacterDetail {
   overlays?: Record<string, OverlayConfig>
   sound?: CharacterSoundConfig
   emotion?: EmotionConfig
+  physics?: PhysicsConfig
   interaction: CharacterInteraction
   settings: { defaultSize: number; allowResize: boolean }
 }

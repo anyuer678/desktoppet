@@ -8,10 +8,12 @@ import type {
   OverlayApplyConfig,
   OverlayConfig,
   OverlayTimeCondition,
+  PhysicsConfig,
   SoundClipKey
 } from '../../shared/ipc'
 import { INTERACTION_ACTIONS, SOUND_CLIP_KEYS } from '../../shared/ipc'
 import { normalizeEmotionConfig, type EmotionConfig } from '../../shared/emotion'
+import { normalizePhysicsConfig } from '../../shared/physics'
 
 export interface ParsedCharacter {
   id: string
@@ -147,6 +149,7 @@ export function readCharacterDetail(root: string, id: string): CharacterDetail |
       overlays?: unknown
       sound?: unknown
       emotion?: unknown
+      physics?: unknown
     }
     if (typeof raw.id !== 'string' || raw.id !== id || typeof raw.name !== 'string') return null
 
@@ -184,6 +187,7 @@ export function readCharacterDetail(root: string, id: string): CharacterDetail |
       overlays: overlays && Object.keys(overlays).length > 0 ? overlays : undefined,
       sound: parseCharacterSound(raw.sound) ?? undefined,
       emotion: raw.emotion ? (normalizeEmotionConfig(raw.emotion) as EmotionConfig) : undefined,
+      physics: raw.physics ? (normalizePhysicsConfig(raw.physics) as PhysicsConfig) : undefined,
       interaction: {
         click: normalizeInteraction(raw.interaction?.click, 'speak'),
         doubleClick: normalizeInteraction(raw.interaction?.doubleClick, 'open_center'),

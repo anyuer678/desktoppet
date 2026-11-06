@@ -22,6 +22,7 @@ import type {
   PassiveTestResult,
   PassiveSourcesConfig,
   PerfReport,
+  PhysicsConfig,
   PetSettingsChanged,
   PluginInfo,
   PushApiGetResult,
@@ -70,6 +71,8 @@ const api = {
     hide: (): Promise<void> => ipcRenderer.invoke('window:hide'),
     quit: (): Promise<void> => ipcRenderer.invoke('window:quit'),
     dragBy: (dx: number, dy: number): Promise<void> => ipcRenderer.invoke('window:dragBy', dx, dy),
+    fling: (vx: number, vy: number, physics?: PhysicsConfig): Promise<void> =>
+      ipcRenderer.invoke('window:fling', vx, vy, physics),
     setSize: (size: number): Promise<number> => ipcRenderer.invoke('window:setSize', size),
     setOpacity: (opacity: number): Promise<number> => ipcRenderer.invoke('window:setOpacity', opacity),
     setIgnoreMouseEvents: (ignore: boolean): Promise<void> =>

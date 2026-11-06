@@ -20,8 +20,13 @@ export function registerWindowIpc(deps: WindowIpcDeps): void {
     const win = deps.windows.pet()
     if (!win) return
     if (typeof dx !== 'number' || !Number.isFinite(dx) || typeof dy !== 'number' || !Number.isFinite(dy)) return
+    deps.windows.stopFling()
     const [x, y] = win.getPosition()
     win.setPosition(x + Math.round(dx), y + Math.round(dy))
+  })
+  ipcMain.handle('window:fling', (_e, vx: unknown, vy: unknown, physics: unknown) => {
+    if (typeof vx !== 'number' || !Number.isFinite(vx) || typeof vy !== 'number' || !Number.isFinite(vy)) return
+    deps.windows.fling(vx, vy, physics)
   })
   ipcMain.handle('window:setSize', (_e, size: number) => deps.settings.setSize(size))
   ipcMain.handle('window:setOpacity', (_e, opacity: number) => deps.settings.setOpacity(opacity))
