@@ -65,6 +65,16 @@ powershell -ExecutionPolicy Bypass -File scripts/verify-local.ps1
 
 打包（electron-builder 已配置）：`npx electron-builder --win`（配置见 `electron-builder.yml`，产物输出到 `release/`）。
 
+## 下载、安装与升级
+
+从 [Releases](https://github.com/anyuer678/desktoppet/releases) 下载最新版安装包（当前为 `DesktopPet-Setup-1.3.0.exe`）。
+
+- **未签名安装包**：项目未配置代码签名证书，Windows SmartScreen 会提示「未知发布者」。点击「更多信息 → 仍要运行」即可；校验完整性可对照 Release 页 `latest.yml` 中的 `sha512` 与文件大小。
+- **自动更新**：v1.3.0 起内置 electron-updater，启动后从 GitHub Release 检查、下载并提示重启安装；`npm run dev` 开发模式自动跳过。`latest.yml` 与 `.blockmap` 是更新链路的一部分，请勿重命名或删除。
+- **从 v1.2.1 及更早版本升级**：旧版没有更新器，需手动下载 v1.3.0 安装包覆盖安装一次，之后即可自动更新。
+- **数据目录**：安装版为 `%APPDATA%\DesktopPet\`（`settings.json`、`pushApi.json`、`inbox/`、统计与心情数据等），开发模式为 `%APPDATA%\desktop-pet\`。两者互不相通；若希望沿用旧数据，退出应用后手动复制对应文件即可。
+- **自定义打包**：`electron-builder.yml` 中的 `artifactName` 不能含空格（自动更新按连字符 URL 解析），并保留 `extraMetadata.productName`，否则安装版数据目录会退回 `desktop-pet`。
+
 ## 质量门禁（CI 与本地同源）
 
 | 门禁 | 命令 | 说明 |
